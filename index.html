@@ -190,11 +190,26 @@
     box-shadow:0 0 0 1px #0000000d inset;touch-action:none}
   .dwrap canvas{position:absolute;left:0;top:0}
   #guide{pointer-events:none}
-  .steptip{position:absolute;left:10px;top:10px;right:10px;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px;pointer-events:none}
+  .steptip{position:absolute;left:10px;top:10px;right:10px;z-index:3;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px;pointer-events:none}
   .steptip > *{pointer-events:auto}
-  .steptip .say{background:#fffdf7ee;color:var(--ink);font-weight:800;font-size:15px;padding:8px 12px;border-radius:10px;box-shadow:0 2px 8px #0002;max-width:100%}
-  .steptip .say em{font-style:normal;color:#2f7fd8}
-  .steptip .pbtn{box-shadow:0 2px 8px #0002}
+  .steptip .say{flex:1 1 260px;background:#fffdf7f2;color:var(--ink);font-weight:800;font-size:16px;padding:9px 13px;border-radius:12px;box-shadow:0 2px 10px #0002;text-wrap:balance}
+  .say .count{display:block;font:800 10px var(--ui);letter-spacing:.16em;color:#2f7fd8;margin-bottom:2px}
+  .say .tipline{display:block;font-weight:700;font-size:13px;color:var(--ink-soft);margin-top:3px}
+  .stepbtns{display:flex;flex-wrap:wrap;gap:6px}
+  .stepbtns .pbtn{box-shadow:0 2px 8px #0002}
+  .dref{position:absolute;right:10px;bottom:10px;z-index:2;width:clamp(70px,15vmin,120px);background:#fff;color:var(--ink);
+    border-radius:10px;box-shadow:0 2px 10px #0002;padding:5px 6px 6px;pointer-events:none}
+  .dref span{display:block;font:800 9px var(--ui);letter-spacing:.16em;color:var(--ink-soft)}
+  .dref svg{display:block;width:100%;aspect-ratio:1}
+  .modeask{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:16px;background:#121016a6}
+  .modeask .card{width:100%;max-width:430px;background:var(--paper);color:var(--ink);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 12px 40px #0008}
+  .modeask h2{margin:0 0 2px;font-size:20px;font-weight:800;text-wrap:balance}
+  .choice{text-align:left;border:1px solid #cdbfa3;background:#fffaf0;color:var(--ink);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+  .choice:hover{border-color:var(--brass-deep)}
+  .choice b{font-size:17px}
+  .choice span{font-size:13px;font-weight:700;color:var(--ink-soft)}
+  .toast{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:4;max-width:calc(100% - 150px);text-align:center;
+    background:var(--ink);color:var(--brass-lit);font-weight:800;font-size:15px;padding:10px 16px;border-radius:999px;box-shadow:0 4px 14px #0005}
   .drawbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:10px 14px 14px}
   .swatches{display:flex;flex-wrap:wrap;gap:6px}
   .sw{width:34px;height:34px;border-radius:50%;border:2px solid #0006;padding:0}
@@ -203,6 +218,17 @@
   .sizes button{width:36px;height:34px;border:0;border-radius:999px;background:transparent;display:grid;place-items:center}
   .sizes button i{display:block;border-radius:50%;background:var(--ivory)}
   .sizes button[aria-pressed="true"]{background:#ffffff18}
+  .nextup{font-style:normal;color:var(--brass-lit)}
+  .jgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .jitem{padding:0;text-align:left;border-radius:10px;overflow:hidden;background:var(--panel);border:1px solid var(--edge);display:flex;flex-direction:column}
+  .jitem img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--paper)}
+  .jitem span{padding:8px 10px;font-weight:800;font-size:14px}
+  .jitem small{display:block;font-weight:700;font-size:12px;color:var(--muted)}
+  .empty-note{font-weight:700;color:var(--muted);font-size:16px}
+  .viewer{position:fixed;inset:0;z-index:20;background:#000e;display:flex;flex-direction:column;gap:10px;padding:14px}
+  .viewer img{flex:1;min-height:0;width:100%;object-fit:contain}
+  .vbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .vbar b{flex:1 1 auto;font-size:16px}
 
   /* ---- guitar ---- */
   .guitar-view{grid-template-rows:auto auto auto minmax(0,1fr)}
@@ -289,7 +315,7 @@
             <path d="M150 24 l8 8 M166 20 l-2 12 M176 34 l-12 2" stroke="#f6c945" stroke-width="5"/>
             <path d="M140 84 C155 74 170 90 188 78" stroke="#3bb273" stroke-width="5"/>
           </svg></span>
-          <span class="txt"><b>Draw</b><span>Free draw · step-by-step lessons</span></span>
+          <span class="txt"><b>Draw</b><span>16 lessons · paper or screen · shading</span></span>
         </button>
         <button class="tile" data-go="guitarMenu">
           <span class="art guitar"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
@@ -377,20 +403,34 @@
   <section class="view draw-view" data-view="draw" hidden>
     <header class="top">
       <button class="back">◀ Back</button>
-      <h1 class="ttl" id="dTitle"><small>DRAW</small>Free draw</h1>
+      <h1 class="ttl" id="dTitle"><small>DRAW</small>Playground</h1>
       <div class="tools">
         <button class="btn" id="dGuide" aria-pressed="true">Show guide</button>
+        <button class="btn go" id="dSave">Save to My drawings</button>
       </div>
     </header>
     <div class="dwrap" id="dwrap">
       <canvas id="paint"></canvas><canvas id="guide"></canvas>
+      <div class="dref" id="dRef"><span>GOAL</span><svg id="dRefSvg" viewBox="-6 -6 112 112" aria-label="The finished drawing"></svg></div>
       <div class="steptip" id="steptip">
-        <span class="say" id="dSay"></span>
-        <button class="pbtn" id="dPrev">◀ Step</button>
-        <button class="pbtn go" id="dNext">Next step ▶</button>
+        <div class="say" id="dSay"></div>
+        <div class="stepbtns" id="stepBtns"></div>
       </div>
+      <div class="modeask" id="modeAsk">
+        <div class="card">
+          <h2>Where do you want to draw?</h2>
+          <button class="choice" id="mScreen"><b>On the screen</b><span>Trace the lines with your finger or the mouse. I’ll tell you how close you got.</span></button>
+          <button class="choice" id="mPaper"><b>On paper</b><span>Watch each step, then draw it with a real pencil. Take a photo at the end.</span></button>
+        </div>
+      </div>
+      <div class="toast" id="dToast" hidden></div>
     </div>
-    <div class="drawbar">
+    <div class="drawbar" id="drawbar">
+      <div class="seg" id="brushes" role="group" aria-label="Brush">
+        <button data-b="pencil" aria-pressed="false">Pencil</button>
+        <button data-b="marker" aria-pressed="true">Marker</button>
+        <button data-b="crayon" aria-pressed="false">Crayon</button>
+      </div>
       <div class="swatches" id="swatches" role="group" aria-label="Colors"></div>
       <div class="sizes" id="sizes" role="group" aria-label="Brush size">
         <button data-s="4" aria-label="Thin"><i style="width:5px;height:5px"></i></button>
@@ -400,6 +440,16 @@
       <button class="btn" id="dErase" aria-pressed="false">Eraser</button>
       <button class="btn" id="dUndo">↶ Undo</button>
       <button class="btn" id="dClear">Clear</button>
+    </div>
+    <input type="file" id="photoIn" accept="image/*" capture="environment" hidden>
+  </section>
+
+  <section class="view listview" data-view="journal" hidden>
+    <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>DRAW</small>My drawings</h1></header>
+    <div class="scroll"><div class="scroll-in" id="journalList"></div></div>
+    <div class="viewer" id="viewer" hidden>
+      <img id="viewImg" alt="">
+      <div class="vbar"><b id="viewName"></b><button class="btn" id="viewDel">Delete</button><button class="btn go" id="viewClose">Close</button></div>
     </div>
   </section>
 
@@ -1186,80 +1236,180 @@
   };
 
   // ================= DRAW =================
-  const LESSONS = [
-    { id:'heart', name:'A heart for Mom', steps:[
-      { t:'Draw the left side of the heart', p:'M50 32 C38 12 8 20 12 45 C16 64 40 76 50 90' },
-      { t:'Now the right side', p:'M50 32 C62 12 92 20 88 45 C84 64 60 76 50 90' },
-      { t:'Color it in — red or pink!', p:null } ] },
-    { id:'sun', name:'Happy sun', steps:[
-      { t:'Draw a big circle', p:'M32 50 A18 18 0 1 0 68 50 A18 18 0 1 0 32 50' },
-      { t:'Add sunbeams all around', p:'M50 8 L50 24 M50 76 L50 92 M8 50 L24 50 M76 50 L92 50 M20 20 L31 31 M80 20 L69 31 M20 80 L31 69 M80 80 L69 69' },
-      { t:'Give it a happy face', p:'M43 45 L43 47 M57 45 L57 47 M42 55 Q50 63 58 55' },
-      { t:'Color it yellow!', p:null } ] },
-    { id:'house', name:'House', steps:[
-      { t:'Draw a big square', p:'M25 45 L75 45 L75 88 L25 88 Z' },
-      { t:'Put a pointy roof on top', p:'M18 47 L50 16 L82 47' },
-      { t:'Add a door', p:'M44 88 L44 68 L56 68 L56 88' },
-      { t:'Add two windows', p:'M30 54 L40 54 L40 63 L30 63 Z M60 54 L70 54 L70 63 L60 63 Z' },
-      { t:'Color your house!', p:null } ] },
-    { id:'cat', name:'Cat', steps:[
-      { t:'Draw a circle for the head', p:'M30 52 A20 20 0 1 0 70 52 A20 20 0 1 0 30 52' },
-      { t:'Add two pointy ears', p:'M33 40 L30 19 L45 33 M67 40 L70 19 L55 33' },
-      { t:'Eyes, nose and mouth', p:'M42 48 L42 50 M58 48 L58 50 M47 56 L50 59 L53 56 M50 59 Q46 64 42 62 M50 59 Q54 64 58 62' },
-      { t:'Whiskers!', p:'M38 57 L20 53 M38 60 L20 62 M62 57 L80 53 M62 60 L80 62' },
-      { t:'Color your cat!', p:null } ] },
-    { id:'fish', name:'Fish', steps:[
-      { t:'Draw the body like a lemon', p:'M18 50 Q44 24 70 50 Q44 76 18 50' },
-      { t:'Add a tail', p:'M70 50 L88 36 L88 64 Z' },
-      { t:'Eye, mouth and a fin', p:'M31 46 L31 48 M22 52 Q26 54 23 57 M44 36 Q52 29 57 41' },
-      { t:'Draw some bubbles', p:'M12 30 A3 3 0 1 0 18 30 A3 3 0 1 0 12 30 M8 20 A2 2 0 1 0 12 20 A2 2 0 1 0 8 20' },
-      { t:'Color your fish!', p:null } ] },
-    { id:'flower', name:'Flower', steps:[
-      { t:'Draw a small circle in the middle', p:'M42 34 A8 8 0 1 0 58 34 A8 8 0 1 0 42 34' },
-      { t:'Add four petals', p:'M50 26 C38 6 62 6 50 26 M50 42 C38 62 62 62 50 42 M42 34 C22 22 22 46 42 34 M58 34 C78 22 78 46 58 34' },
-      { t:'Draw the stem', p:'M50 58 Q47 75 50 92' },
-      { t:'Add two leaves', p:'M49 76 Q61 64 69 70 Q61 80 49 76 M50 84 Q38 72 31 78 Q39 88 50 84' },
-      { t:'Color your flower!', p:null } ] },
-    { id:'car', name:'Car', steps:[
-      { t:'Draw the car body', p:'M10 64 L10 49 L28 49 L37 34 L66 34 L76 49 L90 49 L90 64 Z' },
-      { t:'Add two wheels', p:'M20 66 A9 9 0 1 0 38 66 A9 9 0 1 0 20 66 M62 66 A9 9 0 1 0 80 66 A9 9 0 1 0 62 66' },
-      { t:'Draw the windows', p:'M33 48 L40 38 L49 38 L49 48 Z M54 48 L54 38 L64 38 L71 48 Z' },
-      { t:'Color your car!', p:null } ] },
+  // Lessons live in a 0–100 box. Each step is one SVG path; "shade" steps are areas to fill with pencil.
+  const DLEVELS = [
+    { name:'Warm-ups', lessons:[
+      { id:'lines', name:'Lines and zigzags', steps:[
+        { t:'Draw two straight lines, left to right', tip:'Go slowly — slow lines come out straighter.', p:'M15 20 L85 20 M15 34 L85 34' },
+        { t:'Now a zigzag', tip:'Make sharp points, like mountains.', p:'M15 58 L25 48 L35 58 L45 48 L55 58 L65 48 L75 58 L85 48' },
+        { t:'And a wavy line', tip:'Keep your hand loose and relaxed.', p:'M10 80 Q20 70 30 80 T50 80 T70 80 T90 80' } ] },
+      { id:'circles', name:'Circles and ovals', steps:[
+        { t:'Draw a big circle', tip:'Try it in one smooth move.', p:'M20 38 A20 20 0 1 0 60 38 A20 20 0 1 0 20 38' },
+        { t:'Now a small circle', tip:'Small circles are easier if you go slowly.', p:'M68 30 A10 10 0 1 0 88 30 A10 10 0 1 0 68 30' },
+        { t:'Draw a long oval', tip:'An oval is a stretched-out circle.', p:'M18 78 A30 12 0 1 0 78 78 A30 12 0 1 0 18 78' } ] },
+      { id:'shapes', name:'Square, triangle, star', steps:[
+        { t:'Draw a square', tip:'All four sides are the same length.', p:'M12 12 L42 12 L42 42 L12 42 Z' },
+        { t:'Draw a triangle', tip:'Three sides and three corners.', p:'M74 10 L92 42 L56 42 Z' },
+        { t:'Draw a star', tip:'Go point to point without lifting your pencil.', p:'M50 50 L57 65 L74 66 L61 77 L66 94 L50 84 L34 94 L39 77 L26 66 L43 65 Z' } ] } ] },
+    { name:'First drawings', lessons:[
+      { id:'heart', name:'A heart for Mom', steps:[
+        { t:'Draw the left side of the heart', tip:'Start at the top dip and curve down to the point.', p:'M50 32 C38 12 8 20 12 45 C16 64 40 76 50 90' },
+        { t:'Now the right side', tip:'Make it match the left side, like a mirror.', p:'M50 32 C62 12 92 20 88 45 C84 64 60 76 50 90' },
+        { t:'Color it in — red or pink!', p:null } ] },
+      { id:'house', name:'House', steps:[
+        { t:'Draw a big square', tip:'This is the wall of the house.', p:'M25 45 L75 45 L75 88 L25 88 Z' },
+        { t:'Put a pointy roof on top', tip:'Let the roof stick out a little on each side.', p:'M18 47 L50 16 L82 47' },
+        { t:'Add a door', p:'M44 88 L44 68 L56 68 L56 88' },
+        { t:'Add two windows', p:'M30 54 L40 54 L40 63 L30 63 Z M60 54 L70 54 L70 63 L60 63 Z' },
+        { t:'Color your house!', p:null } ] },
+      { id:'car', name:'Car', steps:[
+        { t:'Draw the car body', tip:'Low in the front and back, taller in the middle.', p:'M10 64 L10 49 L28 49 L37 34 L66 34 L76 49 L90 49 L90 64 Z' },
+        { t:'Add two wheels', p:'M20 66 A9 9 0 1 0 38 66 A9 9 0 1 0 20 66 M62 66 A9 9 0 1 0 80 66 A9 9 0 1 0 62 66' },
+        { t:'Draw the windows', p:'M33 48 L40 38 L49 38 L49 48 Z M54 48 L54 38 L64 38 L71 48 Z' },
+        { t:'Color your car!', p:null } ] } ] },
+    { name:'Nature', lessons:[
+      { id:'sun', name:'Happy sun', steps:[
+        { t:'Draw a big circle', p:'M32 50 A18 18 0 1 0 68 50 A18 18 0 1 0 32 50' },
+        { t:'Add sunbeams all around', tip:'Short straight lines, pointing away from the circle.', p:'M50 8 L50 24 M50 76 L50 92 M8 50 L24 50 M76 50 L92 50 M20 20 L31 31 M80 20 L69 31 M20 80 L31 69 M80 80 L69 69' },
+        { t:'Give it a happy face', p:'M43 45 L43 47 M57 45 L57 47 M42 55 Q50 63 58 55' },
+        { t:'Color it yellow!', p:null } ] },
+      { id:'flower', name:'Flower', steps:[
+        { t:'Draw a small circle in the middle', p:'M42 34 A8 8 0 1 0 58 34 A8 8 0 1 0 42 34' },
+        { t:'Add four petals', tip:'Each petal is like a loop.', p:'M50 26 C38 6 62 6 50 26 M50 42 C38 62 62 62 50 42 M42 34 C22 22 22 46 42 34 M58 34 C78 22 78 46 58 34' },
+        { t:'Draw the stem', p:'M50 58 Q47 75 50 92' },
+        { t:'Add two leaves', p:'M49 76 Q61 64 69 70 Q61 80 49 76 M50 84 Q38 72 31 78 Q39 88 50 84' },
+        { t:'Color your flower!', p:null } ] },
+      { id:'tree', name:'Apple tree', steps:[
+        { t:'Draw the trunk', tip:'Make it a bit wider at the bottom.', p:'M43 92 L46 62 L54 62 L57 92' },
+        { t:'Draw a fluffy cloud of leaves on top', tip:'Lots of round bumps.', p:'M46 62 Q30 66 26 56 Q14 50 22 40 Q20 26 34 26 Q40 12 54 16 Q68 12 72 26 Q86 28 82 42 Q90 54 76 58 Q70 66 54 62' },
+        { t:'Add some apples', p:'M36 44 A4 4 0 1 0 44 44 A4 4 0 1 0 36 44 M58 36 A4 4 0 1 0 66 36 A4 4 0 1 0 58 36 M60 52 A4 4 0 1 0 68 52 A4 4 0 1 0 60 52' },
+        { t:'Color your tree!', p:null } ] } ] },
+    { name:'Animals', lessons:[
+      { id:'cat', name:'Cat', steps:[
+        { t:'Draw a circle for the head', p:'M30 52 A20 20 0 1 0 70 52 A20 20 0 1 0 30 52' },
+        { t:'Add two pointy ears', p:'M33 40 L30 19 L45 33 M67 40 L70 19 L55 33' },
+        { t:'Eyes, nose and mouth', tip:'The mouth looks like a little “w”.', p:'M42 48 L42 50 M58 48 L58 50 M47 56 L50 59 L53 56 M50 59 Q46 64 42 62 M50 59 Q54 64 58 62' },
+        { t:'Whiskers!', p:'M38 57 L20 53 M38 60 L20 62 M62 57 L80 53 M62 60 L80 62' },
+        { t:'Color your cat!', p:null } ] },
+      { id:'fish', name:'Fish', steps:[
+        { t:'Draw the body like a lemon', p:'M18 50 Q44 24 70 50 Q44 76 18 50' },
+        { t:'Add a tail', p:'M70 50 L88 36 L88 64 Z' },
+        { t:'Eye, mouth and a fin', p:'M31 46 L31 48 M22 52 Q26 54 23 57 M44 36 Q52 29 57 41' },
+        { t:'Draw some bubbles', p:'M12 30 A3 3 0 1 0 18 30 A3 3 0 1 0 12 30 M8 20 A2 2 0 1 0 12 20 A2 2 0 1 0 8 20' },
+        { t:'Color your fish!', p:null } ] },
+      { id:'bird', name:'Little bird', steps:[
+        { t:'Draw a round body', tip:'Like an egg lying on its side.', p:'M26 56 Q28 40 50 42 Q68 44 66 60 Q62 74 44 72 Q28 70 26 56' },
+        { t:'Add a round head', p:'M56 34 A10 10 0 1 0 76 34 A10 10 0 1 0 56 34' },
+        { t:'A pointy beak and an eye', p:'M76 31 L87 35 L76 38 M68 31 L68 33' },
+        { t:'Draw a wing and a tail', p:'M38 54 Q48 46 56 56 Q46 62 38 54 M27 58 L13 50 L15 64 Z' },
+        { t:'Two skinny legs', p:'M42 72 L40 86 M52 72 L54 86' },
+        { t:'Color your bird!', p:null } ] },
+      { id:'bunny', name:'Bunny', steps:[
+        { t:'Draw a circle for the head', p:'M34 58 A16 16 0 1 0 66 58 A16 16 0 1 0 34 58' },
+        { t:'Add two long ears', tip:'Long loops that go up high.', p:'M42 45 C34 10 50 8 48 43 M58 45 C66 10 50 8 52 43' },
+        { t:'Eyes, nose and mouth', p:'M44 55 L44 57 M56 55 L56 57 M48 62 L50 64 L52 62 M50 64 L50 68' },
+        { t:'Whiskers!', p:'M40 63 L28 60 M40 66 L28 68 M60 63 L72 60 M60 66 L72 68' },
+        { t:'Color your bunny!', p:null } ] },
+      { id:'snail', name:'Snail', steps:[
+        { t:'Draw a big circle for the shell', p:'M30 60 A20 20 0 1 0 70 60 A20 20 0 1 0 30 60' },
+        { t:'Add a swirl inside', tip:'Start in the middle and go round.', p:'M50 60 A5 5 0 1 1 56 55 A11 11 0 1 1 41 52' },
+        { t:'Draw the body under the shell', p:'M14 80 L84 80 Q94 80 92 68 Q90 60 82 62' },
+        { t:'Add feelers with little eyes', p:'M86 63 L84 47 M90 64 L94 49 M81.5 44 A2.5 2.5 0 1 0 86.5 44 A2.5 2.5 0 1 0 81.5 44 M91.5 46 A2.5 2.5 0 1 0 96.5 46 A2.5 2.5 0 1 0 91.5 46' },
+        { t:'Color your snail!', p:null } ] } ] },
+    { name:'Shading', lessons:[
+      { id:'ball', name:'A shaded ball', steps:[
+        { t:'Draw a circle for the ball', tip:'Nice and round!', p:'M28 48 A22 22 0 1 0 72 48 A22 22 0 1 0 28 48' },
+        { t:'Draw its shadow on the ground', tip:'A flat oval under the ball.', p:'M30 80 A22 5 0 1 0 74 80 A22 5 0 1 0 30 80' },
+        { t:'Shade the dark side of the ball', tip:'Use the pencil. Press lightly and go back and forth.', p:'M72 48 A22 22 0 0 1 34 63 A34 34 0 0 0 72 48 Z', shade:true },
+        { t:'Shade the shadow darker', tip:'Shadows are the darkest part of a drawing.', p:'M30 80 A22 5 0 1 0 74 80 A22 5 0 1 0 30 80', shade:true } ] },
+      { id:'apple', name:'A shaded apple', steps:[
+        { t:'Draw the apple shape', tip:'Like a heart with round sides.', p:'M50 32 C32 18 14 38 20 60 C26 82 42 86 50 80 C58 86 74 82 80 60 C86 38 68 18 50 32' },
+        { t:'Add the stem and a leaf', p:'M50 32 Q51 22 55 14 M54 22 Q64 12 72 17 Q63 26 54 22' },
+        { t:'Shade the right side', tip:'The light comes from the left, so the right side is darker.', p:'M68 26 C82 36 84 58 76 72 C70 82 60 84 56 80 C68 70 72 48 68 26 Z', shade:true },
+        { t:'Color it red — leave a white shiny spot!', p:null } ] } ] },
   ];
+  const LESSONS = DLEVELS.flatMap(l => l.lessons);
+  const lessonD = L => L.steps.filter(s => s.p).map(s => s.p).join(' ');
+  const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const mk = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
+
+  // My drawings (saved in this browser)
+  const J = {
+    list(){ return store.get('journal', []); },
+    add(entry){
+      const l = this.list();
+      l.unshift({ id:Date.now().toString(36), date:new Date().toLocaleDateString(), ...entry });
+      while(l.length > 40) l.pop();
+      while(l.length){
+        try{ localStorage.setItem('ultimateLearn.journal', JSON.stringify(l)); return true; }
+        catch(e){ if(l.length === 1) return false; l.pop(); }
+      }
+      return false;
+    },
+    remove(id){ store.set('journal', this.list().filter(e => e.id !== id)); }
+  };
+
   function drawMenu(){
-    const el = $('drawList'); el.innerHTML = '';
-    const g1 = document.createElement('div'); g1.className = 'songgrid'; el.appendChild(g1);
-    const free = document.createElement('button'); free.className = 'songcard free';
-    free.innerHTML = '<span class="sn">Free draw</span><span class="sm">A blank page — draw anything</span><span class="ss">▶</span>';
-    free.onclick = () => go('draw', null); g1.appendChild(free);
-    const h = document.createElement('h2'); h.textContent = 'Step-by-step lessons'; el.appendChild(h);
-    const g2 = document.createElement('div'); g2.className = 'songgrid'; el.appendChild(g2);
-    LESSONS.forEach(L => {
-      const b = document.createElement('button'); b.className = 'songcard';
-      const d = L.steps.filter(s => s.p).map(s => s.p).join(' ');
-      b.innerHTML = `<span class="sn">${L.name}</span><span class="sm">${L.steps.length} steps</span>` +
-        `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${d}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-      b.onclick = () => go('draw', L.id);
-      g2.appendChild(b);
+    const el = $('drawList'), stars = store.get('stars',{}); el.innerHTML = '';
+    const next = LESSONS.find(L => !stars['draw.'+L.id]);
+    const g1 = mk('div','songgrid'); el.appendChild(g1);
+    const n = J.list().length;
+    const top = [['Playground','A blank page — draw anything', () => go('draw', null)],
+                 ['My drawings', n ? `${n} saved` : 'Finished drawings show up here', () => go('journal')]];
+    top.forEach(([t,m,fn]) => { const b = mk('button','songcard',`<span class="sn">${t}</span><span class="sm">${m}</span><span class="ss">▶</span>`); b.onclick = fn; g1.appendChild(b); });
+    DLEVELS.forEach((lv,li) => {
+      el.appendChild(mk('h2', null, `Level ${li+1} · ${lv.name}`));
+      const g = mk('div','songgrid'); el.appendChild(g);
+      lv.lessons.forEach(L => {
+        const st = stars['draw.'+L.id] || 0;
+        const b = mk('button','songcard',
+          `<span class="sn">${L.name}</span><span class="sm">${L === next ? '<em class="nextup">Next up!</em> · ' : ''}${L.steps.length} steps · <span class="stars" style="color:var(--brass)">${'★'.repeat(st)}${'☆'.repeat(3-st)}</span></span>${thumb(L)}`);
+        b.onclick = () => go('draw', L.id);
+        g.appendChild(b);
+      });
     });
   }
   hooks.drawMenu = { enter: drawMenu };
 
+  // journal page
+  let viewing = null;
+  function renderJournal(){
+    const el = $('journalList'), list = J.list(); el.innerHTML = '';
+    if(!list.length){ el.appendChild(mk('p','empty-note','No drawings yet. Finish a lesson, or tap “Save to My drawings” in the Playground.')); return; }
+    const g = mk('div','jgrid'); el.appendChild(g);
+    list.forEach(e => {
+      const b = mk('button','jitem',`<img src="${e.img}" alt=""><span>${e.name}<small>${e.date}</small></span>`);
+      b.onclick = () => { viewing = e; $('viewImg').src = e.img; $('viewName').textContent = e.name; $('viewDel').textContent = 'Delete'; $('viewer').hidden = false; };
+      g.appendChild(b);
+    });
+  }
+  $('viewClose').onclick = () => { $('viewer').hidden = true; };
+  $('viewDel').onclick = () => {
+    const b = $('viewDel');
+    if(b.textContent === 'Delete'){ b.textContent = 'Tap again to delete'; return; }
+    J.remove(viewing.id); $('viewer').hidden = true; renderJournal();
+  };
+  hooks.journal = { enter(){ $('viewer').hidden = true; renderJournal(); } };
+
+  // canvas + tools
   const paint = $('paint'), guideC = $('guide'), dwrap = $('dwrap');
-  const pctx = paint.getContext('2d'), gctx = guideC.getContext('2d');
+  const pctx = paint.getContext('2d'), gctx = guideC.getContext('2d'), hitCtx = document.createElement('canvas').getContext('2d');
   const COLORS = ['#2a2330','#d7263d','#f28bb5','#f28c28','#f6c945','#3bb273','#2f7fd8','#7b4fc9','#8a5a3b','#ffffff'];
-  let dW = 0, dH = 0, dpr = 1, color = COLORS[1], size = 10, erasing = false, undo = [], lesson = null, step = 0, showGuideOn = true;
+  let dW = 0, dH = 0, dpr = 1, color = COLORS[1], size = 10, brush = 'marker', erasing = false, undo = [];
+  let lesson = null, dmode = null, step = 0, stepPts = [], scores = [], warned = false, showGuideOn = true;
   const sw = $('swatches');
   COLORS.forEach(c => {
-    const b = document.createElement('button'); b.className = 'sw'; b.style.background = c; b.setAttribute('aria-label', 'Color ' + c);
+    const b = mk('button','sw'); b.style.background = c; b.dataset.c = c; b.setAttribute('aria-label','Color ' + c);
     b.onclick = () => { color = c; erasing = false; syncDrawTools(); };
-    sw.appendChild(b); b.dataset.c = c;
+    sw.appendChild(b);
   });
   document.querySelectorAll('#sizes button').forEach(b => b.onclick = () => { size = +b.dataset.s; syncDrawTools(); });
+  document.querySelectorAll('#brushes button').forEach(b => b.onclick = () => { brush = b.dataset.b; erasing = false; syncDrawTools(); });
   $('dErase').onclick = () => { erasing = !erasing; syncDrawTools(); };
   function syncDrawTools(){
     sw.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', !erasing && b.dataset.c === color));
     document.querySelectorAll('#sizes button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.s === size));
+    document.querySelectorAll('#brushes button').forEach(b => b.setAttribute('aria-pressed', !erasing && b.dataset.b === brush));
     $('dErase').setAttribute('aria-pressed', erasing);
   }
   function sizeDraw(){
@@ -1274,80 +1424,259 @@
     dW = w; dH = h; undo = []; drawGuide();
   }
   function clearPaint(){ pctx.save(); pctx.setTransform(1,0,0,1,0,0); pctx.clearRect(0,0,paint.width,paint.height); pctx.restore(); }
-  function drawGuide(){
-    gctx.clearRect(0,0,dW,dH);
-    if(!lesson || !showGuideOn) return;
-    const S = Math.min(dW, dH - 60)*.88, ox = (dW - S)/2, oy = 56 + (dH - 56 - S)/2;
-    gctx.save(); gctx.translate(ox, oy); gctx.scale(S/100, S/100);
-    gctx.lineCap = 'round'; gctx.lineJoin = 'round';
-    lesson.steps.forEach((s,i) => {
-      if(!s.p || i > step) return;
-      const p = new Path2D(s.p);
-      if(i < step){ gctx.setLineDash([]); gctx.strokeStyle = 'rgba(42,35,48,.16)'; gctx.lineWidth = 1; }
-      else { gctx.setLineDash([2.4, 2]); gctx.strokeStyle = 'rgba(47,127,216,.8)'; gctx.lineWidth = 1.2; }
-      gctx.stroke(p);
-    });
-    gctx.restore();
-  }
-  function syncStep(){
-    const tip = $('steptip');
-    if(!lesson){ tip.hidden = true; $('dGuide').hidden = true; return; }
-    tip.hidden = false; $('dGuide').hidden = false;
-    const last = step === lesson.steps.length - 1;
-    $('dSay').innerHTML = `Step ${step+1} of ${lesson.steps.length}: <em>${lesson.steps[step].t}</em>`;
-    $('dPrev').hidden = step === 0;
-    $('dNext').textContent = last ? 'All done ✓' : 'Next step ▶';
-    drawGuide();
-  }
-  $('dPrev').onclick = () => { if(step > 0){ step--; syncStep(); } };
-  $('dNext').onclick = () => {
-    if(step < lesson.steps.length - 1){ step++; syncStep(); return; }
-    showGuideOn = false; $('dGuide').setAttribute('aria-pressed', false); drawGuide();
-    $('dSay').innerHTML = `<em>Beautiful!</em> You drew a ${lesson.name.toLowerCase().replace(/^a /,'')}. ✨`;
-    saveStars('draw.'+lesson.id, 3);
-    tada();
-  };
-  $('dGuide').onclick = () => { showGuideOn = !showGuideOn; $('dGuide').setAttribute('aria-pressed', showGuideOn); drawGuide(); };
-  $('dUndo').onclick = () => { const img = undo.pop(); if(img) pctx.putImageData(img, 0, 0); };
-  $('dClear').onclick = () => { pushUndo(); clearPaint(); };
   function pushUndo(){ try{ undo.push(pctx.getImageData(0,0,paint.width,paint.height)); if(undo.length > 10) undo.shift(); }catch(e){} }
+  $('dUndo').onclick = () => { const img = undo.pop(); if(img) pctx.putImageData(img, 0, 0); };
+  $('dClear').onclick = () => { pushUndo(); clearPaint(); stepPts = []; };
+  function snapshot(){
+    const w = Math.min(720, paint.width), h = Math.round(paint.height*w/paint.width);
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const x = c.getContext('2d'); x.fillStyle = '#fbf8f0'; x.fillRect(0,0,w,h); x.drawImage(paint, 0, 0, w, h);
+    return c.toDataURL('image/jpeg', .72);
+  }
+  const toastEl = $('dToast'); let toastT = 0;
+  function toast(msg){ toastEl.textContent = msg; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => toastEl.hidden = true, 2200); }
+  $('dSave').onclick = () => toast(J.add({ name:'Playground drawing', img:snapshot() }) ? 'Saved to My drawings! ✨' : 'My drawings is full — delete some first');
+
+  // strokes: marker = smooth line; pencil & crayon = grainy texture
   let stroke = null;
   const ptOf = e => { const r = paint.getBoundingClientRect(); return { x:e.clientX - r.left, y:e.clientY - r.top }; };
-  function styleStroke(){
+  function grain(a, b){
+    const pencil = brush === 'pencil';
+    const w = pencil ? Math.max(1.6, size*.4) : size*.9, d = Math.hypot(b.x-a.x, b.y-a.y), n = Math.max(1, Math.ceil(d/(pencil ? .7 : 1.4)));
+    const dot = pencil ? 1.1 : 1.8, k = pencil ? 3 : 5;
+    pctx.globalCompositeOperation = 'source-over'; pctx.fillStyle = color; pctx.globalAlpha = pencil ? .3 : .45;
+    for(let i = 0; i <= n; i++){
+      const x = a.x + (b.x-a.x)*i/n, y = a.y + (b.y-a.y)*i/n;
+      for(let j = 0; j < k; j++){ const r = Math.random()*w/2, an = Math.random()*6.283; pctx.fillRect(x + Math.cos(an)*r - dot/2, y + Math.sin(an)*r - dot/2, dot, dot); }
+    }
+    pctx.globalAlpha = 1;
+  }
+  function smoothStyle(){
     pctx.lineCap = 'round'; pctx.lineJoin = 'round'; pctx.lineWidth = erasing ? size*2.2 : size;
-    pctx.strokeStyle = color; pctx.fillStyle = color;
+    pctx.strokeStyle = color; pctx.fillStyle = erasing ? '#000' : color;
     pctx.globalCompositeOperation = erasing ? 'destination-out' : 'source-over';
   }
   paint.addEventListener('pointerdown', e => {
     if(stroke) return;
     e.preventDefault(); try{ paint.setPointerCapture(e.pointerId); }catch(_){}
-    pushUndo(); styleStroke();
+    pushUndo();
     const p = ptOf(e);
     stroke = { id:e.pointerId, last:p, mid:p };
-    pctx.beginPath(); pctx.arc(p.x, p.y, pctx.lineWidth/2, 0, 7);
-    if(erasing){ pctx.fillStyle = '#000'; } pctx.fill();
+    stepPts.push(p);
+    if(erasing || brush === 'marker'){ smoothStyle(); pctx.beginPath(); pctx.arc(p.x, p.y, pctx.lineWidth/2, 0, 7); pctx.fill(); }
+    else grain(p, p);
   });
   paint.addEventListener('pointermove', e => {
     if(!stroke || e.pointerId !== stroke.id) return;
-    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
-    styleStroke();
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+    const smooth = erasing || brush === 'marker';
+    if(smooth) smoothStyle();
     (evs.length ? evs : [e]).forEach(ev => {
-      const p = ptOf(ev), mid = { x:(stroke.last.x + p.x)/2, y:(stroke.last.y + p.y)/2 };
-      pctx.beginPath(); pctx.moveTo(stroke.mid.x, stroke.mid.y); pctx.quadraticCurveTo(stroke.last.x, stroke.last.y, mid.x, mid.y); pctx.stroke();
-      stroke.last = p; stroke.mid = mid;
+      const p = ptOf(ev);
+      if(smooth){
+        const mid = { x:(stroke.last.x + p.x)/2, y:(stroke.last.y + p.y)/2 };
+        pctx.beginPath(); pctx.moveTo(stroke.mid.x, stroke.mid.y); pctx.quadraticCurveTo(stroke.last.x, stroke.last.y, mid.x, mid.y); pctx.stroke();
+        stroke.mid = mid;
+      } else grain(stroke.last, p);
+      stroke.last = p;
+      if(stepPts.length < 6000) stepPts.push(p);
     });
   });
   const dUp = e => { if(stroke && e.pointerId === stroke.id){ pctx.globalCompositeOperation = 'source-over'; stroke = null; } };
   ['pointerup','pointercancel','lostpointercapture'].forEach(t => paint.addEventListener(t, dUp));
+
+  // lesson geometry: sample each path into points (for the "video" and for checking your drawing)
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const meas = document.createElementNS(SVGNS,'svg'), measP = document.createElementNS(SVGNS,'path');
+  meas.setAttribute('style','position:absolute;width:0;height:0;visibility:hidden'); meas.appendChild(measP); document.body.appendChild(meas);
+  const sampCache = {};
+  function samples(d){
+    if(sampCache[d]) return sampCache[d];
+    measP.setAttribute('d', d);
+    const L = measP.getTotalLength(), out = []; let prev = null;
+    for(let s = 0; s <= L; s += .6){
+      const p = measP.getPointAtLength(s), pt = { x:p.x, y:p.y, brk: !prev || Math.hypot(p.x-prev.x, p.y-prev.y) > 2.5 };
+      out.push(pt); prev = pt;
+    }
+    return sampCache[d] = out;
+  }
+  function box(){
+    const tip = $('steptip'), topPad = lesson && !tip.hidden ? tip.offsetHeight + 18 : 12;
+    const avail = dH - topPad - 10, S = Math.max(40, Math.min(dW*.9, avail*.94));
+    return { S, ox:(dW - S)/2, oy:topPad + (avail - S)/2 };
+  }
+  const mapP = (b,p) => ({ x:b.ox + p.x*b.S/100, y:b.oy + p.y*b.S/100 });
+  function pathPx(d, b){ const P = new Path2D(); P.addPath(new Path2D(d), new DOMMatrix([b.S/100,0,0,b.S/100,b.ox,b.oy])); return P; }
+  function strokePts(pts, b, upto){
+    gctx.beginPath();
+    for(let i = 0; i < upto; i++){ const q = mapP(b, pts[i]); if(pts[i].brk) gctx.moveTo(q.x, q.y); else gctx.lineTo(q.x, q.y); }
+    gctx.stroke();
+  }
+  function hatch(d, b, col, frac){
+    const pts = samples(d), xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), h = y1 - y0;
+    const lines = []; for(let x = x0 - h; x <= x1; x += 2.2) lines.push(x);
+    gctx.save(); gctx.clip(pathPx(d, b));
+    gctx.setLineDash([]); gctx.strokeStyle = col; gctx.lineWidth = Math.max(1.2, b.S*.005);
+    gctx.beginPath();
+    lines.slice(0, Math.ceil(lines.length*frac)).forEach(x => { const a = mapP(b, {x, y:y1}), c = mapP(b, {x:x+h, y:y0}); gctx.moveTo(a.x, a.y); gctx.lineTo(c.x, c.y); });
+    gctx.stroke(); gctx.restore();
+  }
+  function pencilTip(q){
+    gctx.save(); gctx.translate(q.x, q.y); gctx.rotate(-Math.PI/4);
+    gctx.fillStyle = '#e9cfa3'; gctx.beginPath(); gctx.moveTo(0,0); gctx.lineTo(7,-4); gctx.lineTo(7,4); gctx.closePath(); gctx.fill();
+    gctx.fillStyle = '#2a2330'; gctx.beginPath(); gctx.arc(1,0,1.6,0,7); gctx.fill();
+    gctx.fillStyle = '#f6c945'; gctx.fillRect(7,-4,26,8);
+    gctx.fillStyle = '#f28bb5'; gctx.fillRect(33,-4,6,8);
+    gctx.restore();
+  }
+  // frac = how much of the current step the "video" has drawn (null = finished)
+  function drawGuide(frac){
+    gctx.clearRect(0,0,dW,dH);
+    if(!lesson || !dmode) return;
+    const b = box(), paper = dmode === 'paper', lw = Math.max(2, b.S*.012);
+    gctx.lineCap = 'round'; gctx.lineJoin = 'round';
+    let tip = null;
+    lesson.steps.forEach((s,i) => {
+      if(!s.p || i > step) return;
+      const pts = samples(s.p), cur = i === step, anim = cur && frac != null;
+      if(s.shade){
+        if(i < step){ if(paper) hatch(s.p, b, 'rgba(42,35,48,.55)', 1); return; }
+        if(anim || paper) hatch(s.p, b, paper ? 'rgba(42,35,48,.55)' : 'rgba(47,127,216,.45)', anim ? frac : 1);
+        if(!paper && showGuideOn){ gctx.setLineDash([lw*2, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw*.8; gctx.stroke(pathPx(s.p, b)); }
+        return;
+      }
+      if(i < step){
+        if(!paper && !showGuideOn) return;
+        gctx.setLineDash([]); gctx.strokeStyle = paper ? '#2a2330' : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? lw : lw*.8;
+        strokePts(pts, b, pts.length); return;
+      }
+      if(anim){
+        const k = Math.max(1, Math.floor(pts.length*frac));
+        gctx.setLineDash([]); gctx.strokeStyle = paper ? '#2a2330' : '#2f7fd8'; gctx.lineWidth = lw*1.15;
+        strokePts(pts, b, k); tip = mapP(b, pts[k-1]);
+      } else if(paper){
+        gctx.setLineDash([]); gctx.strokeStyle = '#2a2330'; gctx.lineWidth = lw; strokePts(pts, b, pts.length);
+      } else if(showGuideOn){
+        gctx.setLineDash([lw*2.2, lw*1.8]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw; strokePts(pts, b, pts.length);
+      }
+    });
+    gctx.setLineDash([]);
+    if(tip) pencilTip(tip);
+  }
+  let araf = 0;
+  function watch(){
+    cancelAnimationFrame(araf);
+    const s = lesson.steps[step];
+    if(!s.p || matchMedia('(prefers-reduced-motion:reduce)').matches){ drawGuide(); return; }
+    const t0 = performance.now(), dur = Math.max(900, Math.min(2800, samples(s.p).length*9));
+    const tick = () => {
+      const f = (performance.now() - t0)/dur;
+      if(f >= 1){ drawGuide(); return; }
+      drawGuide(f); araf = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+  function drawRef(){
+    let s = '';
+    lesson.steps.forEach((st,i) => {
+      if(!st.p) return;
+      const cur = i === step && dmode;
+      if(st.shade) s += `<path d="${st.p}" fill="${cur ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
+      else s += `<path d="${st.p}" fill="none" stroke="${cur ? '#2f7fd8' : '#2a2330'}" stroke-width="${cur ? 4 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    });
+    $('dRefSvg').innerHTML = s;
+  }
+  function setBtns(list){
+    const box = $('stepBtns'); box.innerHTML = '';
+    list.filter(Boolean).forEach(b => { const e = mk('button','pbtn' + (b.cls ? ' ' + b.cls : ''), b.label); e.onclick = b.fn; box.appendChild(e); });
+  }
+  function showStep(i){
+    step = i; stepPts = []; warned = false;
+    const s = lesson.steps[step], n = lesson.steps.length, last = step === n-1;
+    $('dSay').innerHTML = `<span class="count">STEP ${step+1} OF ${n}</span>${s.t}${s.tip ? `<span class="tipline">Tip: ${s.tip}</span>` : ''}`;
+    setBtns([
+      s.p && { label:'▶ Watch again', fn:watch },
+      step > 0 && { label:'◀', fn:() => showStep(step-1) },
+      { label:last ? 'Finish ✓' : 'Next step ▶', cls:'go', fn:nextStep }
+    ]);
+    drawRef(); watch();
+  }
+  function scoreStep(s){
+    if(!stepPts.length) return 0;
+    const b = box();
+    if(s.shade){ const P = pathPx(s.p, b); let inside = 0; stepPts.forEach(p => { if(hitCtx.isPointInPath(P, p.x, p.y)) inside++; }); return Math.min(1, inside/60); }
+    const pts = samples(s.p).filter((_,i) => i % 3 === 0), thr = b.S*.055, t2 = thr*thr;
+    let cov = 0;
+    pts.forEach(p => { const q = mapP(b, p); for(const u of stepPts){ const dx = u.x-q.x, dy = u.y-q.y; if(dx*dx + dy*dy < t2){ cov++; break; } } });
+    return cov/pts.length;
+  }
+  function nextStep(){
+    const s = lesson.steps[step];
+    if(dmode === 'screen' && s.p){
+      const sc = scoreStep(s);
+      if(sc < .25 && !warned){ warned = true; toast(s.shade ? 'Shade inside the blue area first — or tap Next again to skip' : 'Trace the blue dotted line first — or tap Next again to skip'); return; }
+      scores.push(sc);
+      toast(sc >= .8 ? 'Awesome! Super close to the line ⭐' : sc >= .5 ? 'Good job! 👍' : 'Nice try — keep practicing!');
+    }
+    if(step < lesson.steps.length - 1) showStep(step + 1); else finishLesson();
+  }
+  function finishLesson(){
+    cancelAnimationFrame(araf);
+    const nextL = LESSONS[LESSONS.indexOf(lesson) + 1];
+    if(dmode === 'screen'){
+      const avg = scores.length ? scores.reduce((a,b) => a+b, 0)/scores.length : 1;
+      const st = avg >= .7 ? 3 : avg >= .45 ? 2 : 1;
+      saveStars('draw.'+lesson.id, st);
+      const ok = J.add({ name:lesson.name, img:snapshot() });
+      showGuideOn = false; drawGuide();
+      $('dSay').innerHTML = `<span class="count">ALL DONE</span>Beautiful drawing! ${starText(st)}<span class="tipline">${ok ? 'Saved to My drawings.' : 'Couldn’t save — My drawings is full.'}</span>`;
+    } else {
+      saveStars('draw.'+lesson.id, 3);
+      $('dSay').innerHTML = `<span class="count">ALL DONE</span>Great work! ${starText(3)}<span class="tipline">Take a photo of your paper to keep it in My drawings.</span>`;
+    }
+    setBtns([
+      dmode === 'paper' && { label:'📷 Take a photo', cls:'go', fn:() => $('photoIn').click() },
+      { label:'Draw again', fn:() => { clearPaint(); undo = []; scores = []; showGuideOn = true; showStep(0); } },
+      nextL && { label:'Next lesson ▶', cls:dmode === 'paper' ? '' : 'go', fn:() => { stack[stack.length-1].arg = nextL.id; open('draw', nextL.id); } }
+    ]);
+    tada();
+  }
+  $('photoIn').onchange = e => {
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, 800/Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src);
+      toast(J.add({ name:(lesson ? lesson.name : 'Drawing') + ' (on paper)', img:c.toDataURL('image/jpeg', .75) }) ? 'Photo saved to My drawings! 📷' : 'My drawings is full — delete some first');
+    };
+    img.src = URL.createObjectURL(f); e.target.value = '';
+  };
+  function startLesson(mode){
+    dmode = mode; $('modeAsk').hidden = true;
+    paint.style.pointerEvents = mode === 'paper' ? 'none' : '';
+    $('drawbar').hidden = mode === 'paper';
+    $('dGuide').hidden = mode === 'paper';
+    if(mode === 'screen'){ brush = 'pencil'; color = COLORS[0]; size = 10; erasing = false; syncDrawTools(); }
+    scores = []; sizeDraw(); showStep(0);
+  }
+  $('mScreen').onclick = () => startLesson('screen');
+  $('mPaper').onclick = () => startLesson('paper');
+  $('dGuide').onclick = () => { showGuideOn = !showGuideOn; $('dGuide').setAttribute('aria-pressed', showGuideOn); drawGuide(); };
   hooks.draw = {
     enter(id){
-      lesson = id ? LESSONS.find(l => l.id === id) : null; step = 0; showGuideOn = true;
-      $('dGuide').setAttribute('aria-pressed', true);
-      $('dTitle').innerHTML = `<small>DRAW</small>${lesson ? lesson.name : 'Free draw'}`;
-      dW = dH = 0; sizeDraw(); clearPaint(); undo = [];
-      if(lesson && lesson.id === 'heart'){ color = COLORS[1]; }
-      erasing = false; syncDrawTools(); syncStep();
-    }
+      lesson = id ? LESSONS.find(l => l.id === id) : null; step = 0; dmode = lesson ? null : 'free'; showGuideOn = true;
+      $('dTitle').innerHTML = `<small>DRAW</small>${lesson ? lesson.name : 'Playground'}`;
+      $('dSave').hidden = !!lesson; $('dGuide').hidden = true; $('dGuide').setAttribute('aria-pressed', true);
+      $('steptip').hidden = $('dRef').hidden = $('modeAsk').hidden = !lesson;
+      $('drawbar').hidden = false; paint.style.pointerEvents = ''; toastEl.hidden = true;
+      if(lesson){ $('dSay').innerHTML = `<span class="count">${lesson.steps.length} STEPS</span>${lesson.name}`; setBtns([]); drawRef(); }
+      brush = 'marker'; color = COLORS[1]; erasing = false; syncDrawTools();
+      dW = dH = 0; sizeDraw(); clearPaint(); undo = []; stepPts = [];
+    },
+    leave(){ cancelAnimationFrame(araf); }
   };
 
   // ================= GUITAR =================
