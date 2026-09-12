@@ -98,7 +98,7 @@
   .tip{font-size:13px;font-weight:700;color:#8e8497}
 
   /* ---- song lists ---- */
-  .listview{grid-template-rows:auto minmax(0,1fr)}
+  .listview{position:relative;grid-template-rows:auto minmax(0,1fr)}
   .scroll{overflow-y:auto;min-height:0}
   .scroll-in{max-width:980px;margin:0 auto;padding:6px 16px 32px;display:flex;flex-direction:column;gap:10px}
   .scroll-in h2{margin:14px 0 0;font:800 12px var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
@@ -201,13 +201,20 @@
     border-radius:10px;box-shadow:0 2px 10px #0002;padding:5px 6px 6px;pointer-events:none}
   .dref span{display:block;font:800 9px var(--ui);letter-spacing:.16em;color:var(--ink-soft)}
   .dref svg{display:block;width:100%;aspect-ratio:1}
-  .modeask{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:16px;background:#121016a6}
-  .modeask .card{width:100%;max-width:430px;background:var(--paper);color:var(--ink);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 12px 40px #0008}
-  .modeask h2{margin:0 0 2px;font-size:20px;font-weight:800;text-wrap:balance}
+  .modeask{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:16px;background:#121016a6;overflow-y:auto}
+  .modeask .card{width:100%;max-width:440px;background:var(--paper);color:var(--ink);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:9px;box-shadow:0 12px 40px #0008}
+  .modeask h2{margin:0;font-size:20px;font-weight:800;text-wrap:balance}
+  .asksub{margin:0;font-size:14px;font-weight:700;color:var(--ink-soft)}
+  .askq{margin:6px 0 0;font:800 12px var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
   .choice{text-align:left;border:1px solid #cdbfa3;background:#fffaf0;color:var(--ink);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
   .choice:hover{border-color:var(--brass-deep)}
   .choice b{font-size:17px}
   .choice span{font-size:13px;font-weight:700;color:var(--ink-soft)}
+  .go-choice{align-items:center;background:var(--ink);border-color:var(--ink);margin-top:4px}
+  .go-choice b{color:var(--brass-lit);font-size:18px}
+  .chips-pick{display:flex;flex-wrap:wrap;gap:8px}
+  .taste{padding:9px 14px;border-radius:999px;border:1px solid #cdbfa3;background:#fffaf0;color:var(--ink);font-weight:800;font-size:15px}
+  .taste[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--brass-lit)}
   .toast{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:4;max-width:calc(100% - 150px);text-align:center;
     background:var(--ink);color:var(--brass-lit);font-weight:800;font-size:15px;padding:10px 16px;border-radius:999px;box-shadow:0 4px 14px #0005}
   .drawbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:10px 14px 14px}
@@ -219,6 +226,8 @@
   .sizes button i{display:block;border-radius:50%;background:var(--ivory)}
   .sizes button[aria-pressed="true"]{background:#ffffff18}
   .nextup{font-style:normal;color:var(--brass-lit)}
+  .yours{font-style:normal;color:#e39ec6}
+  .stars2{color:var(--brass);letter-spacing:.06em}
   .jgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
   .jitem{padding:0;text-align:left;border-radius:10px;overflow:hidden;background:var(--panel);border:1px solid var(--edge);display:flex;flex-direction:column}
   .jitem img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--paper)}
@@ -227,6 +236,11 @@
   .empty-note{font-weight:700;color:var(--muted);font-size:16px}
   .viewer{position:fixed;inset:0;z-index:20;background:#000e;display:flex;flex-direction:column;gap:10px;padding:14px}
   .viewer img{flex:1;min-height:0;width:100%;object-fit:contain}
+  .stickline{font-size:26px;min-height:32px;letter-spacing:.06em;cursor:pointer}
+  .stickrow{display:flex;flex-wrap:wrap;gap:6px}
+  .stickrow button{width:46px;height:46px;border-radius:12px;border:1px solid var(--edge);background:var(--panel);font-size:23px;line-height:1}
+  .stickrow button:hover{border-color:var(--brass)}
+  .notein{padding:11px 14px;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--ivory);font:700 15px var(--ui)}
   .vbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
   .vbar b{flex:1 1 auto;font-size:16px}
 
@@ -315,7 +329,7 @@
             <path d="M150 24 l8 8 M166 20 l-2 12 M176 34 l-12 2" stroke="#f6c945" stroke-width="5"/>
             <path d="M140 84 C155 74 170 90 188 78" stroke="#3bb273" stroke-width="5"/>
           </svg></span>
-          <span class="txt"><b>Draw</b><span>16 lessons · paper or screen · shading</span></span>
+          <span class="txt"><b>Draw</b><span>34 lessons · make it yours · shading</span></span>
         </button>
         <button class="tile" data-go="guitarMenu">
           <span class="art guitar"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
@@ -339,8 +353,10 @@
     <div class="scroll"><div class="scroll-in" id="singList"></div></div>
   </section>
   <section class="view listview" data-view="drawMenu" hidden>
-    <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>DRAW</small>What do you want to draw?</h1></header>
+    <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>DRAW</small>What do you want to draw?</h1>
+      <div class="tools"><button class="btn" id="likesBtn">❤️ What I like</button></div></header>
     <div class="scroll"><div class="scroll-in" id="drawList"></div></div>
+    <div class="modeask" id="likesAsk" hidden><div class="card" id="likesCard"></div></div>
   </section>
   <section class="view listview" data-view="guitarMenu" hidden>
     <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>GUITAR</small>Pick something</h1></header>
@@ -416,13 +432,7 @@
         <div class="say" id="dSay"></div>
         <div class="stepbtns" id="stepBtns"></div>
       </div>
-      <div class="modeask" id="modeAsk">
-        <div class="card">
-          <h2>Where do you want to draw?</h2>
-          <button class="choice" id="mScreen"><b>On the screen</b><span>Trace the lines with your finger or the mouse. I’ll tell you how close you got.</span></button>
-          <button class="choice" id="mPaper"><b>On paper</b><span>Watch each step, then draw it with a real pencil. Take a photo at the end.</span></button>
-        </div>
-      </div>
+      <div class="modeask" id="modeAsk" hidden><div class="card" id="askCard"></div></div>
       <div class="toast" id="dToast" hidden></div>
     </div>
     <div class="drawbar" id="drawbar">
@@ -449,6 +459,9 @@
     <div class="scroll"><div class="scroll-in" id="journalList"></div></div>
     <div class="viewer" id="viewer" hidden>
       <img id="viewImg" alt="">
+      <div class="stickline" id="viewStickers" title="Tap to clear the stickers"></div>
+      <div class="stickrow" id="stickRow"></div>
+      <input class="notein" id="viewNote" placeholder="Write a note about this drawing…" maxlength="80">
       <div class="vbar"><b id="viewName"></b><button class="btn" id="viewDel">Delete</button><button class="btn go" id="viewClose">Close</button></div>
     </div>
   </section>
@@ -1236,154 +1249,410 @@
   };
 
   // ================= DRAW =================
-  // Lessons live in a 0–100 box. Each step is one SVG path; "shade" steps are areas to fill with pencil.
-  const DLEVELS = [
-    { name:'Warm-ups', lessons:[
-      { id:'lines', name:'Lines and zigzags', steps:[
-        { t:'Draw two straight lines, left to right', tip:'Go slowly — slow lines come out straighter.', p:'M15 20 L85 20 M15 34 L85 34' },
-        { t:'Now a zigzag', tip:'Make sharp points, like mountains.', p:'M15 58 L25 48 L35 58 L45 48 L55 58 L65 48 L75 58 L85 48' },
-        { t:'And a wavy line', tip:'Keep your hand loose and relaxed.', p:'M10 80 Q20 70 30 80 T50 80 T70 80 T90 80' } ] },
-      { id:'circles', name:'Circles and ovals', steps:[
-        { t:'Draw a big circle', tip:'Try it in one smooth move.', p:'M20 38 A20 20 0 1 0 60 38 A20 20 0 1 0 20 38' },
-        { t:'Now a small circle', tip:'Small circles are easier if you go slowly.', p:'M68 30 A10 10 0 1 0 88 30 A10 10 0 1 0 68 30' },
-        { t:'Draw a long oval', tip:'An oval is a stretched-out circle.', p:'M18 78 A30 12 0 1 0 78 78 A30 12 0 1 0 18 78' } ] },
-      { id:'shapes', name:'Square, triangle, star', steps:[
-        { t:'Draw a square', tip:'All four sides are the same length.', p:'M12 12 L42 12 L42 42 L12 42 Z' },
-        { t:'Draw a triangle', tip:'Three sides and three corners.', p:'M74 10 L92 42 L56 42 Z' },
-        { t:'Draw a star', tip:'Go point to point without lifting your pencil.', p:'M50 50 L57 65 L74 66 L61 77 L66 94 L50 84 L34 94 L39 77 L26 66 L43 65 Z' } ] } ] },
-    { name:'First drawings', lessons:[
-      { id:'heart', name:'A heart for Mom', steps:[
-        { t:'Draw the left side of the heart', tip:'Start at the top dip and curve down to the point.', p:'M50 32 C38 12 8 20 12 45 C16 64 40 76 50 90' },
-        { t:'Now the right side', tip:'Make it match the left side, like a mirror.', p:'M50 32 C62 12 92 20 88 45 C84 64 60 76 50 90' },
-        { t:'Color it in — red or pink!', p:null } ] },
-      { id:'house', name:'House', steps:[
-        { t:'Draw a big square', tip:'This is the wall of the house.', p:'M25 45 L75 45 L75 88 L25 88 Z' },
-        { t:'Put a pointy roof on top', tip:'Let the roof stick out a little on each side.', p:'M18 47 L50 16 L82 47' },
-        { t:'Add a door', p:'M44 88 L44 68 L56 68 L56 88' },
-        { t:'Add two windows', p:'M30 54 L40 54 L40 63 L30 63 Z M60 54 L70 54 L70 63 L60 63 Z' },
-        { t:'Color your house!', p:null } ] },
-      { id:'car', name:'Car', steps:[
-        { t:'Draw the car body', tip:'Low in the front and back, taller in the middle.', p:'M10 64 L10 49 L28 49 L37 34 L66 34 L76 49 L90 49 L90 64 Z' },
-        { t:'Add two wheels', p:'M20 66 A9 9 0 1 0 38 66 A9 9 0 1 0 20 66 M62 66 A9 9 0 1 0 80 66 A9 9 0 1 0 62 66' },
-        { t:'Draw the windows', p:'M33 48 L40 38 L49 38 L49 48 Z M54 48 L54 38 L64 38 L71 48 Z' },
-        { t:'Color your car!', p:null } ] } ] },
-    { name:'Nature', lessons:[
-      { id:'sun', name:'Happy sun', steps:[
-        { t:'Draw a big circle', p:'M32 50 A18 18 0 1 0 68 50 A18 18 0 1 0 32 50' },
-        { t:'Add sunbeams all around', tip:'Short straight lines, pointing away from the circle.', p:'M50 8 L50 24 M50 76 L50 92 M8 50 L24 50 M76 50 L92 50 M20 20 L31 31 M80 20 L69 31 M20 80 L31 69 M80 80 L69 69' },
-        { t:'Give it a happy face', p:'M43 45 L43 47 M57 45 L57 47 M42 55 Q50 63 58 55' },
-        { t:'Color it yellow!', p:null } ] },
-      { id:'flower', name:'Flower', steps:[
-        { t:'Draw a small circle in the middle', p:'M42 34 A8 8 0 1 0 58 34 A8 8 0 1 0 42 34' },
-        { t:'Add four petals', tip:'Each petal is like a loop.', p:'M50 26 C38 6 62 6 50 26 M50 42 C38 62 62 62 50 42 M42 34 C22 22 22 46 42 34 M58 34 C78 22 78 46 58 34' },
-        { t:'Draw the stem', p:'M50 58 Q47 75 50 92' },
-        { t:'Add two leaves', p:'M49 76 Q61 64 69 70 Q61 80 49 76 M50 84 Q38 72 31 78 Q39 88 50 84' },
-        { t:'Color your flower!', p:null } ] },
-      { id:'tree', name:'Apple tree', steps:[
-        { t:'Draw the trunk', tip:'Make it a bit wider at the bottom.', p:'M43 92 L46 62 L54 62 L57 92' },
-        { t:'Draw a fluffy cloud of leaves on top', tip:'Lots of round bumps.', p:'M46 62 Q30 66 26 56 Q14 50 22 40 Q20 26 34 26 Q40 12 54 16 Q68 12 72 26 Q86 28 82 42 Q90 54 76 58 Q70 66 54 62' },
-        { t:'Add some apples', p:'M36 44 A4 4 0 1 0 44 44 A4 4 0 1 0 36 44 M58 36 A4 4 0 1 0 66 36 A4 4 0 1 0 58 36 M60 52 A4 4 0 1 0 68 52 A4 4 0 1 0 60 52' },
-        { t:'Color your tree!', p:null } ] } ] },
-    { name:'Animals', lessons:[
-      { id:'cat', name:'Cat', steps:[
-        { t:'Draw a circle for the head', p:'M30 52 A20 20 0 1 0 70 52 A20 20 0 1 0 30 52' },
-        { t:'Add two pointy ears', p:'M33 40 L30 19 L45 33 M67 40 L70 19 L55 33' },
-        { t:'Eyes, nose and mouth', tip:'The mouth looks like a little “w”.', p:'M42 48 L42 50 M58 48 L58 50 M47 56 L50 59 L53 56 M50 59 Q46 64 42 62 M50 59 Q54 64 58 62' },
-        { t:'Whiskers!', p:'M38 57 L20 53 M38 60 L20 62 M62 57 L80 53 M62 60 L80 62' },
-        { t:'Color your cat!', p:null } ] },
-      { id:'fish', name:'Fish', steps:[
-        { t:'Draw the body like a lemon', p:'M18 50 Q44 24 70 50 Q44 76 18 50' },
-        { t:'Add a tail', p:'M70 50 L88 36 L88 64 Z' },
-        { t:'Eye, mouth and a fin', p:'M31 46 L31 48 M22 52 Q26 54 23 57 M44 36 Q52 29 57 41' },
-        { t:'Draw some bubbles', p:'M12 30 A3 3 0 1 0 18 30 A3 3 0 1 0 12 30 M8 20 A2 2 0 1 0 12 20 A2 2 0 1 0 8 20' },
-        { t:'Color your fish!', p:null } ] },
-      { id:'bird', name:'Little bird', steps:[
-        { t:'Draw a round body', tip:'Like an egg lying on its side.', p:'M26 56 Q28 40 50 42 Q68 44 66 60 Q62 74 44 72 Q28 70 26 56' },
-        { t:'Add a round head', p:'M56 34 A10 10 0 1 0 76 34 A10 10 0 1 0 56 34' },
-        { t:'A pointy beak and an eye', p:'M76 31 L87 35 L76 38 M68 31 L68 33' },
-        { t:'Draw a wing and a tail', p:'M38 54 Q48 46 56 56 Q46 62 38 54 M27 58 L13 50 L15 64 Z' },
-        { t:'Two skinny legs', p:'M42 72 L40 86 M52 72 L54 86' },
-        { t:'Color your bird!', p:null } ] },
-      { id:'bunny', name:'Bunny', steps:[
-        { t:'Draw a circle for the head', p:'M34 58 A16 16 0 1 0 66 58 A16 16 0 1 0 34 58' },
-        { t:'Add two long ears', tip:'Long loops that go up high.', p:'M42 45 C34 10 50 8 48 43 M58 45 C66 10 50 8 52 43' },
-        { t:'Eyes, nose and mouth', p:'M44 55 L44 57 M56 55 L56 57 M48 62 L50 64 L52 62 M50 64 L50 68' },
-        { t:'Whiskers!', p:'M40 63 L28 60 M40 66 L28 68 M60 63 L72 60 M60 66 L72 68' },
-        { t:'Color your bunny!', p:null } ] },
-      { id:'snail', name:'Snail', steps:[
-        { t:'Draw a big circle for the shell', p:'M30 60 A20 20 0 1 0 70 60 A20 20 0 1 0 30 60' },
-        { t:'Add a swirl inside', tip:'Start in the middle and go round.', p:'M50 60 A5 5 0 1 1 56 55 A11 11 0 1 1 41 52' },
-        { t:'Draw the body under the shell', p:'M14 80 L84 80 Q94 80 92 68 Q90 60 82 62' },
-        { t:'Add feelers with little eyes', p:'M86 63 L84 47 M90 64 L94 49 M81.5 44 A2.5 2.5 0 1 0 86.5 44 A2.5 2.5 0 1 0 81.5 44 M91.5 46 A2.5 2.5 0 1 0 96.5 46 A2.5 2.5 0 1 0 91.5 46' },
-        { t:'Color your snail!', p:null } ] } ] },
-    { name:'Shading', lessons:[
-      { id:'ball', name:'A shaded ball', steps:[
-        { t:'Draw a circle for the ball', tip:'Nice and round!', p:'M28 48 A22 22 0 1 0 72 48 A22 22 0 1 0 28 48' },
-        { t:'Draw its shadow on the ground', tip:'A flat oval under the ball.', p:'M30 80 A22 5 0 1 0 74 80 A22 5 0 1 0 30 80' },
-        { t:'Shade the dark side of the ball', tip:'Use the pencil. Press lightly and go back and forth.', p:'M72 48 A22 22 0 0 1 34 63 A34 34 0 0 0 72 48 Z', shade:true },
-        { t:'Shade the shadow darker', tip:'Shadows are the darkest part of a drawing.', p:'M30 80 A22 5 0 1 0 74 80 A22 5 0 1 0 30 80', shade:true } ] },
-      { id:'apple', name:'A shaded apple', steps:[
-        { t:'Draw the apple shape', tip:'Like a heart with round sides.', p:'M50 32 C32 18 14 38 20 60 C26 82 42 86 50 80 C58 86 74 82 80 60 C86 38 68 18 50 32' },
-        { t:'Add the stem and a leaf', p:'M50 32 Q51 22 55 14 M54 22 Q64 12 72 17 Q63 26 54 22' },
-        { t:'Shade the right side', tip:'The light comes from the left, so the right side is darker.', p:'M68 26 C82 36 84 58 76 72 C70 82 60 84 56 80 C68 70 72 48 68 26 Z', shade:true },
-        { t:'Color it red — leave a white shiny spot!', p:null } ] } ] },
+  // Lessons live in a 0-100 box. Each step is one SVG path; "shade" steps are areas to fill in with pencil.
+  // variants = the "make it yours" choices the kid picks before drawing.
+  const LESSONS = [
+    { id:'lines', name:'Lines and zigzags', cat:'Basics', hard:1, steps:[
+      { t:'Draw two straight lines, left to right', tip:'Go slowly — slow lines come out straighter.', p:'M15 20 L85 20 M15 34 L85 34' },
+      { t:'Now a zigzag', tip:'Make sharp points, like mountains.', p:'M15 58 L25 48 L35 58 L45 48 L55 58 L65 48 L75 58 L85 48' },
+      { t:'And a wavy line', tip:'Keep your hand loose and relaxed.', p:'M10 80 Q20 70 30 80 T50 80 T70 80 T90 80' } ] },
+    { id:'circles', name:'Circles and ovals', cat:'Basics', hard:1, steps:[
+      { t:'Draw a big circle', tip:'Try it in one smooth move.', p:'M20 38 A20 20 0 1 0 60 38 A20 20 0 1 0 20 38' },
+      { t:'Now a small circle', tip:'Small circles are easier if you go slowly.', p:'M68 30 A10 10 0 1 0 88 30 A10 10 0 1 0 68 30' },
+      { t:'Draw a long oval', tip:'An oval is a stretched-out circle.', p:'M18 78 A30 12 0 1 0 78 78 A30 12 0 1 0 18 78' } ] },
+    { id:'shapes', name:'Square, triangle, star', cat:'Basics', hard:1, steps:[
+      { t:'Draw a square', tip:'All four sides are the same length.', p:'M12 12 L42 12 L42 42 L12 42 Z' },
+      { t:'Draw a triangle', tip:'Three sides and three corners.', p:'M74 10 L92 42 L56 42 Z' },
+      { t:'Draw a star', tip:'Go point to point without lifting your pencil.', p:'M50 50 L57 65 L74 66 L61 77 L66 94 L50 84 L34 94 L39 77 L26 66 L43 65 Z' } ] },
+
+    { id:'heart', name:'A heart for Mom', cat:'Faces', hard:1, steps:[
+      { t:'Draw the left side of the heart', tip:'Start at the top dip and curve down to the point.', p:'M50 32 C38 12 8 20 12 45 C16 64 40 76 50 90' },
+      { t:'Now the right side', tip:'Make it match the left side, like a mirror.', p:'M50 32 C62 12 92 20 88 45 C84 64 60 76 50 90' },
+      { t:'Color it in — red or pink!', p:null } ],
+      variants:[ { q:'Add something?', choices:[
+        { label:'A little arrow', t:'Draw an arrow through the heart', p:'M6 66 L94 30 M6 66 L18 62 M6 66 L12 76 M94 30 L82 28 M94 30 L86 40' },
+        { label:'Sparkles', t:'Add sparkles around the heart', p:'M8 22 L8 34 M2 28 L14 28 M92 62 L92 74 M86 68 L98 68 M20 90 L20 98 M16 94 L24 94' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'face', name:'A funny face', cat:'Faces', hard:2, steps:[
+      { t:'Draw a big oval for the head', p:'M26 52 A24 26 0 1 0 74 52 A24 26 0 1 0 26 52' },
+      { t:'Add two eyes', tip:'Put them halfway down the face.', p:'M38 46 A4 4 0 1 0 46 46 A4 4 0 1 0 38 46 M54 46 A4 4 0 1 0 62 46 A4 4 0 1 0 54 46' },
+      { t:'Draw a nose', p:'M50 50 L50 60 Q54 62 50 63' },
+      { t:'Add a big smile', p:'M38 68 Q50 79 62 68' },
+      { t:'Color your face!', p:null } ],
+      variants:[
+        { q:'What hair?', choices:[
+          { label:'Spiky', t:'Draw spiky hair', p:'M27 44 L32 24 L38 38 L44 20 L50 36 L56 20 L62 38 L68 24 L73 44' },
+          { label:'Long', t:'Draw long hair', p:'M27 46 Q24 20 50 22 Q76 24 73 46 Q70 30 56 30 Q40 28 34 40 M27 46 Q22 74 30 88 M73 46 Q78 74 70 88' },
+          { label:'Curly', t:'Draw curly hair', p:'M28 44 Q22 32 32 30 Q34 18 46 24 Q52 16 60 24 Q72 20 72 32 Q80 36 72 44' },
+          { label:'Bald', p:null } ] },
+        { q:'Glasses?', choices:[
+          { label:'Yes!', t:'Draw glasses', p:'M32 46 A9 7 0 1 0 50 46 A9 7 0 1 0 32 46 M50 46 A9 7 0 1 0 68 46 A9 7 0 1 0 50 46 M23 43 L32 45 M77 43 L68 45' },
+          { label:'No', p:null } ] } ] },
+
+    { id:'sun', name:'Happy sun', cat:'Nature', hard:1, steps:[
+      { t:'Draw a big circle', p:'M32 50 A18 18 0 1 0 68 50 A18 18 0 1 0 32 50' },
+      { t:'Add sunbeams all around', tip:'Short straight lines, pointing away from the circle.', p:'M50 8 L50 24 M50 76 L50 92 M8 50 L24 50 M76 50 L92 50 M20 20 L31 31 M80 20 L69 31 M20 80 L31 69 M80 80 L69 69' },
+      { t:'Give it a happy face', p:'M43 45 L43 47 M57 45 L57 47 M42 55 Q50 63 58 55' },
+      { t:'Color it yellow!', p:null } ] },
+    { id:'flower', name:'Flower', cat:'Nature', hard:1, steps:[
+      { t:'Draw a small circle in the middle', p:'M42 34 A8 8 0 1 0 58 34 A8 8 0 1 0 42 34' },
+      { t:'Add four petals', tip:'Each petal is like a loop.', p:'M50 26 C38 6 62 6 50 26 M50 42 C38 62 62 62 50 42 M42 34 C22 22 22 46 42 34 M58 34 C78 22 78 46 58 34' },
+      { t:'Draw the stem', p:'M50 58 Q47 75 50 92' },
+      { t:'Add two leaves', p:'M49 76 Q61 64 69 70 Q61 80 49 76 M50 84 Q38 72 31 78 Q39 88 50 84' },
+      { t:'Color your flower!', p:null } ],
+      variants:[ { q:'How many petals?', choices:[
+        { label:'Four', p:null },
+        { label:'Eight!', t:'Add four more petals in between', p:'M44 28 C28 14 30 34 43 33 M56 28 C72 14 70 34 57 33 M44 40 C28 54 30 34 43 35 M56 40 C72 54 70 34 57 35' } ] } ] },
+    { id:'rainbow', name:'Rainbow', cat:'Nature', hard:1, steps:[
+      { t:'Draw a big arch', tip:'Like half a circle.', p:'M12 80 A38 38 0 0 1 88 80' },
+      { t:'Draw another arch inside it', p:'M20 80 A30 30 0 0 1 80 80' },
+      { t:'And two more, smaller', p:'M28 80 A22 22 0 0 1 72 80 M36 80 A14 14 0 0 1 64 80' },
+      { t:'Add a cloud at each end', p:'M4 80 Q0 70 10 70 Q14 62 24 68 Q32 70 28 80 Z M72 80 Q68 70 78 70 Q82 62 92 68 Q100 70 96 80 Z' },
+      { t:'Color every stripe a different color!', p:null } ] },
+    { id:'tree', name:'Apple tree', cat:'Nature', hard:2, steps:[
+      { t:'Draw the trunk', tip:'Make it a bit wider at the bottom.', p:'M43 92 L46 62 L54 62 L57 92' },
+      { t:'Draw a fluffy cloud of leaves on top', tip:'Lots of round bumps.', p:'M46 62 Q30 66 26 56 Q14 50 22 40 Q20 26 34 26 Q40 12 54 16 Q68 12 72 26 Q86 28 82 42 Q90 54 76 58 Q70 66 54 62' },
+      { t:'Add some apples', p:'M36 44 A4 4 0 1 0 44 44 A4 4 0 1 0 36 44 M58 36 A4 4 0 1 0 66 36 A4 4 0 1 0 58 36 M60 52 A4 4 0 1 0 68 52 A4 4 0 1 0 60 52' },
+      { t:'Color your tree!', p:null } ],
+      variants:[ { q:'What else is in your tree?', choices:[
+        { label:'A swing', t:'Hang a swing from a branch', p:'M40 58 L36 82 M56 58 L60 82 M34 82 L62 82' },
+        { label:'A bird house', t:'Add a bird house', p:'M62 44 L62 58 L76 58 L76 44 Z M60 44 L69 36 L78 44 M67 50 A3 3 0 1 0 73 50 A3 3 0 1 0 67 50' },
+        { label:'Just apples', p:null } ] } ] },
+    { id:'mountain', name:'Mountains', cat:'Nature', hard:2, steps:[
+      { t:'Draw two pointy mountains', p:'M8 80 L34 32 L52 60 L66 40 L92 80 Z' },
+      { t:'Add snow on the tops', tip:'Wiggly lines under each peak.', p:'M34 32 L26 45 Q31 41 35 45 Q40 41 44 46 L34 32 M66 40 L60 50 Q64 47 67 50 Q70 47 73 51 L66 40' },
+      { t:'Put the sun in the sky', p:'M64 22 A9 9 0 1 0 82 22 A9 9 0 1 0 64 22' },
+      { t:'Draw the ground line', p:'M4 80 L96 80' },
+      { t:'Color your mountains!', p:null } ] },
+
+    { id:'fish', name:'Fish', cat:'Animals', hard:1, steps:[
+      { t:'Draw the body like a lemon', p:'M18 50 Q44 24 70 50 Q44 76 18 50' },
+      { t:'Add a tail', p:'M70 50 L88 36 L88 64 Z' },
+      { t:'Eye, mouth and a fin', p:'M31 46 L31 48 M22 52 Q26 54 23 57 M44 36 Q52 29 57 41' },
+      { t:'Draw some bubbles', p:'M12 30 A3 3 0 1 0 18 30 A3 3 0 1 0 12 30 M8 20 A2 2 0 1 0 12 20 A2 2 0 1 0 8 20' },
+      { t:'Color your fish!', p:null } ],
+      variants:[
+        { q:'What pattern?', choices:[
+          { label:'Stripes', t:'Add stripes on the body', p:'M34 33 Q38 50 34 67 M44 29 Q49 50 44 71 M54 31 Q59 50 54 69' },
+          { label:'Spots', t:'Add spots on the body', p:'M33 46 A3.5 3.5 0 1 0 40 46 A3.5 3.5 0 1 0 33 46 M44 56 A3.5 3.5 0 1 0 51 56 A3.5 3.5 0 1 0 44 56 M52 42 A3.5 3.5 0 1 0 59 42 A3.5 3.5 0 1 0 52 42 M40 62 A3 3 0 1 0 46 62 A3 3 0 1 0 40 62' },
+          { label:'Plain', p:null } ] },
+        { q:'What fins?', choices:[
+          { label:'Big and fancy', t:'Add a big top fin and a bottom fin', p:'M38 32 Q46 18 58 30 Q50 27 44 31 M40 68 Q48 82 58 70 Q50 72 45 69' },
+          { label:'Small', t:'Add a small bottom fin', p:'M44 68 Q50 76 56 69' },
+          { label:'None', p:null } ] } ] },
+    { id:'cat', name:'Cat', cat:'Animals', hard:2, steps:[
+      { t:'Draw a circle for the head', p:'M30 52 A20 20 0 1 0 70 52 A20 20 0 1 0 30 52' },
+      { t:'Add two pointy ears', p:'M33 40 L30 19 L45 33 M67 40 L70 19 L55 33' },
+      { t:'Eyes, nose and mouth', tip:'The mouth looks like a little “w”.', p:'M42 48 L42 50 M58 48 L58 50 M47 56 L50 59 L53 56 M50 59 Q46 64 42 62 M50 59 Q54 64 58 62' },
+      { t:'Whiskers!', p:'M38 57 L20 53 M38 60 L20 62 M62 57 L80 53 M62 60 L80 62' },
+      { t:'Color your cat!', p:null } ],
+      variants:[
+        { q:'What fur?', choices:[
+          { label:'Stripes', t:'Add stripes on the head', p:'M44 32 L45 39 M50 30 L50 38 M56 32 L55 39 M32 52 L26 50 M68 52 L74 50' },
+          { label:'A spot', t:'Add a big spot over one eye', p:'M36 44 Q44 40 48 48 Q42 54 35 52 Q32 48 36 44' },
+          { label:'Plain', p:null } ] },
+        { q:'A collar?', choices:[
+          { label:'Yes, with a bell', t:'Draw a collar with a bell', p:'M34 66 Q50 76 66 66 M46 74 A5 5 0 1 0 56 74 A5 5 0 1 0 46 74 M51 74 L51 78' },
+          { label:'No', p:null } ] } ] },
+    { id:'bird', name:'Little bird', cat:'Animals', hard:2, steps:[
+      { t:'Draw a round body', tip:'Like an egg lying on its side.', p:'M26 56 Q28 40 50 42 Q68 44 66 60 Q62 74 44 72 Q28 70 26 56' },
+      { t:'Add a round head', p:'M56 34 A10 10 0 1 0 76 34 A10 10 0 1 0 56 34' },
+      { t:'A pointy beak and an eye', p:'M76 31 L87 35 L76 38 M68 31 L68 33' },
+      { t:'Draw a wing and a tail', p:'M38 54 Q48 46 56 56 Q46 62 38 54 M27 58 L13 50 L15 64 Z' },
+      { t:'Two skinny legs', p:'M42 72 L40 86 M52 72 L54 86' },
+      { t:'Color your bird!', p:null } ],
+      variants:[ { q:'Anything on its head?', choices:[
+        { label:'A fancy crest', t:'Add feathers on top of the head', p:'M64 25 L60 10 L68 20 L70 6 L74 20 L80 12 L76 26' },
+        { label:'A tiny hat', t:'Draw a tiny hat', p:'M60 24 L80 24 M64 24 L66 14 L76 14 L78 24' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'bunny', name:'Bunny', cat:'Animals', hard:2, steps:[
+      { t:'Draw a circle for the head', p:'M34 58 A16 16 0 1 0 66 58 A16 16 0 1 0 34 58' },
+      { t:'Add two long ears', tip:'Long loops that go up high.', p:'M42 45 C34 10 50 8 48 43 M58 45 C66 10 50 8 52 43' },
+      { t:'Eyes, nose and mouth', p:'M44 55 L44 57 M56 55 L56 57 M48 62 L50 64 L52 62 M50 64 L50 68' },
+      { t:'Whiskers!', p:'M40 63 L28 60 M40 66 L28 68 M60 63 L72 60 M60 66 L72 68' },
+      { t:'Color your bunny!', p:null } ],
+      variants:[ { q:'Is it holding something?', choices:[
+        { label:'A carrot', t:'Draw a carrot', p:'M70 74 L86 90 L88 84 L76 72 Z M70 74 L64 70 M70 74 L66 80' },
+        { label:'A flower', t:'Draw a flower', p:'M74 88 L74 74 M70 70 A4 4 0 1 0 78 70 A4 4 0 1 0 70 70 M66 74 Q70 68 74 74 M74 74 Q78 68 82 74' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'dog', name:'Dog', cat:'Animals', hard:2, steps:[
+      { t:'Draw an oval for the head', p:'M30 56 A20 18 0 1 0 70 56 A20 18 0 1 0 30 56' },
+      { t:'Add two floppy ears', tip:'Long ears hanging down the sides.', p:'M33 44 Q19 30 23 58 Q27 68 35 62 M67 44 Q81 30 77 58 Q73 68 65 62' },
+      { t:'Eyes and a big nose', p:'M42 52 L42 54 M58 52 L58 54 M45 62 Q50 66 55 62 Q50 68 45 62' },
+      { t:'Draw the mouth and tongue', p:'M50 66 L50 70 M42 70 Q50 78 58 70 M48 74 Q50 80 52 74' },
+      { t:'Color your dog!', p:null } ],
+      variants:[ { q:'What pattern?', choices:[
+        { label:'A patch on one eye', t:'Draw a patch around one eye', p:'M34 46 Q46 42 49 54 Q40 60 32 56 Q30 50 34 46' },
+        { label:'Spots', t:'Add some spots', p:'M36 44 A4 4 0 1 0 44 44 A4 4 0 1 0 36 44 M58 42 A3.5 3.5 0 1 0 65 42 A3.5 3.5 0 1 0 58 42' },
+        { label:'Plain', p:null } ] } ] },
+    { id:'butterfly', name:'Butterfly', cat:'Animals', hard:2, steps:[
+      { t:'Draw the body', tip:'A long thin oval down the middle.', p:'M50 30 L50 76' },
+      { t:'Draw the two top wings', p:'M50 36 C30 18 12 30 20 46 C26 58 42 52 50 44 M50 36 C70 18 88 30 80 46 C74 58 58 52 50 44' },
+      { t:'Now the two bottom wings', p:'M50 50 C36 54 24 62 32 74 C40 84 48 68 50 58 M50 50 C64 54 76 62 68 74 C60 84 52 68 50 58' },
+      { t:'Add two antennae', p:'M50 32 Q44 20 38 16 M50 32 Q56 20 62 16' },
+      { t:'Color your butterfly!', p:null } ],
+      variants:[ { q:'What pattern on the wings?', choices:[
+        { label:'Big spots', t:'Add big spots on the wings', p:'M30 36 A5 5 0 1 0 40 36 A5 5 0 1 0 30 36 M60 36 A5 5 0 1 0 70 36 A5 5 0 1 0 60 36 M36 66 A3.5 3.5 0 1 0 43 66 A3.5 3.5 0 1 0 36 66 M57 66 A3.5 3.5 0 1 0 64 66 A3.5 3.5 0 1 0 57 66' },
+        { label:'Stripes', t:'Add stripes on the wings', p:'M26 32 L30 44 M34 26 L38 42 M74 32 L70 44 M66 26 L62 42 M34 62 L38 72 M66 62 L62 72' },
+        { label:'Plain', p:null } ] } ] },
+    { id:'ladybug', name:'Ladybug', cat:'Animals', hard:1, steps:[
+      { t:'Draw a big circle for the body', p:'M24 56 A26 26 0 1 0 76 56 A26 26 0 1 0 24 56' },
+      { t:'Add the head on top', p:'M36 38 A16 12 0 0 1 64 38' },
+      { t:'Draw a line down the middle', p:'M50 34 L50 82' },
+      { t:'Add the spots', p:'M36 52 A5 5 0 1 0 46 52 A5 5 0 1 0 36 52 M56 50 A5 5 0 1 0 66 50 A5 5 0 1 0 56 50 M44 70 A5 5 0 1 0 54 70 A5 5 0 1 0 44 70' },
+      { t:'Six little legs', p:'M28 44 L16 38 M26 58 L12 58 M30 72 L18 80 M72 44 L84 38 M74 58 L88 58 M70 72 L82 80' },
+      { t:'Color it red with black spots!', p:null } ] },
+    { id:'turtle', name:'Turtle', cat:'Animals', hard:2, steps:[
+      { t:'Draw a dome for the shell', p:'M22 58 A28 22 0 0 1 78 58' },
+      { t:'Close the bottom of the shell', p:'M22 58 L78 58' },
+      { t:'Add the head and tail', p:'M78 52 A7 7 0 1 0 92 52 A7 7 0 1 0 78 52 M22 56 L12 60 L22 62 M86 50 L86 52' },
+      { t:'Draw two legs', p:'M32 58 L28 70 L38 70 Z M60 58 L56 70 L66 70 Z' },
+      { t:'Draw the shell pattern', p:'M40 46 L48 42 L56 46 L56 54 L48 58 L40 54 Z M30 52 L36 49 L40 54 L36 58 L30 56 Z M60 50 L66 48 L70 53 L66 57 L60 55 Z' },
+      { t:'Color your turtle!', p:null } ] },
+    { id:'owl', name:'Owl', cat:'Animals', hard:3, steps:[
+      { t:'Draw the body', tip:'Like a big egg standing up.', p:'M28 46 Q28 22 50 22 Q72 22 72 46 Q72 80 50 80 Q28 80 28 46' },
+      { t:'Add two big eyes', p:'M32 42 A10 10 0 1 0 52 42 A10 10 0 1 0 32 42 M48 42 A10 10 0 1 0 68 42 A10 10 0 1 0 48 42' },
+      { t:'Add the pupils and a beak', p:'M42 41 L42 44 M58 41 L58 44 M50 48 L45 56 L55 56 Z' },
+      { t:'Draw the wings', p:'M30 50 Q24 66 32 74 M70 50 Q76 66 68 74' },
+      { t:'Little feet on a branch', p:'M42 80 L40 87 M47 80 L47 87 M53 80 L53 87 M58 80 L60 87 M16 88 L84 88' },
+      { t:'Color your owl!', p:null } ] },
+    { id:'penguin', name:'Penguin', cat:'Animals', hard:2, steps:[
+      { t:'Draw the body', p:'M30 44 Q30 18 50 18 Q70 18 70 44 Q70 86 50 86 Q30 86 30 44' },
+      { t:'Draw the white tummy', p:'M40 44 Q40 30 50 30 Q60 30 60 44 Q60 78 50 78 Q40 78 40 44' },
+      { t:'Eyes and a beak', p:'M44 32 L44 34 M56 32 L56 34 M46 40 L54 40 L50 46 Z' },
+      { t:'Two wings', p:'M30 46 Q20 60 28 72 M70 46 Q80 60 72 72' },
+      { t:'Two flappy feet', p:'M38 86 L30 92 L44 92 Z M62 86 L56 92 L70 92 Z' },
+      { t:'Color your penguin!', p:null } ],
+      variants:[ { q:'Winter clothes?', choices:[
+        { label:'A scarf', t:'Draw a scarf', p:'M34 50 Q50 58 66 50 M64 50 L70 68 L62 66 L64 50' },
+        { label:'A hat', t:'Draw a woolly hat', p:'M32 24 Q50 10 68 24 M36 18 L36 12 M40 15 L40 9' },
+        { label:'Nothing', p:null } ] } ] },
+
+    { id:'icecream', name:'Ice cream', cat:'Food', hard:1, steps:[
+      { t:'Draw the cone', tip:'A triangle pointing down.', p:'M34 48 L50 92 L66 48 Z' },
+      { t:'Add a big scoop on top', p:'M34 48 A16 16 0 0 1 66 48' },
+      { t:'Add a second scoop', p:'M38 34 A13 13 0 0 1 62 34' },
+      { t:'Draw the waffle lines on the cone', p:'M40 62 L58 62 M44 74 L56 74 M42 56 L46 68 M54 56 L50 68' },
+      { t:'Color your ice cream!', p:null } ],
+      variants:[ { q:'What on top?', choices:[
+        { label:'A cherry', t:'Put a cherry on top', p:'M45 24 A5 5 0 1 0 55 24 A5 5 0 1 0 45 24 M50 19 Q52 12 58 10' },
+        { label:'Sprinkles', t:'Add sprinkles', p:'M40 40 L43 36 M48 38 L51 34 M56 40 L59 36 M44 30 L47 27 M53 30 L56 27' },
+        { label:'Chocolate drips', t:'Add chocolate dripping down', p:'M36 44 Q40 54 44 44 Q48 56 52 44 Q56 54 60 44 Q63 50 65 45' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'cupcake', name:'Cupcake', cat:'Food', hard:2, steps:[
+      { t:'Draw the cup', p:'M30 52 L38 88 L62 88 L70 52 Z' },
+      { t:'Add lines on the cup', p:'M40 52 L44 88 M50 52 L50 88 M60 52 L56 88' },
+      { t:'Draw the frosting on top', tip:'Big fluffy bumps.', p:'M28 52 Q26 34 40 38 Q44 24 56 32 Q72 30 70 52 Z' },
+      { t:'Color your cupcake!', p:null } ],
+      variants:[ { q:'Decorate it!', choices:[
+        { label:'A candle', t:'Put a candle on top', p:'M50 30 L50 16 M47 14 Q50 6 53 14' },
+        { label:'A cherry', t:'Put a cherry on top', p:'M45 26 A5 5 0 1 0 55 26 A5 5 0 1 0 45 26 M50 21 Q52 14 58 12' },
+        { label:'Sprinkles', t:'Add sprinkles', p:'M36 46 L39 42 M46 44 L49 40 M56 46 L59 42 M42 38 L45 34 M53 37 L56 33' } ] } ] },
+    { id:'donut', name:'Donut', cat:'Food', hard:1, steps:[
+      { t:'Draw a big circle', p:'M20 52 A30 30 0 1 0 80 52 A30 30 0 1 0 20 52' },
+      { t:'Draw a small circle in the middle', p:'M40 52 A10 10 0 1 0 60 52 A10 10 0 1 0 40 52' },
+      { t:'Add wavy icing', tip:'Wiggle your pencil around.', p:'M21 46 Q28 60 36 48 Q44 62 52 48 Q60 62 68 48 Q75 56 79 48' },
+      { t:'Add sprinkles', p:'M32 40 L35 36 M44 38 L47 34 M58 40 L61 36 M66 48 L70 45 M30 58 L34 56 M50 66 L53 63' },
+      { t:'Color your donut!', p:null } ] },
+    { id:'pizza', name:'Pizza slice', cat:'Food', hard:1, steps:[
+      { t:'Draw a big triangle', p:'M20 84 L50 16 L80 84 Z' },
+      { t:'Curve the crust at the bottom', p:'M20 84 Q50 96 80 84' },
+      { t:'Add round pepperoni', p:'M50 36 A5 5 0 1 0 60 36 A5 5 0 1 0 50 36 M36 58 A5 5 0 1 0 46 58 A5 5 0 1 0 36 58 M56 62 A5 5 0 1 0 66 62 A5 5 0 1 0 56 62 M44 76 A5 5 0 1 0 54 76 A5 5 0 1 0 44 76' },
+      { t:'Color your pizza!', p:null } ] },
+
+    { id:'car', name:'Car', cat:'Vehicles', hard:1, steps:[
+      { t:'Draw the car body', tip:'Low in the front and back, taller in the middle.', p:'M10 64 L10 49 L28 49 L37 34 L66 34 L76 49 L90 49 L90 64 Z' },
+      { t:'Add two wheels', p:'M20 66 A9 9 0 1 0 38 66 A9 9 0 1 0 20 66 M62 66 A9 9 0 1 0 80 66 A9 9 0 1 0 62 66' },
+      { t:'Draw the windows', p:'M33 48 L40 38 L49 38 L49 48 Z M54 48 L54 38 L64 38 L71 48 Z' },
+      { t:'Color your car!', p:null } ],
+      variants:[ { q:'What kind of car?', choices:[
+        { label:'A race car', t:'Add a racing stripe and a spoiler', p:'M14 56 L86 56 M88 44 L96 44 L96 50 L88 50' },
+        { label:'Roof rack', t:'Add a roof rack with a bag', p:'M40 34 L40 28 L62 28 L62 34 M42 28 L60 28 L58 22 L44 22 Z' },
+        { label:'Plain', p:null } ] } ] },
+    { id:'rocket', name:'Rocket', cat:'Vehicles', hard:2, steps:[
+      { t:'Draw the rocket body', tip:'Pointy at the top.', p:'M50 12 C62 28 64 52 62 70 L38 70 C36 52 38 28 50 12' },
+      { t:'Add a round window', p:'M42 38 A8 8 0 1 0 58 38 A8 8 0 1 0 42 38' },
+      { t:'Draw two fins', p:'M38 52 L24 74 L38 70 M62 52 L76 74 L62 70' },
+      { t:'Add fire coming out!', p:'M42 70 Q46 88 50 74 Q54 88 58 70' },
+      { t:'Color your rocket!', p:null } ],
+      variants:[ { q:'What is in the sky?', choices:[
+        { label:'Stars', t:'Add stars around the rocket', p:'M14 20 L14 30 M9 25 L19 25 M84 34 L84 44 M79 39 L89 39 M20 60 L20 68 M16 64 L24 64' },
+        { label:'A planet', t:'Draw a planet with a ring', p:'M76 20 A12 12 0 1 0 100 20 A12 12 0 1 0 76 20 M70 24 Q88 34 106 16' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'boat', name:'Sailboat', cat:'Vehicles', hard:2, steps:[
+      { t:'Draw the boat', tip:'Like a wide smile.', p:'M16 62 L84 62 L72 84 L28 84 Z' },
+      { t:'Put up the mast', p:'M50 62 L50 16' },
+      { t:'Add the big sail', p:'M52 20 L80 58 L52 58 Z' },
+      { t:'Add the little sail', p:'M48 24 L26 58 L48 58 Z' },
+      { t:'Draw waves under the boat', p:'M8 88 Q18 82 28 88 T48 88 T68 88 T88 88' },
+      { t:'Color your boat!', p:null } ] },
+    { id:'train', name:'Train engine', cat:'Vehicles', hard:3, steps:[
+      { t:'Draw the big box', p:'M18 48 L62 48 L62 76 L18 76 Z' },
+      { t:'Add the driver’s cabin', p:'M62 34 L84 34 L84 76 L62 76' },
+      { t:'Draw a window and three wheels', p:'M66 40 L80 40 L80 52 L66 52 Z M26 78 A7 7 0 1 0 40 78 A7 7 0 1 0 26 78 M46 78 A7 7 0 1 0 60 78 A7 7 0 1 0 46 78 M66 78 A7 7 0 1 0 80 78 A7 7 0 1 0 66 78' },
+      { t:'Add the chimney', p:'M26 48 L26 32 L38 32 L38 48' },
+      { t:'Puff out some smoke!', p:'M32 28 Q24 22 32 16 Q40 10 34 4' },
+      { t:'Color your train!', p:null } ] },
+
+    { id:'robot', name:'Robot', cat:'Fantasy', hard:2, steps:[
+      { t:'Draw a square head', p:'M32 26 L68 26 L68 56 L32 56 Z' },
+      { t:'Add an antenna', p:'M50 26 L50 14 M46 12 A4 4 0 1 0 54 12 A4 4 0 1 0 46 12' },
+      { t:'Draw the face', p:'M40 36 A4 4 0 1 0 48 36 A4 4 0 1 0 40 36 M54 36 A4 4 0 1 0 62 36 A4 4 0 1 0 54 36 M40 48 L60 48' },
+      { t:'Draw a body', p:'M36 56 L64 56 L64 84 L36 84 Z' },
+      { t:'Add arms and legs', p:'M36 62 L22 62 L22 76 M64 62 L78 62 L78 76 M44 84 L44 94 M56 84 L56 94' },
+      { t:'Color your robot!', p:null } ],
+      variants:[ { q:'What is on its tummy?', choices:[
+        { label:'Buttons', t:'Add buttons', p:'M44 66 A3 3 0 1 0 50 66 A3 3 0 1 0 44 66 M54 66 A3 3 0 1 0 60 66 A3 3 0 1 0 54 66 M44 74 L60 74' },
+        { label:'A screen', t:'Draw a screen with a heart', p:'M42 62 L62 62 L62 78 L42 78 Z M52 68 Q49 64 46 68 Q46 72 52 75 Q58 72 58 68 Q55 64 52 68' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'ghost', name:'Ghost', cat:'Fantasy', hard:1, steps:[
+      { t:'Draw a round top', p:'M26 60 L26 44 Q26 20 50 20 Q74 20 74 44 L74 60' },
+      { t:'Add a wobbly bottom', tip:'Bumps like waves.', p:'M26 60 L26 84 Q32 92 38 84 Q44 76 50 84 Q56 92 62 84 Q68 76 74 84 L74 60' },
+      { t:'Add two big eyes', p:'M40 44 A5 6 0 1 0 50 44 A5 6 0 1 0 40 44 M54 44 A5 6 0 1 0 64 44 A5 6 0 1 0 54 44' },
+      { t:'Draw a spooky mouth', p:'M44 60 Q50 70 56 60 Q50 65 44 60' },
+      { t:'Color your ghost!', p:null } ] },
+    { id:'unicorn', name:'Unicorn', cat:'Fantasy', hard:3, steps:[
+      { t:'Draw the head', p:'M40 40 Q46 24 62 26 Q74 28 72 44 Q70 58 58 62 L46 62 Q38 56 40 40' },
+      { t:'Add the magic horn', tip:'A pointy triangle with lines on it.', p:'M56 24 L60 6 L66 24 M57 18 L64 18 M58 13 L63 13' },
+      { t:'Add an ear', p:'M68 30 L79 23 L73 37' },
+      { t:'Draw the eye and nose', p:'M52 42 L52 45 M64 54 L67 54 M58 62 Q62 66 66 61' },
+      { t:'Draw a big wavy mane', p:'M42 34 Q26 30 30 44 Q18 44 26 56 Q16 60 28 70' },
+      { t:'Color your unicorn!', p:null } ],
+      variants:[ { q:'Add magic?', choices:[
+        { label:'Stars', t:'Add magic stars', p:'M14 18 L14 28 M9 23 L19 23 M84 60 L84 70 M79 65 L89 65 M20 82 L20 90 M16 86 L24 86' },
+        { label:'A rainbow tail', t:'Draw a rainbow tail', p:'M42 58 Q22 62 16 84 M46 60 Q28 66 22 86 M50 62 Q34 70 28 88' },
+        { label:'Nothing', p:null } ] } ] },
+
+    { id:'ball', name:'A shaded ball', cat:'Shading', hard:2, steps:[
+      { t:'Draw a circle for the ball', tip:'Nice and round!', p:'M28 48 A22 22 0 1 0 72 48 A22 22 0 1 0 28 48' },
+      { t:'Draw its shadow on the ground', tip:'A flat oval under the ball.', p:'M30 80 A22 5 0 1 0 74 80 A22 5 0 1 0 30 80' },
+      { t:'Shade the dark side of the ball', tip:'Use the pencil. Press lightly and go back and forth.', p:'M72 48 A22 22 0 0 1 34 63 A34 34 0 0 0 72 48 Z', shade:true },
+      { t:'Shade the shadow darker', tip:'Shadows are the darkest part of a drawing.', p:'M30 80 A22 5 0 1 0 74 80 A22 5 0 1 0 30 80', shade:true } ] },
+    { id:'apple', name:'A shaded apple', cat:'Shading', hard:2, steps:[
+      { t:'Draw the apple shape', tip:'Like a heart with round sides.', p:'M50 32 C32 18 14 38 20 60 C26 82 42 86 50 80 C58 86 74 82 80 60 C86 38 68 18 50 32' },
+      { t:'Add the stem and a leaf', p:'M50 32 Q51 22 55 14 M54 22 Q64 12 72 17 Q63 26 54 22' },
+      { t:'Shade the right side', tip:'The light comes from the left, so the right side is darker.', p:'M68 26 C82 36 84 58 76 72 C70 82 60 84 56 80 C68 70 72 48 68 26 Z', shade:true },
+      { t:'Color it red — leave a white shiny spot!', p:null } ] },
+    { id:'cube', name:'A shaded box', cat:'Shading', hard:3, steps:[
+      { t:'Draw a square for the front', p:'M28 44 L64 44 L64 80 L28 80 Z' },
+      { t:'Add the top of the box', tip:'Two lines going up and back.', p:'M28 44 L44 28 L80 28 L64 44' },
+      { t:'Add the side of the box', p:'M64 44 L80 28 L80 64 L64 80' },
+      { t:'Shade the side dark', tip:'The side away from the light is darkest.', p:'M64 44 L80 28 L80 64 L64 80 Z', shade:true },
+      { t:'Shade the top a little bit', tip:'Press very lightly this time.', p:'M28 44 L44 28 L80 28 L64 44 Z', shade:true } ] },
   ];
-  const LESSONS = DLEVELS.flatMap(l => l.lessons);
+  const CATS = ['Basics','Animals','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
+  const CATICON = { Basics:'✏️', Animals:'🐟', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
+
   const lessonD = L => L.steps.filter(s => s.p).map(s => s.p).join(' ');
   const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const mk = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
+  const STICKERS = ['⭐','❤️','🌈','😀','🐟','🦄','🔥','🍦'];
 
   // My drawings (saved in this browser)
   const J = {
     list(){ return store.get('journal', []); },
-    add(entry){
-      const l = this.list();
-      l.unshift({ id:Date.now().toString(36), date:new Date().toLocaleDateString(), ...entry });
-      while(l.length > 40) l.pop();
+    save(l){
       while(l.length){
         try{ localStorage.setItem('ultimateLearn.journal', JSON.stringify(l)); return true; }
         catch(e){ if(l.length === 1) return false; l.pop(); }
       }
       return false;
     },
-    remove(id){ store.set('journal', this.list().filter(e => e.id !== id)); }
+    add(entry){
+      const l = this.list();
+      l.unshift({ id:Date.now().toString(36), date:new Date().toLocaleDateString(), stickers:[], note:'', ...entry });
+      while(l.length > 40) l.pop();
+      return this.save(l);
+    },
+    update(id, patch){ const l = this.list(), e = l.find(x => x.id === id); if(e){ Object.assign(e, patch); this.save(l); } },
+    remove(id){ this.save(this.list().filter(e => e.id !== id)); }
   };
+
+  // ---- what do you like to draw? (personalises the path, like Simply Draw) ----
+  const likes = () => store.get('likes', null);
+  function askLikes(){
+    const card = $('likesCard'), chosen = new Set(likes() || CATS);
+    card.innerHTML = `<h2>What do you like to draw?</h2><p class="asksub">Pick as many as you want. Your path starts with these.</p><div class="chips-pick" id="tasteRow"></div>`;
+    const row = $('tasteRow');
+    CATS.forEach(c => {
+      const b = mk('button','taste', `${CATICON[c]} ${c}`);
+      b.setAttribute('aria-pressed', chosen.has(c));
+      b.onclick = () => { chosen.has(c) ? chosen.delete(c) : chosen.add(c); b.setAttribute('aria-pressed', chosen.has(c)); };
+      row.appendChild(b);
+    });
+    const go = mk('button','choice go-choice','<b>That’s me! ▶</b>');
+    go.onclick = () => { store.set('likes', chosen.size ? [...chosen] : CATS); $('likesAsk').hidden = true; drawMenu(); };
+    card.appendChild(go);
+    $('likesAsk').hidden = false;
+  }
+  $('likesBtn').onclick = askLikes;
 
   function drawMenu(){
     const el = $('drawList'), stars = store.get('stars',{}); el.innerHTML = '';
     const next = LESSONS.find(L => !stars['draw.'+L.id]);
+    const card = (parent, title, meta, fn, cls) => { const b = mk('button','songcard' + (cls ? ' ' + cls : ''), `<span class="sn">${title}</span><span class="sm">${meta}</span><span class="ss">▶</span>`); b.onclick = fn; parent.appendChild(b); return b; };
     const g1 = mk('div','songgrid'); el.appendChild(g1);
     const n = J.list().length;
-    const top = [['Playground','A blank page — draw anything', () => go('draw', null)],
-                 ['My drawings', n ? `${n} saved` : 'Finished drawings show up here', () => go('journal')]];
-    top.forEach(([t,m,fn]) => { const b = mk('button','songcard',`<span class="sn">${t}</span><span class="sm">${m}</span><span class="ss">▶</span>`); b.onclick = fn; g1.appendChild(b); });
-    DLEVELS.forEach((lv,li) => {
-      el.appendChild(mk('h2', null, `Level ${li+1} · ${lv.name}`));
+    card(g1, 'Playground', 'A blank page — draw anything', () => go('draw', null));
+    card(g1, 'My drawings', n ? `${n} saved` : 'Finished drawings show up here', () => go('journal'));
+
+    const lessonCard = (parent, L) => {
+      const st = stars['draw.'+L.id] || 0;
+      const bits = [L === next ? '<em class="nextup">Next up!</em>' : '', `${L.steps.length} steps`, L.variants ? '<em class="yours">make it yours</em>' : ''].filter(Boolean);
+      const b = mk('button','songcard',
+        `<span class="sn">${L.name}</span><span class="sm">${bits.join(' · ')} · <span class="stars2">${'★'.repeat(st)}${'☆'.repeat(3-st)}</span></span>${thumb(L)}`);
+      b.onclick = () => go('draw', L.id);
+      parent.appendChild(b);
+    };
+    const my = likes();
+    if(my){
+      const path = LESSONS.filter(L => my.includes(L.cat)).sort((a,b) => (a.hard - b.hard) || (!!stars['draw.'+a.id] - !!stars['draw.'+b.id])).slice(0, 8);
+      if(path.length){
+        el.appendChild(mk('h2', null, 'Your path'));
+        const g = mk('div','songgrid'); el.appendChild(g);
+        path.forEach(L => lessonCard(g, L));
+      }
+    }
+    CATS.forEach(c => {
+      const list = LESSONS.filter(L => L.cat === c);
+      if(!list.length) return;
+      el.appendChild(mk('h2', null, `${CATICON[c]} ${c}`));
       const g = mk('div','songgrid'); el.appendChild(g);
-      lv.lessons.forEach(L => {
-        const st = stars['draw.'+L.id] || 0;
-        const b = mk('button','songcard',
-          `<span class="sn">${L.name}</span><span class="sm">${L === next ? '<em class="nextup">Next up!</em> · ' : ''}${L.steps.length} steps · <span class="stars" style="color:var(--brass)">${'★'.repeat(st)}${'☆'.repeat(3-st)}</span></span>${thumb(L)}`);
-        b.onclick = () => go('draw', L.id);
-        g.appendChild(b);
-      });
+      list.forEach(L => lessonCard(g, L));
     });
   }
-  hooks.drawMenu = { enter: drawMenu };
+  hooks.drawMenu = { enter(){ $('likesAsk').hidden = true; if(!likes()) askLikes(); drawMenu(); } };
 
-  // journal page
+  // ---- My drawings page (with stickers and notes) ----
   let viewing = null;
   function renderJournal(){
     const el = $('journalList'), list = J.list(); el.innerHTML = '';
     if(!list.length){ el.appendChild(mk('p','empty-note','No drawings yet. Finish a lesson, or tap “Save to My drawings” in the Playground.')); return; }
     const g = mk('div','jgrid'); el.appendChild(g);
     list.forEach(e => {
-      const b = mk('button','jitem',`<img src="${e.img}" alt=""><span>${e.name}<small>${e.date}</small></span>`);
-      b.onclick = () => { viewing = e; $('viewImg').src = e.img; $('viewName').textContent = e.name; $('viewDel').textContent = 'Delete'; $('viewer').hidden = false; };
+      const b = mk('button','jitem',`<img src="${e.img}" alt=""><span>${e.name} ${(e.stickers||[]).join('')}<small>${e.note ? e.note + ' · ' : ''}${e.date}</small></span>`);
+      b.onclick = () => openViewer(e);
       g.appendChild(b);
     });
   }
-  $('viewClose').onclick = () => { $('viewer').hidden = true; };
+  function openViewer(e){
+    viewing = e;
+    $('viewImg').src = e.img; $('viewName').textContent = e.name;
+    $('viewDel').textContent = 'Delete';
+    $('viewNote').value = e.note || '';
+    const row = $('stickRow'); row.innerHTML = '';
+    STICKERS.forEach(s => { const b = mk('button', null, s); b.onclick = () => addSticker(s); row.appendChild(b); });
+    $('viewStickers').textContent = (e.stickers || []).join('');
+    $('viewer').hidden = false;
+  }
+  function addSticker(s){
+    const list = (viewing.stickers || []).concat(s).slice(-8);
+    viewing.stickers = list; J.update(viewing.id, { stickers:list });
+    $('viewStickers').textContent = list.join('');
+  }
+  $('viewStickers').onclick = () => { viewing.stickers = []; J.update(viewing.id, { stickers:[] }); $('viewStickers').textContent = ''; };
+  $('viewNote').oninput = () => { viewing.note = $('viewNote').value; J.update(viewing.id, { note:viewing.note }); };
+  $('viewClose').onclick = () => { $('viewer').hidden = true; renderJournal(); };
   $('viewDel').onclick = () => {
     const b = $('viewDel');
     if(b.textContent === 'Delete'){ b.textContent = 'Tap again to delete'; return; }
@@ -1391,12 +1660,12 @@
   };
   hooks.journal = { enter(){ $('viewer').hidden = true; renderJournal(); } };
 
-  // canvas + tools
+  // ---- canvas + tools ----
   const paint = $('paint'), guideC = $('guide'), dwrap = $('dwrap');
   const pctx = paint.getContext('2d'), gctx = guideC.getContext('2d'), hitCtx = document.createElement('canvas').getContext('2d');
   const COLORS = ['#2a2330','#d7263d','#f28bb5','#f28c28','#f6c945','#3bb273','#2f7fd8','#7b4fc9','#8a5a3b','#ffffff'];
   let dW = 0, dH = 0, dpr = 1, color = COLORS[1], size = 10, brush = 'marker', erasing = false, undo = [];
-  let lesson = null, dmode = null, step = 0, stepPts = [], scores = [], warned = false, showGuideOn = true;
+  let raw = null, lesson = null, dmode = null, step = 0, stepPts = [], scores = [], warned = false, showGuideOn = true;
   const sw = $('swatches');
   COLORS.forEach(c => {
     const b = mk('button','sw'); b.style.background = c; b.dataset.c = c; b.setAttribute('aria-label','Color ' + c);
@@ -1485,7 +1754,7 @@
   const dUp = e => { if(stroke && e.pointerId === stroke.id){ pctx.globalCompositeOperation = 'source-over'; stroke = null; } };
   ['pointerup','pointercancel','lostpointercapture'].forEach(t => paint.addEventListener(t, dUp));
 
-  // lesson geometry: sample each path into points (for the "video" and for checking your drawing)
+  // ---- lesson geometry: sample each path into points (for the "video" and for checking your drawing) ----
   const SVGNS = 'http://www.w3.org/2000/svg';
   const meas = document.createElementNS(SVGNS,'svg'), measP = document.createElementNS(SVGNS,'path');
   meas.setAttribute('style','position:absolute;width:0;height:0;visibility:hidden'); meas.appendChild(measP); document.body.appendChild(meas);
@@ -1591,6 +1860,53 @@
     const box = $('stepBtns'); box.innerHTML = '';
     list.filter(Boolean).forEach(b => { const e = mk('button','pbtn' + (b.cls ? ' ' + b.cls : ''), b.label); e.onclick = b.fn; box.appendChild(e); });
   }
+
+  // ---- "where do you want to draw?" then "make it yours!" ----
+  function askMode(){
+    const card = $('askCard');
+    card.innerHTML = '<h2>Where do you want to draw?</h2>';
+    const opt = (title, sub, fn) => { const b = mk('button','choice',`<b>${title}</b><span>${sub}</span>`); b.onclick = fn; card.appendChild(b); };
+    opt('On the screen', 'Trace the lines with your finger or the mouse. I’ll tell you how close you got.', () => afterMode('screen'));
+    opt('On paper', 'Watch each step, then draw it with a real pencil. Take a photo at the end.', () => afterMode('paper'));
+    $('modeAsk').hidden = false;
+  }
+  function afterMode(mode){
+    if(!raw.variants){ $('modeAsk').hidden = true; startLesson(mode, []); return; }
+    const picks = raw.variants.map(() => 0), card = $('askCard');
+    card.innerHTML = `<h2>Make it yours!</h2><p class="asksub">Pick what your ${raw.name.toLowerCase().replace(/^(a|an) /,'')} looks like.</p>`;
+    raw.variants.forEach((v,vi) => {
+      card.appendChild(mk('p','askq', v.q));
+      const row = mk('div','chips-pick');
+      v.choices.forEach((c,ci) => {
+        const b = mk('button','taste', c.label);
+        b.setAttribute('aria-pressed', ci === 0);
+        b.onclick = () => { picks[vi] = ci; [...row.children].forEach((x,xi) => x.setAttribute('aria-pressed', xi === ci)); };
+        row.appendChild(b);
+      });
+      card.appendChild(row);
+    });
+    const go = mk('button','choice go-choice','<b>Start drawing ▶</b>');
+    go.onclick = () => { $('modeAsk').hidden = true; startLesson(mode, picks); };
+    card.appendChild(go);
+  }
+  function buildSteps(picks){
+    const base = raw.steps.slice(), extra = [];
+    (raw.variants || []).forEach((v,i) => {
+      const c = v.choices[picks[i] || 0];
+      if(c && c.p) extra.push({ t:c.t || ('Add ' + c.label.toLowerCase()), tip:c.tip, p:c.p, shade:c.shade });
+    });
+    if(!extra.length) return base;
+    return base.length && !base[base.length-1].p ? [...base.slice(0,-1), ...extra, base[base.length-1]] : [...base, ...extra];
+  }
+  function startLesson(mode, picks){
+    dmode = mode;
+    lesson = { ...raw, steps:buildSteps(picks) };
+    paint.style.pointerEvents = mode === 'paper' ? 'none' : '';
+    $('drawbar').hidden = mode === 'paper';
+    $('dGuide').hidden = mode === 'paper';
+    if(mode === 'screen'){ brush = 'pencil'; color = COLORS[0]; size = 10; erasing = false; syncDrawTools(); }
+    scores = []; sizeDraw(); showStep(0);
+  }
   function showStep(i){
     step = i; stepPts = []; warned = false;
     const s = lesson.steps[step], n = lesson.steps.length, last = step === n-1;
@@ -1623,16 +1939,16 @@
   }
   function finishLesson(){
     cancelAnimationFrame(araf);
-    const nextL = LESSONS[LESSONS.indexOf(lesson) + 1];
+    const nextL = LESSONS[LESSONS.indexOf(raw) + 1];
     if(dmode === 'screen'){
       const avg = scores.length ? scores.reduce((a,b) => a+b, 0)/scores.length : 1;
       const st = avg >= .7 ? 3 : avg >= .45 ? 2 : 1;
-      saveStars('draw.'+lesson.id, st);
-      const ok = J.add({ name:lesson.name, img:snapshot() });
+      saveStars('draw.'+raw.id, st);
+      const ok = J.add({ name:raw.name, img:snapshot() });
       showGuideOn = false; drawGuide();
       $('dSay').innerHTML = `<span class="count">ALL DONE</span>Beautiful drawing! ${starText(st)}<span class="tipline">${ok ? 'Saved to My drawings.' : 'Couldn’t save — My drawings is full.'}</span>`;
     } else {
-      saveStars('draw.'+lesson.id, 3);
+      saveStars('draw.'+raw.id, 3);
       $('dSay').innerHTML = `<span class="count">ALL DONE</span>Great work! ${starText(3)}<span class="tipline">Take a photo of your paper to keep it in My drawings.</span>`;
     }
     setBtns([
@@ -1650,31 +1966,23 @@
       c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(img.src);
-      toast(J.add({ name:(lesson ? lesson.name : 'Drawing') + ' (on paper)', img:c.toDataURL('image/jpeg', .75) }) ? 'Photo saved to My drawings! 📷' : 'My drawings is full — delete some first');
+      toast(J.add({ name:(raw ? raw.name : 'Drawing') + ' (on paper)', img:c.toDataURL('image/jpeg', .75) }) ? 'Photo saved to My drawings! 📷' : 'My drawings is full — delete some first');
     };
     img.src = URL.createObjectURL(f); e.target.value = '';
   };
-  function startLesson(mode){
-    dmode = mode; $('modeAsk').hidden = true;
-    paint.style.pointerEvents = mode === 'paper' ? 'none' : '';
-    $('drawbar').hidden = mode === 'paper';
-    $('dGuide').hidden = mode === 'paper';
-    if(mode === 'screen'){ brush = 'pencil'; color = COLORS[0]; size = 10; erasing = false; syncDrawTools(); }
-    scores = []; sizeDraw(); showStep(0);
-  }
-  $('mScreen').onclick = () => startLesson('screen');
-  $('mPaper').onclick = () => startLesson('paper');
   $('dGuide').onclick = () => { showGuideOn = !showGuideOn; $('dGuide').setAttribute('aria-pressed', showGuideOn); drawGuide(); };
   hooks.draw = {
     enter(id){
-      lesson = id ? LESSONS.find(l => l.id === id) : null; step = 0; dmode = lesson ? null : 'free'; showGuideOn = true;
-      $('dTitle').innerHTML = `<small>DRAW</small>${lesson ? lesson.name : 'Playground'}`;
-      $('dSave').hidden = !!lesson; $('dGuide').hidden = true; $('dGuide').setAttribute('aria-pressed', true);
-      $('steptip').hidden = $('dRef').hidden = $('modeAsk').hidden = !lesson;
+      raw = id ? LESSONS.find(l => l.id === id) : null;
+      lesson = raw; step = 0; dmode = raw ? null : 'free'; showGuideOn = true;
+      $('dTitle').innerHTML = `<small>DRAW</small>${raw ? raw.name : 'Playground'}`;
+      $('dSave').hidden = !!raw; $('dGuide').hidden = true; $('dGuide').setAttribute('aria-pressed', true);
+      $('steptip').hidden = $('dRef').hidden = !raw;
+      $('modeAsk').hidden = true;
       $('drawbar').hidden = false; paint.style.pointerEvents = ''; toastEl.hidden = true;
-      if(lesson){ $('dSay').innerHTML = `<span class="count">${lesson.steps.length} STEPS</span>${lesson.name}`; setBtns([]); drawRef(); }
       brush = 'marker'; color = COLORS[1]; erasing = false; syncDrawTools();
       dW = dH = 0; sizeDraw(); clearPaint(); undo = []; stepPts = [];
+      if(raw){ $('dSay').innerHTML = `<span class="count">${raw.steps.length} STEPS</span>${raw.name}`; setBtns([]); drawRef(); askMode(); }
     },
     leave(){ cancelAnimationFrame(araf); }
   };
