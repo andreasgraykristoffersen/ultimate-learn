@@ -329,7 +329,7 @@
             <path d="M150 24 l8 8 M166 20 l-2 12 M176 34 l-12 2" stroke="#f6c945" stroke-width="5"/>
             <path d="M140 84 C155 74 170 90 188 78" stroke="#3bb273" stroke-width="5"/>
           </svg></span>
-          <span class="txt"><b>Draw</b><span>34 lessons · make it yours · shading</span></span>
+          <span class="txt"><b>Draw</b><span>65 lessons · monsters · make it yours</span></span>
         </button>
         <button class="tile" data-go="guitarMenu">
           <span class="art guitar"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
@@ -1539,9 +1539,243 @@
       { t:'Add the side of the box', p:'M64 44 L80 28 L80 64 L64 80' },
       { t:'Shade the side dark', tip:'The side away from the light is darkest.', p:'M64 44 L80 28 L80 64 L64 80 Z', shade:true },
       { t:'Shade the top a little bit', tip:'Press very lightly this time.', p:'M28 44 L44 28 L80 28 L64 44 Z', shade:true } ] },
+
+    { id:'monster1', name:'One-eyed monster', cat:'Monsters', hard:1, steps:[
+      { t:'Draw a big blobby body', tip:'It does not have to be neat — monsters are lumpy!', p:'M24 82 Q16 46 50 26 Q84 46 76 82 Q50 90 24 82' },
+      { t:'Draw one HUGE eye', p:'M38 46 A12 12 0 1 0 62 46 A12 12 0 1 0 38 46 M46 46 A4 4 0 1 0 54 46 A4 4 0 1 0 46 46' },
+      { t:'Add a mouth with pointy teeth', p:'M36 64 Q50 76 64 64 M42 68 L44 73 M50 70 L50 75 M58 68 L56 73' },
+      { t:'Add arms and legs', p:'M34 84 L30 94 M50 86 L50 96 M66 84 L70 94 M24 62 L10 56 M76 62 L90 56' },
+      { t:'Color your monster!', p:null } ],
+      variants:[
+        { q:'What is on its head?', choices:[
+          { label:'Two horns', t:'Draw two horns', p:'M34 30 L28 14 L42 24 M66 30 L72 14 L58 24' },
+          { label:'One antenna', t:'Draw an antenna', p:'M50 26 L50 10 M46 8 A4 4 0 1 0 54 8 A4 4 0 1 0 46 8' },
+          { label:'Nothing', p:null } ] },
+        { q:'What skin?', choices:[
+          { label:'Spots', t:'Add spots', p:'M32 64 A4 4 0 1 0 40 64 A4 4 0 1 0 32 64 M60 68 A4 4 0 1 0 68 68 A4 4 0 1 0 60 68 M46 78 A3 3 0 1 0 52 78 A3 3 0 1 0 46 78' },
+          { label:'Stripes', t:'Add stripes', p:'M28 58 L36 58 M30 70 L42 70 M58 74 L70 74' },
+          { label:'Plain', p:null } ] } ] },
+    { id:'furry', name:'Furry monster', cat:'Monsters', hard:2, steps:[
+      { t:'Draw a fuzzy zigzag body', tip:'Zigzag all the way around — that is the fur.', p:'M26 74 L20 68 L28 62 L20 54 L28 48 L22 40 L32 38 L30 28 L40 32 L42 22 L50 30 L58 22 L60 32 L70 28 L68 38 L78 40 L72 48 L80 54 L72 62 L80 68 L74 74 Q50 86 26 74' },
+      { t:'Add two eyes', p:'M38 44 A6 6 0 1 0 50 44 A6 6 0 1 0 38 44 M52 44 A6 6 0 1 0 64 44 A6 6 0 1 0 52 44 M43 45 L43 47 M57 45 L57 47' },
+      { t:'A big mouth with two teeth', p:'M36 60 Q50 70 64 60 M42 62 L44 68 L48 62 M54 62 L57 68 L60 62' },
+      { t:'Add arms and feet', p:'M24 60 L10 66 M78 60 L92 66 M36 82 L34 94 M62 82 L66 94' },
+      { t:'Color your furry monster!', p:null } ],
+      variants:[ { q:'Add something extra?', choices:[
+        { label:'A third eye', t:'Add a third eye on top', p:'M46 30 A5 5 0 1 0 56 30 A5 5 0 1 0 46 30 M51 31 L51 33' },
+        { label:'Two horns', t:'Draw two horns', p:'M32 30 L26 14 L40 26 M68 30 L74 14 L60 26' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'slime', name:'Slime monster', cat:'Monsters', hard:1, steps:[
+      { t:'Draw a drippy blob', tip:'Round on top, drippy at the bottom.', p:'M20 60 Q20 30 50 30 Q80 30 80 60 Q80 80 66 80 Q64 92 58 80 Q50 80 48 88 Q44 80 34 80 Q20 80 20 60' },
+      { t:'Add two big eyes', p:'M34 48 A7 7 0 1 0 48 48 A7 7 0 1 0 34 48 M52 48 A7 7 0 1 0 66 48 A7 7 0 1 0 52 48 M41 49 L41 51 M59 49 L59 51' },
+      { t:'Draw a wide smile', p:'M38 64 Q50 74 62 64' },
+      { t:'Add drips underneath', p:'M30 84 Q32 92 34 84 M70 82 Q72 90 74 82' },
+      { t:'Color it slimy green!', p:null } ],
+      variants:[ { q:'Add something?', choices:[
+        { label:'A little hat', t:'Draw a hat on top', p:'M34 30 Q50 14 66 30 M30 30 L70 30' },
+        { label:'Bubbles', t:'Add bubbles around it', p:'M14 40 A4 4 0 1 0 22 40 A4 4 0 1 0 14 40 M82 52 A3 3 0 1 0 88 52 A3 3 0 1 0 82 52 M16 70 A3 3 0 1 0 22 70 A3 3 0 1 0 16 70' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'alien3', name:'Three-eyed alien', cat:'Monsters', hard:2, steps:[
+      { t:'Draw a big head', tip:'Wide at the top, pointy at the chin.', p:'M30 44 Q30 18 50 18 Q70 18 70 44 Q70 66 50 76 Q30 66 30 44' },
+      { t:'Add three eyes', p:'M36 42 A5 5 0 1 0 46 42 A5 5 0 1 0 36 42 M54 42 A5 5 0 1 0 64 42 A5 5 0 1 0 54 42 M45 28 A5 5 0 1 0 55 28 A5 5 0 1 0 45 28' },
+      { t:'Draw a tiny mouth', p:'M42 58 Q50 64 58 58' },
+      { t:'Add two wobbly antennae', p:'M38 20 Q32 8 25 8 M62 20 Q68 8 75 8 M21 5 A4 4 0 1 0 29 5 A4 4 0 1 0 21 5 M71 5 A4 4 0 1 0 79 5 A4 4 0 1 0 71 5' },
+      { t:'Add legs', p:'M42 76 L40 90 M58 76 L60 90 M40 90 L32 95 M60 90 L68 95' },
+      { t:'Color your alien!', p:null } ] },
+    { id:'bat', name:'Bat', cat:'Monsters', hard:2, steps:[
+      { t:'Draw a small body', p:'M42 44 Q50 36 58 44 Q60 58 50 64 Q40 58 42 44' },
+      { t:'Add two pointy ears', p:'M44 40 L42 28 L50 36 M56 40 L58 28 L50 36' },
+      { t:'Draw the left wing', tip:'Bumpy at the bottom, like an umbrella.', p:'M42 46 Q24 34 10 44 Q22 46 16 56 Q28 52 34 60 Q38 54 44 56' },
+      { t:'Draw the right wing', p:'M58 46 Q76 34 90 44 Q78 46 84 56 Q72 52 66 60 Q62 54 56 56' },
+      { t:'Eyes and fangs', p:'M46 46 L46 48 M54 46 L54 48 M47 56 L47 61 M53 56 L53 61' },
+      { t:'Color your bat!', p:null } ] },
+    { id:'dragon', name:'Dragon', cat:'Monsters', hard:3, steps:[
+      { t:'Draw the body', p:'M24 78 Q18 54 34 48 Q48 42 58 52 Q66 60 62 78 Z' },
+      { t:'Add the head', p:'M58 40 Q74 30 83 43 Q87 52 76 54 Q64 56 58 50 Z' },
+      { t:'Draw two wings', p:'M40 48 Q34 22 53 29 Q47 38 49 48 M49 46 Q59 20 73 29 Q59 34 57 48' },
+      { t:'Add a long tail', p:'M24 74 Q8 76 5 60 Q5 51 14 53' },
+      { t:'Legs, eye and spikes', p:'M34 78 L32 90 M56 78 L58 90 M72 43 L72 45 M36 48 L34 42 M46 44 L44 38' },
+      { t:'Breathe some fire!', p:'M84 46 Q96 40 91 50 Q99 53 86 55' },
+      { t:'Color your dragon!', p:null } ] },
+
+    { id:'eye', name:'A real eye', cat:'Real things', hard:3, steps:[
+      { t:'Draw the eye shape', tip:'Two curves that meet in points.', p:'M12 50 Q50 22 88 50 Q50 78 12 50' },
+      { t:'Draw the circle of the iris', p:'M38 50 A12 12 0 1 0 62 50 A12 12 0 1 0 38 50' },
+      { t:'Add the pupil and a shiny spot', p:'M44 50 A6 6 0 1 0 56 50 A6 6 0 1 0 44 50 M58 42 A3 3 0 1 0 64 42 A3 3 0 1 0 58 42' },
+      { t:'Add eyelashes', p:'M16 44 L10 36 M30 32 L26 22 M50 26 L50 14 M70 32 L74 22 M84 44 L90 36' },
+      { t:'Shade under the top eyelid', tip:'This is the trick that makes an eye look real.', p:'M14 48 Q50 24 86 48 Q50 34 14 48 Z', shade:true } ] },
+    { id:'hand', name:'Your own hand', cat:'Real things', hard:2, steps:[
+      { t:'Draw the palm', tip:'You can put your real hand on the paper and trace it!', p:'M30 88 Q26 66 30 54 L64 54 Q70 70 66 88 Z' },
+      { t:'Add four fingers', p:'M32 54 L30 26 Q34 20 38 26 L40 54 M42 54 L40 18 Q45 12 49 18 L50 54 M52 54 L52 20 Q57 14 60 20 L60 54 M62 54 L64 30 Q69 26 71 32 L68 54' },
+      { t:'Add the thumb', p:'M30 62 Q18 54 12 60 Q10 66 20 70 Q26 72 30 70' },
+      { t:'Add the wrist', p:'M30 88 L32 96 M66 88 L64 96' },
+      { t:'Shade the middle of the palm', tip:'Press lightly — just a soft shadow.', p:'M34 68 Q48 76 62 68 Q48 86 34 68 Z', shade:true } ] },
+    { id:'rose', name:'Rose', cat:'Real things', hard:3, steps:[
+      { t:'Draw the outside petals', p:'M30 46 Q22 26 44 20 Q64 14 70 34 Q76 52 58 60 Q38 68 30 46' },
+      { t:'Draw a swirl in the middle', tip:'Start in the middle and spiral out.', p:'M50 44 A6 6 0 1 1 57 38 A12 12 0 1 1 40 34 A18 18 0 1 1 67 44' },
+      { t:'Draw the stem', p:'M50 62 L50 94' },
+      { t:'Add two leaves', p:'M50 74 Q64 64 72 72 Q62 82 50 74 M50 84 Q36 74 28 82 Q38 92 50 84' },
+      { t:'Color your rose!', p:null } ] },
+    { id:'leaf', name:'Leaf', cat:'Real things', hard:1, steps:[
+      { t:'Draw the leaf shape', tip:'Two curves meeting at a point.', p:'M50 14 Q82 40 50 88 Q18 40 50 14' },
+      { t:'Draw the line down the middle', p:'M50 20 L50 84' },
+      { t:'Add the side veins', p:'M50 34 L34 30 M50 34 L66 30 M50 48 L32 46 M50 48 L68 46 M50 62 L36 62 M50 62 L64 62' },
+      { t:'Add the stem', p:'M50 88 L50 96' },
+      { t:'Shade one half of the leaf', tip:'Shade only the right side — it makes it look round.', p:'M50 20 Q78 42 50 86 Q50 50 50 20 Z', shade:true } ] },
+    { id:'mushroom', name:'Mushroom', cat:'Real things', hard:2, steps:[
+      { t:'Draw the cap', p:'M18 54 Q18 24 50 24 Q82 24 82 54 Z' },
+      { t:'Draw the stem', p:'M40 54 Q38 76 34 86 Q50 92 66 86 Q62 76 60 54' },
+      { t:'Add spots on the cap', p:'M32 40 A5 5 0 1 0 42 40 A5 5 0 1 0 32 40 M56 36 A4 4 0 1 0 64 36 A4 4 0 1 0 56 36 M66 46 A3 3 0 1 0 72 46 A3 3 0 1 0 66 46' },
+      { t:'Draw the ground', p:'M14 88 Q50 96 86 88' },
+      { t:'Shade the right side of the stem', p:'M52 56 Q56 74 60 87 Q52 90 50 88 Q52 70 52 56 Z', shade:true } ] },
+    { id:'cup', name:'Cup of tea', cat:'Real things', hard:2, steps:[
+      { t:'Draw the cup', tip:'Narrower at the bottom than the top.', p:'M24 40 L30 78 Q50 86 70 78 L76 40 Z' },
+      { t:'Add the handle', p:'M76 48 Q92 48 90 60 Q88 70 74 68' },
+      { t:'Draw the saucer', p:'M14 86 Q50 96 86 86 Q50 80 14 86' },
+      { t:'Add curly steam', p:'M42 32 Q36 24 42 16 Q48 8 42 2 M58 32 Q52 24 58 16 Q64 8 58 2' },
+      { t:'Shade the right side of the cup', p:'M58 42 L64 79 Q70 77 71 76 L76 42 Z', shade:true } ] },
+    { id:'candle', name:'Candle', cat:'Real things', hard:2, steps:[
+      { t:'Draw the candle', p:'M36 44 L36 88 L64 88 L64 44 Z' },
+      { t:'Add the wick and flame', tip:'The flame is a leaf shape.', p:'M50 44 L50 38 M50 38 Q42 30 50 14 Q58 30 50 38' },
+      { t:'Add melting wax drips', p:'M36 52 Q40 60 44 52 M56 50 Q60 58 64 50' },
+      { t:'Shade the right side', tip:'The flame lights the left side, so shade the right.', p:'M54 46 L54 86 L64 86 L64 46 Z', shade:true },
+      { t:'Color the flame orange and yellow!', p:null } ] },
+    { id:'pear', name:'A shaded pear', cat:'Real things', hard:3, steps:[
+      { t:'Draw the pear shape', tip:'Skinny at the top, round at the bottom.', p:'M50 20 Q58 30 56 42 Q74 52 72 68 Q70 86 50 86 Q30 86 28 68 Q26 52 44 42 Q42 30 50 20' },
+      { t:'Add the stem', p:'M50 20 Q52 12 58 8' },
+      { t:'Shade the right side', p:'M58 44 Q70 54 68 68 Q66 82 52 84 Q64 74 62 60 Q61 50 58 44 Z', shade:true },
+      { t:'Shade a shadow on the ground', p:'M30 88 Q50 94 72 88 Q50 84 30 88 Z', shade:true } ] },
+
+    { id:'snail', name:'Snail', cat:'Animals', hard:2, steps:[
+      { t:'Draw a big circle for the shell', p:'M30 60 A20 20 0 1 0 70 60 A20 20 0 1 0 30 60' },
+      { t:'Add a swirl inside', tip:'Start in the middle and go round.', p:'M50 60 A5 5 0 1 1 56 55 A11 11 0 1 1 41 52' },
+      { t:'Draw the body under the shell', p:'M14 80 L84 80 Q94 80 92 68 Q90 60 82 62' },
+      { t:'Add feelers with little eyes', p:'M86 63 L84 47 M90 64 L94 49 M81.5 44 A2.5 2.5 0 1 0 86.5 44 A2.5 2.5 0 1 0 81.5 44 M91.5 46 A2.5 2.5 0 1 0 96.5 46 A2.5 2.5 0 1 0 91.5 46' },
+      { t:'Color your snail!', p:null } ] },
+    { id:'frog', name:'Frog', cat:'Animals', hard:2, steps:[
+      { t:'Draw a wide body', p:'M22 70 Q20 46 50 46 Q80 46 78 70 Q78 82 50 82 Q22 82 22 70' },
+      { t:'Add two eyes on top', p:'M28 44 A9 9 0 1 0 46 44 A9 9 0 1 0 28 44 M54 44 A9 9 0 1 0 72 44 A9 9 0 1 0 54 44 M37 44 L37 47 M63 44 L63 47' },
+      { t:'Draw a big wide smile', p:'M30 66 Q50 78 70 66' },
+      { t:'Add four legs with toes', p:'M22 76 L10 84 L22 86 M78 76 L90 84 L78 86 M34 82 L30 92 L40 90 M66 82 L70 92 L60 90' },
+      { t:'Color your frog!', p:null } ],
+      variants:[ { q:'Add something?', choices:[
+        { label:'Spots', t:'Add spots on the back', p:'M34 58 A4 4 0 1 0 42 58 A4 4 0 1 0 34 58 M56 56 A4 4 0 1 0 64 56 A4 4 0 1 0 56 56 M46 64 A3 3 0 1 0 52 64 A3 3 0 1 0 46 64' },
+        { label:'A lily pad', t:'Draw a lily pad under the frog', p:'M8 88 Q50 100 92 88 Q50 80 8 88 M50 88 L58 82' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'crab', name:'Crab', cat:'Animals', hard:2, steps:[
+      { t:'Draw the round shell', p:'M22 56 Q22 38 50 38 Q78 38 78 56 Q78 68 50 68 Q22 68 22 56' },
+      { t:'Add eyes on stalks', p:'M40 36 L40 26 M60 36 L60 26 M36 22 A4 4 0 1 0 44 22 A4 4 0 1 0 36 22 M56 22 A4 4 0 1 0 64 22 A4 4 0 1 0 56 22' },
+      { t:'Draw two big claws', tip:'Like mittens with a snip in them.', p:'M22 52 L10 44 Q4 38 9 34 L16 42 M10 44 L6 52 Q6 58 11 56 L18 50 M78 52 L90 44 Q96 38 91 34 L84 42 M90 44 L94 52 Q94 58 89 56 L82 50' },
+      { t:'Add the legs', p:'M28 68 L22 82 M40 68 L36 84 M60 68 L64 84 M72 68 L78 82' },
+      { t:'Add a smile', p:'M44 58 Q50 62 56 58' },
+      { t:'Color your crab red!', p:null } ] },
+    { id:'shark', name:'Shark', cat:'Animals', hard:3, steps:[
+      { t:'Draw the body', tip:'Pointy nose on the right.', p:'M14 58 Q34 40 66 44 Q86 48 94 60 Q78 72 58 72 Q32 72 14 58' },
+      { t:'Add the tail', p:'M14 58 L2 44 L8 58 L2 74 Z' },
+      { t:'Add the top fin', p:'M46 44 Q52 26 62 42' },
+      { t:'Add the bottom fin', p:'M40 70 Q44 82 54 71' },
+      { t:'Eye, mouth and teeth', p:'M78 54 L78 56 M74 62 Q84 66 92 61 M77 63 L79 66 M83 64 L84 67' },
+      { t:'Color your shark!', p:null } ] },
+    { id:'dino', name:'T-Rex', cat:'Animals', hard:3, steps:[
+      { t:'Draw the body and head', tip:'One long wobbly line.', p:'M24 78 Q20 52 44 48 Q64 44 70 30 Q76 20 88 24 Q96 30 90 40 Q84 48 72 50 Q66 64 64 78 Z' },
+      { t:'Add a long tail', p:'M24 74 Q8 72 4 58 Q4 50 12 52' },
+      { t:'Draw two strong legs', p:'M34 78 L32 92 L44 92 M56 78 L54 92 L66 92' },
+      { t:'Add tiny arms', p:'M62 54 L54 60 L60 62' },
+      { t:'Eye, mouth and spikes', p:'M84 32 L84 34 M76 42 L92 40 M80 42 L80 46 M86 41 L86 45 M34 50 L32 44 M44 48 L42 42 M54 47 L52 41' },
+      { t:'Color your dinosaur!', p:null } ] },
+
+    { id:'wizard', name:'Wizard', cat:'Fantasy', hard:2, steps:[
+      { t:'Draw a tall pointy hat', p:'M50 8 Q40 30 30 44 L70 44 Q60 30 50 8' },
+      { t:'Add the brim of the hat', p:'M24 44 Q50 52 76 44' },
+      { t:'Draw the face', p:'M34 44 Q34 62 50 64 Q66 62 66 44 M44 50 L44 52 M56 50 L56 52' },
+      { t:'Add a long beard', p:'M36 58 Q40 84 50 90 Q60 84 64 58 Q50 70 36 58' },
+      { t:'Put stars on the hat', p:'M44 24 L44 30 M41 27 L47 27 M56 32 L56 38 M53 35 L59 35' },
+      { t:'Color your wizard!', p:null } ] },
+    { id:'fairy', name:'Fairy', cat:'Fantasy', hard:3, steps:[
+      { t:'Draw the head', p:'M42 34 A8 8 0 1 0 58 34 A8 8 0 1 0 42 34' },
+      { t:'Draw the body', p:'M50 46 Q56 52 54 64 L46 64 Q44 52 50 46' },
+      { t:'Add two wings', p:'M46 50 Q26 34 18 48 Q24 60 44 58 M54 50 Q74 34 82 48 Q76 60 56 58' },
+      { t:'Add arms and legs', p:'M46 52 L34 60 M54 52 L66 60 M48 64 L44 84 M52 64 L56 84' },
+      { t:'Give her a magic wand', p:'M66 60 L82 70 M84 66 L84 74 M80 70 L88 70' },
+      { t:'Color your fairy!', p:null } ] },
+    { id:'castle', name:'Castle', cat:'Fantasy', hard:3, steps:[
+      { t:'Draw the middle wall', p:'M24 84 L24 44 L76 44 L76 84 Z' },
+      { t:'Add two tall towers', p:'M14 84 L14 34 L30 34 L30 84 M70 84 L70 34 L86 34 L86 84' },
+      { t:'Add the bumpy tops', p:'M14 34 L14 28 L18 28 L18 34 M22 34 L22 28 L26 28 L26 34 M70 34 L70 28 L74 28 L74 34 M78 34 L78 28 L82 28 L82 34' },
+      { t:'Draw a round door and windows', p:'M44 84 L44 62 Q50 56 56 62 L56 84 M34 52 L40 52 L40 60 L34 60 Z M60 52 L66 52 L66 60 L60 60 Z' },
+      { t:'Put flags on the towers', p:'M22 28 L22 14 L34 18 L22 22 M78 28 L78 14 L66 18 L78 22' },
+      { t:'Color your castle!', p:null } ] },
+
+    { id:'burger', name:'Burger', cat:'Food', hard:2, steps:[
+      { t:'Draw the top bun', p:'M18 46 Q18 22 50 22 Q82 22 82 46 Z' },
+      { t:'Add wavy lettuce', p:'M16 46 Q26 56 36 48 Q46 58 56 48 Q66 58 76 48 Q82 50 84 46' },
+      { t:'Add the burger', p:'M18 58 L82 58 L82 68 L18 68 Z M20 58 L80 58' },
+      { t:'Draw the bottom bun', p:'M18 68 Q18 82 50 82 Q82 82 82 68' },
+      { t:'Add seeds on top', p:'M34 32 L38 30 M48 28 L52 27 M62 32 L66 30' },
+      { t:'Color your burger!', p:null } ] },
+    { id:'banana', name:'Banana', cat:'Food', hard:1, steps:[
+      { t:'Draw the banana', tip:'Like a smile with a fat middle.', p:'M22 34 Q26 66 54 78 Q80 88 84 66 Q70 76 50 66 Q32 56 32 32 Q28 28 22 34' },
+      { t:'Add the tips', p:'M22 34 L16 26 M84 66 L90 71' },
+      { t:'Draw a line along the middle', p:'M36 44 Q42 62 60 70' },
+      { t:'Shade the bottom curve', p:'M34 58 Q52 72 78 70 Q80 76 74 78 Q50 74 32 62 Z', shade:true },
+      { t:'Color it yellow!', p:null } ] },
+    { id:'melon', name:'Watermelon slice', cat:'Food', hard:1, steps:[
+      { t:'Draw a half circle', p:'M12 40 L88 40 Q50 96 12 40' },
+      { t:'Add the rind line', p:'M16 45 Q50 90 84 45' },
+      { t:'Add the seeds', p:'M40 56 L42 60 M56 54 L58 58 M48 68 L50 72 M32 48 L34 52 M66 48 L68 52' },
+      { t:'Color it pink and green!', p:null } ] },
+
+    { id:'plane', name:'Aeroplane', cat:'Vehicles', hard:2, steps:[
+      { t:'Draw the body', p:'M12 58 Q40 46 76 50 Q88 52 86 60 Q60 68 20 64 Z' },
+      { t:'Add a wing', p:'M44 58 L34 80 L60 74 Z' },
+      { t:'Add the tail', p:'M78 52 L88 32 L70 46' },
+      { t:'Draw a row of windows', p:'M30 58 L30 60 M38 57 L38 59 M46 56 L46 58 M54 56 L54 58 M62 56 L62 58' },
+      { t:'Color your plane!', p:null } ] },
+    { id:'bike', name:'Bicycle', cat:'Vehicles', hard:3, steps:[
+      { t:'Draw two wheels', tip:'Make them the same size.', p:'M10 70 A16 16 0 1 0 42 70 A16 16 0 1 0 10 70 M58 70 A16 16 0 1 0 90 70 A16 16 0 1 0 58 70' },
+      { t:'Draw the frame', p:'M26 70 L42 44 L62 44 L74 70 M42 44 L50 70 L74 70' },
+      { t:'Add the seat and handlebars', p:'M38 40 L46 40 M62 44 L66 34 L58 32' },
+      { t:'Add the pedals', p:'M50 70 A6 6 0 1 0 62 70 A6 6 0 1 0 50 70' },
+      { t:'Color your bike!', p:null } ] },
+
+    { id:'cactus', name:'Cactus', cat:'Nature', hard:1, steps:[
+      { t:'Draw the tall body', p:'M42 88 L42 34 Q42 22 50 22 Q58 22 58 34 L58 88 Z' },
+      { t:'Add two arms', p:'M42 50 L28 50 Q22 50 22 42 L22 34 M58 58 L72 58 Q78 58 78 50 L78 40' },
+      { t:'Draw a pot', p:'M30 88 L34 98 L66 98 L70 88 Z' },
+      { t:'Add the spikes', p:'M46 30 L46 26 M54 40 L54 36 M26 44 L22 44 M74 48 L78 48 M46 62 L46 58 M54 74 L54 70' },
+      { t:'Put a flower on top', p:'M45 18 A5 5 0 1 0 55 18 A5 5 0 1 0 45 18' },
+      { t:'Color your cactus!', p:null } ] },
+    { id:'snowman', name:'Snowman', cat:'Nature', hard:2, steps:[
+      { t:'Draw a big circle at the bottom', p:'M28 76 A20 20 0 1 0 68 76 A20 20 0 1 0 28 76' },
+      { t:'Draw a middle circle', p:'M34 46 A14 14 0 1 0 62 46 A14 14 0 1 0 34 46' },
+      { t:'Draw the head', p:'M38 24 A10 10 0 1 0 58 24 A10 10 0 1 0 38 24' },
+      { t:'Add a face and a carrot nose', p:'M44 21 L44 23 M52 21 L52 23 M48 26 L57 28 L48 30 M44 32 Q48 35 52 32' },
+      { t:'Add stick arms and buttons', p:'M34 44 L14 36 M62 44 L82 36 M48 42 L48 44 M48 52 L48 54' },
+      { t:'Give him a hat', p:'M38 16 L58 16 M42 16 L42 6 L54 6 L54 16' },
+      { t:'Color your snowman!', p:null } ] },
+    { id:'moon', name:'Moon and stars', cat:'Nature', hard:1, steps:[
+      { t:'Draw a moon', tip:'A big curve, then a smaller curve back.', p:'M62 20 A22 22 0 1 0 62 64 A17 17 0 1 1 62 20 Z' },
+      { t:'Add sparkly stars', p:'M20 30 L20 42 M14 36 L26 36 M34 60 L34 70 M29 65 L39 65 M76 76 L76 86 M71 81 L81 81' },
+      { t:'Add tiny dots in the sky', p:'M50 84 L50 86 M18 62 L18 64 M84 40 L84 42 M40 14 L40 16' },
+      { t:'Color the sky dark blue!', p:null } ] },
+
+    { id:'emoji', name:'Emoji face', cat:'Faces', hard:1, steps:[
+      { t:'Draw a big circle', p:'M20 50 A30 30 0 1 0 80 50 A30 30 0 1 0 20 50' },
+      { t:'Add two eyes', p:'M38 42 A4 4 0 1 0 46 42 A4 4 0 1 0 38 42 M54 42 A4 4 0 1 0 62 42 A4 4 0 1 0 54 42' },
+      { t:'Add a smile', p:'M34 60 Q50 76 66 60' },
+      { t:'Color it yellow!', p:null } ],
+      variants:[
+        { q:'What mouth?', choices:[
+          { label:'Big grin with teeth', t:'Draw a big grin with teeth', p:'M32 58 Q50 78 68 58 L32 58 M44 58 L44 70 M56 58 L56 70' },
+          { label:'Tongue out', t:'Add a tongue', p:'M40 70 Q50 84 58 70 Q50 74 40 70' },
+          { label:'Just a smile', p:null } ] },
+        { q:'Anything else?', choices:[
+          { label:'Sunglasses', t:'Draw cool sunglasses', p:'M28 40 L44 40 L44 50 L30 50 Z M56 40 L72 40 L70 50 L56 50 Z M44 43 L56 43 M28 40 L22 44 M72 40 L78 44' },
+          { label:'Blushing cheeks', t:'Add blushing cheeks', p:'M30 56 A5 4 0 1 0 40 56 A5 4 0 1 0 30 56 M60 56 A5 4 0 1 0 70 56 A5 4 0 1 0 60 56' },
+          { label:'Nothing', p:null } ] } ] },
   ];
-  const CATS = ['Basics','Animals','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
-  const CATICON = { Basics:'✏️', Animals:'🐟', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
+  const CATS = ['Basics','Animals','Monsters','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
+  const CATICON = { Basics:'✏️', Animals:'🐟', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
 
   const lessonD = L => L.steps.filter(s => s.p).map(s => s.p).join(' ');
   const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
