@@ -471,6 +471,16 @@
     background:linear-gradient(120deg,#2a2530,#3a2c14)}
   @media (prefers-reduced-motion:reduce){ .ipad.target{animation:none} }
 
+  /* ---- draw studio 2: shapes, name art, replay ---- */
+  /* every page is one column that may shrink, so long tool rows scroll instead of stretching the page */
+  .view{grid-template-columns:minmax(0,1fr)}
+  .namerow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .namerow[hidden]{display:none}
+  .namerow input{flex:1 1 180px;min-width:0;padding:10px 14px;border-radius:999px;border:1px solid var(--edge);background:var(--panel);color:var(--ivory);font:800 16px var(--ui)}
+  .shapebtn span{font-size:22px;line-height:1}
+  .dwrap canvas#replayC{z-index:7;width:100%;height:100%;cursor:pointer}
+  #replayC[hidden]{display:none}
+
   /* ---- guitar ---- */
   .guitar-view{grid-template-rows:auto auto auto minmax(0,1fr)}
   .chordbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:2px 16px 10px}
@@ -730,7 +740,7 @@
       </div>
     </header>
     <div class="dwrap" id="dwrap">
-      <canvas id="paint"></canvas><canvas id="guide"></canvas>
+      <canvas id="paint"></canvas><canvas id="guide"></canvas><canvas id="replayC" title="Tap to stop" hidden></canvas>
       <div class="dref" id="dRef"><span>GOAL</span><svg id="dRefSvg" viewBox="-6 -6 112 112" aria-label="The finished drawing"></svg></div>
       <div class="steptip" id="steptip">
         <div class="say" id="dSay"></div>
@@ -747,6 +757,11 @@
     </div>
     <div class="drawbar" id="drawbar">
       <div class="stamprow" id="stampRow" role="group" aria-label="Stamps" hidden></div>
+      <div class="stamprow" id="shapeRow" role="group" aria-label="Shapes" hidden></div>
+      <div class="namerow" id="nameRow" hidden>
+        <input id="dNameIn" maxlength="12" placeholder="Type your name" autocomplete="off">
+        <button class="btn go" id="dNameAdd">Make bubble letters</button>
+      </div>
       <div class="toolrow" id="brushes" role="group" aria-label="Brushes and tools"></div>
       <div class="optrow">
         <div class="swatches" id="swatches" role="group" aria-label="Colors"></div>
@@ -754,6 +769,8 @@
         <div class="sizebox" title="Brush size"><span class="sizedot" id="dSizeDot"></span><input type="range" id="dSize" min="2" max="60" value="10" aria-label="Brush size"></div>
         <button class="btn" id="dMirror" aria-pressed="false">⧉ Mirror: off</button>
         <button class="btn" id="dPaper">📄 Cream</button>
+        <button class="btn" id="dName" aria-pressed="false">🔤 My name</button>
+        <button class="btn" id="dReplay">▶ Replay</button>
         <button class="btn" id="dUndo" aria-label="Undo">↶</button>
         <button class="btn" id="dRedo" aria-label="Redo">↷</button>
         <button class="btn" id="dClear">Clear</button>
@@ -2726,8 +2743,8 @@
           { label:'Blushing cheeks', t:'Add blushing cheeks', p:'M30 56 A5 4 0 1 0 40 56 A5 4 0 1 0 30 56 M60 56 A5 4 0 1 0 70 56 A5 4 0 1 0 60 56' },
           { label:'Nothing', p:null } ] } ] },
   ];
-  const CATS = ['Basics','Crazy!','People','Animals','Monsters','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
-  const CATICON = { Basics:'✏️', 'Crazy!':'🤪', People:'🧑', Animals:'🐟', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
+  const CATS = ['Basics','Crazy!','People','Animals','Monsters','Ocean','Space','Holidays','Sports','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
+  const CATICON = { Basics:'✏️', 'Crazy!':'🤪', People:'🧑', Animals:'🐟', Ocean:'🌊', Space:'🪐', Holidays:'🎃', Sports:'⚽', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
 
   // ---- more drawings ----
   const MORE_LESSONS = [
@@ -3043,6 +3060,101 @@
   ];
   LESSONS.push(...WILD_LESSONS);
 
+  // ---- ocean, space, holidays and sports ----
+  const WORLD_LESSONS = [
+    { id:'whale', name:'Whale', cat:'Ocean', hard:2, steps:[
+      { t:'Draw the big whale body', tip:'A long round shape, fatter at the front.', p:'M12 56 Q16 30 48 30 Q78 30 84 50 Q88 66 70 72 L30 72 Q12 70 12 56' },
+      { t:'Add the tail', tip:'It joins the back of the body.', p:'M84 52 L96 36 Q91 50 97 66 L84 58' },
+      { t:'An eye and a big smile', p:'M28 48 L28 50 M16 60 Q28 68 42 63' },
+      { t:'Draw the belly line', p:'M22 66 Q46 76 74 67' },
+      { t:'Make it spout water!', p:'M46 30 L46 18 M46 18 Q38 8 33 14 M46 18 Q54 8 59 14' },
+      { t:'Color your whale!', p:null } ] },
+    { id:'jelly', name:'Jellyfish', cat:'Ocean', hard:1, steps:[
+      { t:'Draw the round bell', tip:'Like an umbrella with a bumpy bottom.', p:'M24 50 Q24 18 50 18 Q76 18 76 50 Q70 46 63 50 Q56 46 50 50 Q44 46 37 50 Q30 46 24 50' },
+      { t:'Add four wiggly tentacles', p:'M30 50 Q26 64 32 76 Q36 86 30 94 M42 50 Q38 64 44 76 Q48 86 42 94 M57 50 Q61 64 55 76 Q51 86 57 94 M70 50 Q74 64 68 76 Q64 86 70 94' },
+      { t:'A cute face', p:'M42 34 L42 36 M58 34 L58 36 M46 40 Q50 44 54 40' },
+      { t:'Add some spots', p:'M31 30 A2.5 2.5 0 1 0 36 30 A2.5 2.5 0 1 0 31 30 M64 28 A2 2 0 1 0 68 28 A2 2 0 1 0 64 28' },
+      { t:'Color your jellyfish!', p:null } ] },
+    { id:'starfish', name:'Starfish', cat:'Ocean', hard:1, steps:[
+      { t:'Draw a star with round arms', tip:'Five fat arms, soft at the tips.', p:'M50 10 Q56 34 58 38 Q86 36 88 42 Q66 56 64 62 Q76 88 70 92 Q54 76 50 76 Q46 76 30 92 Q24 88 36 62 Q34 56 12 42 Q14 36 42 38 Q44 34 50 10' },
+      { t:'Give it a happy face', p:'M44 48 L44 50 M56 48 L56 50 M45 56 Q50 60 55 56' },
+      { t:'Dot the arms', p:'M50 24 L50 25 M74 44 L75 44 M64 76 L64 77 M36 76 L36 77 M26 44 L27 44' },
+      { t:'Color your starfish!', p:null } ] },
+    { id:'saturn', name:'Planet Saturn', cat:'Space', hard:2, steps:[
+      { t:'Draw the planet', p:'M30 50 A20 20 0 1 0 70 50 A20 20 0 1 0 30 50' },
+      { t:'Draw the tilted ring around it', tip:'A long thin oval that tips up on the right.', p:'M8.9 58.7 A42 13 -12 1 0 91.1 41.3 A42 13 -12 1 0 8.9 58.7' },
+      { t:'Add stripes on the planet', p:'M31 44 Q50 40 69 44 M31 57 Q50 61 69 57' },
+      { t:'Stars and a little moon', p:'M10 16 L10 24 M6 20 L14 20 M84 80 A4 4 0 1 0 92 80 A4 4 0 1 0 84 80 M86 12 L86 18 M83 15 L89 15' },
+      { t:'Color your planet!', p:null } ] },
+    { id:'astronaut', name:'Astronaut', cat:'Space', hard:3, steps:[
+      { t:'Draw the round helmet', p:'M34 30 A16 16 0 1 0 66 30 A16 16 0 1 0 34 30' },
+      { t:'Add the visor', p:'M40 30 Q50 20 60 30 Q50 40 40 30' },
+      { t:'Draw the space suit body', p:'M36 46 L64 46 L66 78 L34 78 Z' },
+      { t:'Add the arms', p:'M36 50 L22 64 L26 68 L36 58 M64 50 L78 64 L74 68 L64 58' },
+      { t:'Legs and big boots', p:'M38 78 L38 92 L48 92 L48 78 M52 78 L52 92 L62 92 L62 78' },
+      { t:'The control panel on the chest', p:'M44 54 L56 54 L56 64 L44 64 Z M47 58 L47 58.6 M53 58 L53 58.6' },
+      { t:'Stars all around', p:'M8 20 L8 28 M4 24 L12 24 M88 40 L88 46 M85 43 L91 43 M14 80 L14 84 M86 84 L86 88' },
+      { t:'Color your astronaut!', p:null } ],
+      variants:[ { q:'What is next to them?', choices:[
+        { label:'Nothing', p:null },
+        { label:'A flag', t:'Plant a flag', p:'M84 92 L84 58 M84 58 L96 62 L84 66' },
+        { label:'A rocket', t:'Draw a little rocket', p:'M10 50 Q14 38 18 50 L18 64 L10 64 Z M10 58 L6 66 L10 64 M18 58 L22 66 L18 64' } ] } ] },
+    { id:'pumpkin', name:'Jack-o’-lantern', cat:'Holidays', hard:2, steps:[
+      { t:'Draw a big round pumpkin', p:'M50 30 Q20 28 16 56 Q16 84 50 86 Q84 84 84 56 Q80 28 50 30' },
+      { t:'Add the curved lines', tip:'They follow the round sides.', p:'M36 33 Q24 58 36 84 M64 33 Q76 58 64 84' },
+      { t:'Draw the stem', p:'M46 31 L44 16 L53 14 L54 31' },
+      { t:'Add a curly vine', p:'M53 18 Q66 8 72 18 Q62 22 53 18' },
+      { t:'Color your pumpkin orange!', p:null } ],
+      variants:[ { q:'What face?', choices:[
+        { label:'Happy', t:'Carve a happy face', p:'M34 50 L42 42 L46 52 Z M66 50 L58 42 L54 52 Z M34 64 Q50 80 66 64 Q50 72 34 64 M44 68 L44 73 M56 68 L56 73' },
+        { label:'Spooky', t:'Carve a spooky face', p:'M34 48 L44 52 L34 56 Z M66 48 L56 52 L66 56 Z M32 68 L38 62 L44 70 L50 62 L56 70 L62 62 L68 68' },
+        { label:'No face', p:null } ] } ] },
+    { id:'xmastree', name:'Christmas tree', cat:'Holidays', hard:2, steps:[
+      { t:'Draw the zigzag tree', tip:'Three layers, wider at the bottom.', p:'M50 10 L30 36 L40 36 L22 60 L36 60 L16 84 L84 84 L64 60 L78 60 L60 36 L70 36 Z' },
+      { t:'Add the trunk', p:'M44 84 L44 96 L56 96 L56 84' },
+      { t:'Put a star on top', p:'M50 1 L52.4 6.5 L58.5 7 L53.9 11 L55.3 17 L50 14 L44.7 17 L46.1 11 L41.5 7 L47.6 6.5 Z' },
+      { t:'Hang ornaments', p:'M40 50 A3 3 0 1 0 46 50 A3 3 0 1 0 40 50 M56 44 A3 3 0 1 0 62 44 A3 3 0 1 0 56 44 M34 72 A3 3 0 1 0 40 72 A3 3 0 1 0 34 72 M60 70 A3 3 0 1 0 66 70 A3 3 0 1 0 60 70 M48 64 A3 3 0 1 0 54 64 A3 3 0 1 0 48 64' },
+      { t:'Add tinsel', p:'M36 40 Q50 48 62 38 M28 64 Q50 74 72 62' },
+      { t:'Color your tree!', p:null } ],
+      variants:[ { q:'Anything under the tree?', choices:[
+        { label:'Presents', t:'Draw two presents', p:'M12 86 L26 86 L26 96 L12 96 Z M12 90 L26 90 M19 86 L19 96 M74 88 L88 88 L88 96 L74 96 Z M81 88 L81 96' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'snowflake', name:'Snowflake', cat:'Holidays', hard:1, steps:[
+      { t:'Draw three lines crossing in the middle', tip:'Like a star with six points.', p:'M50 10 L50 90 M84.6 30 L15.4 70 M84.6 70 L15.4 30' },
+      { t:'Add little V branches on every arm', p:'M50 24 L43.6 16.3 M50 24 L56.4 16.3 M50 76 L56.4 83.7 M50 76 L43.6 83.7 M72.5 37 L75.9 27.6 M72.5 37 L82.35 38.7 M72.5 63 L82.35 61.3 M72.5 63 L75.9 72.4 M27.5 37 L17.65 38.7 M27.5 37 L24.1 27.6 M27.5 63 L24.1 72.4 M27.5 63 L17.65 61.3' },
+      { t:'Draw a hexagon in the middle', p:'M50 42 L57 46 L57 54 L50 58 L43 54 L43 46 Z' },
+      { t:'Color it icy blue!', p:null } ] },
+    { id:'easteregg', name:'Easter egg', cat:'Holidays', hard:1, steps:[
+      { t:'Draw an egg', p:'M50 12 Q76 12 78 52 Q78 88 50 88 Q22 88 22 52 Q24 12 50 12' },
+      { t:'Add a zigzag band', p:'M23 46 L30 40 L37 46 L44 40 L51 46 L58 40 L65 46 L72 40 L77 45' },
+      { t:'Add a wavy band', p:'M22 62 Q29 56 36 62 T50 62 T64 62 T78 62' },
+      { t:'Dots on top and bottom', p:'M40 28 A3 3 0 1 0 46 28 A3 3 0 1 0 40 28 M54 26 A3 3 0 1 0 60 26 A3 3 0 1 0 54 26 M46 76 A3 3 0 1 0 52 76 A3 3 0 1 0 46 76' },
+      { t:'Color your egg!', p:null } ] },
+    { id:'soccer', name:'Soccer ball', cat:'Sports', hard:2, steps:[
+      { t:'Draw a big circle', p:'M18 50 A32 32 0 1 0 82 50 A32 32 0 1 0 18 50' },
+      { t:'A five-sided shape in the middle', tip:'A pentagon — five straight sides.', p:'M50 38 L61.4 46.3 L57.1 59.7 L42.9 59.7 L38.6 46.3 Z' },
+      { t:'Lines out to the edge', p:'M50 38 L50 19 M61.4 46.3 L79 41 M57.1 59.7 L68 76 M42.9 59.7 L32 76 M38.6 46.3 L21 41' },
+      { t:'Shade the middle shape dark', p:'M50 38 L61.4 46.3 L57.1 59.7 L42.9 59.7 L38.6 46.3 Z', shade:true },
+      { t:'Whoosh lines — it’s flying!', p:'M4 30 L11 32 M2 50 L11 50 M4 70 L11 68' } ] },
+    { id:'trophy', name:'Trophy', cat:'Sports', hard:2, steps:[
+      { t:'Draw the cup', p:'M32 18 L68 18 Q68 52 50 58 Q32 52 32 18' },
+      { t:'Add two handles', p:'M32 24 Q18 24 20 36 Q22 44 34 44 M68 24 Q82 24 80 36 Q78 44 66 44' },
+      { t:'The stem and the base', p:'M46 58 L46 72 L54 72 L54 58 M36 72 L64 72 L66 84 L34 84 Z' },
+      { t:'A star on the cup', p:'M50 28 L52.4 33 L58 33.5 L53.8 37 L55 42.5 L50 39.6 L45 42.5 L46.2 37 L42 33.5 L47.6 33 Z' },
+      { t:'Sparkles — you won!', p:'M20 10 L20 16 M17 13 L23 13 M82 8 L82 14 M79 11 L85 11' },
+      { t:'Color it gold!', p:null } ] },
+    { id:'skateboard', name:'Skateboard', cat:'Sports', hard:1, steps:[
+      { t:'Draw the board', tip:'A long flat shape with round ends.', p:'M10 50 Q10 42 20 42 L80 42 Q90 42 90 50 Q90 58 80 58 L20 58 Q10 58 10 50' },
+      { t:'Add the metal parts underneath', p:'M24 58 L24 64 L34 64 L34 58 M66 58 L66 64 L76 64 L76 58' },
+      { t:'Draw the wheels', p:'M24 69 A5 5 0 1 0 34 69 A5 5 0 1 0 24 69 M66 69 A5 5 0 1 0 76 69 A5 5 0 1 0 66 69' },
+      { t:'Color your skateboard!', p:null } ],
+      variants:[ { q:'What design?', choices:[
+        { label:'Flames', t:'Draw flames on the board', p:'M26 50 Q32 44 38 50 Q44 44 50 50 Q56 44 62 50 Q68 44 74 50' },
+        { label:'Lightning', t:'Draw a lightning bolt', p:'M40 44 L54 50 L46 50 L60 56' },
+        { label:'Plain', p:null } ] } ] },
+  ];
+  LESSONS.push(...WORLD_LESSONS);
+
   const lessonD = L => L.steps.filter(s => s.p && !s.helper).map(s => s.p).join(' ');
   const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const mk = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
@@ -3171,15 +3283,21 @@
   const BRUSHES = [
     ['pencil','✏️','Pencil'], ['marker','🖊️','Marker'], ['crayon','🖍️','Crayon'], ['water','💧','Watercolor'],
     ['spray','💨','Spray'], ['rainbow','🌈','Rainbow'], ['glitter','✨','Glitter'], ['neon','💡','Neon'],
-    ['fill','🪣','Fill'], ['stamp','⭐','Stamps'], ['eraser','🧽','Eraser']
+    ['shape','🔷','Shapes'], ['fill','🪣','Fill'], ['stamp','⭐','Stamps'], ['eraser','🧽','Eraser']
   ];
   const STAMPS = ['⭐','❤️','🌸','🦋','🌈','✨','🐾','🍭','☁️','🌙','🍀','🎈'];
   const PAPERS = [['cream','Cream'],['white','White'],['dots','Dots'],['lines','Lines'],['black','Black']];
   const PAPERBASE = { cream:'#fbf8f0', white:'#ffffff', dots:'#fbf8f0', lines:'#fbf8f0', black:'#15121a' };
-  let dW = 0, dH = 0, dpr = 1, color = RED, size = 10, brush = 'marker', undo = [], redo = [], stamp = STAMPS[0], mirror = 0;
+  let dW = 0, dH = 0, dpr = 1, color = RED, size = 10, brush = 'marker', undo = [], redo = [], stamp = STAMPS[0], shapeKind = 'rect', mirror = 0;
   let paper = store.get('paper', 'cream');
   let raw = null, lesson = null, dmode = null, step = 0, stepPts = [], scores = [], warned = false, showGuideOn = true;
-  const sw = $('swatches'), brushRow = $('brushes'), stampRow = $('stampRow');
+  const sw = $('swatches'), brushRow = $('brushes'), stampRow = $('stampRow'), shapeRow = $('shapeRow');
+  const SHAPES = [['line','╱','Line'], ['rect','▭','Box'], ['circle','◯','Circle'], ['tri','△','Triangle'], ['star','☆','Star'], ['heart','♡','Heart']];
+  SHAPES.forEach(([id, e, n]) => {
+    const b = mk('button', 'stampbtn shapebtn', `<span>${e}</span>`); b.dataset.s = id; b.title = n; b.setAttribute('aria-label', n);
+    b.onclick = () => { shapeKind = id; brush = 'shape'; syncDrawTools(); };
+    shapeRow.appendChild(b);
+  });
   BRUSHES.forEach(([id, e, n]) => {
     const b = mk('button','tool', `<span>${e}</span><b>${n}</b>`); b.dataset.b = id; b.title = n;
     b.onclick = () => { brush = id; syncDrawTools(); };
@@ -3199,6 +3317,8 @@
     brushRow.querySelectorAll('.tool').forEach(b => b.setAttribute('aria-pressed', b.dataset.b === brush));
     sw.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', brush !== 'eraser' && b.dataset.c.toLowerCase() === color.toLowerCase()));
     stampRow.hidden = brush !== 'stamp';
+    shapeRow.hidden = brush !== 'shape';
+    shapeRow.querySelectorAll('.shapebtn').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === shapeKind));
     stampRow.querySelectorAll('.stampbtn').forEach(b => b.setAttribute('aria-pressed', b.textContent === stamp));
     $('dSize').value = size;
     const dot = $('dSizeDot'), px = Math.max(4, Math.min(30, size));
@@ -3226,7 +3346,7 @@
   function pushUndo(){ const img = grab(); if(img){ undo.push(img); if(undo.length > 12) undo.shift(); } redo = []; }
   $('dUndo').onclick = () => { const img = undo.pop(); if(!img) return; const cur = grab(); if(cur) redo.push(cur); pctx.putImageData(img, 0, 0); syncDrawTools(); };
   $('dRedo').onclick = () => { const img = redo.pop(); if(!img) return; const cur = grab(); if(cur) undo.push(cur); pctx.putImageData(img, 0, 0); syncDrawTools(); };
-  $('dClear').onclick = () => { pushUndo(); clearPaint(); stepPts = []; if(dmode === 'color') drawColoringLines(); syncDrawTools(); };
+  $('dClear').onclick = () => { pushUndo(); clearPaint(); stepPts = []; if(dmode === 'color') drawColoringLines(); recordFrame(); syncDrawTools(); };
   function snapshot(){
     const w = Math.min(720, paint.width), h = Math.round(paint.height*w/paint.width);
     const c = document.createElement('canvas'); c.width = w; c.height = h;
@@ -3371,12 +3491,19 @@
     pushUndo();
     const p = ptOf(e);
     stepPts.push(p);
-    if(brush === 'fill'){ mirrors().forEach(f => floodFill(f(p))); syncDrawTools(); return; }
+    if(brush === 'shape'){ stroke = { id:e.pointerId, shape:true, start:p, base:grab() }; return; }
+    if(brush === 'fill'){ mirrors().forEach(f => floodFill(f(p))); recordFrame(); syncDrawTools(); return; }
     stroke = { id:e.pointerId, hue:Math.random()*360, segs:mirrors().map(f => ({ f, last:f(p), mid:f(p), stampAt:f(p) })) };
     stroke.segs.forEach(s => brush === 'stamp' ? putStamp(s.last) : dab(s.last));
   });
   paint.addEventListener('pointermove', e => {
     if(!stroke || e.pointerId !== stroke.id) return;
+    if(stroke.shape){
+      if(stroke.base) pctx.putImageData(stroke.base, 0, 0);
+      const p = ptOf(e);
+      mirrors().forEach(f => drawShape(f(stroke.start), f(p)));
+      return;
+    }
     const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
     (evs.length ? evs : [e]).forEach(ev => {
       const p = ptOf(ev);
@@ -3389,8 +3516,85 @@
       if(stepPts.length < 6000) stepPts.push(p);
     });
   });
-  const dUp = e => { if(stroke && e.pointerId === stroke.id){ resetPen(); stroke = null; syncDrawTools(); } };
+  const dUp = e => { if(stroke && e.pointerId === stroke.id){ resetPen(); stroke = null; recordFrame(); syncDrawTools(); } };
   ['pointerup','pointercancel','lostpointercapture'].forEach(t => paint.addEventListener(t, dUp));
+
+  // ---- shapes: drag to make a line, box, circle, triangle, star or heart ----
+  function drawShape(a, b){
+    const x0 = Math.min(a.x, b.x), y0 = Math.min(a.y, b.y), w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y), cx = x0 + w/2, cy = y0 + h/2;
+    resetPen(); roundPen(size); pctx.strokeStyle = color; pctx.beginPath();
+    if(shapeKind === 'line'){ pctx.moveTo(a.x, a.y); pctx.lineTo(b.x, b.y); }
+    else if(shapeKind === 'rect') pctx.rect(x0, y0, w, h);
+    else if(shapeKind === 'circle') pctx.ellipse(cx, cy, Math.max(1, w/2), Math.max(1, h/2), 0, 0, Math.PI*2);
+    else if(shapeKind === 'tri'){ pctx.moveTo(cx, y0); pctx.lineTo(x0 + w, y0 + h); pctx.lineTo(x0, y0 + h); pctx.closePath(); }
+    else if(shapeKind === 'star'){
+      const R = Math.max(1, Math.min(w, h)/2), r = R*.45;
+      for(let i = 0; i < 10; i++){
+        const ang = -Math.PI/2 + i*Math.PI/5, rad = i % 2 ? r : R, px = cx + Math.cos(ang)*rad, py = cy + Math.sin(ang)*rad;
+        if(i) pctx.lineTo(px, py); else pctx.moveTo(px, py);
+      }
+      pctx.closePath();
+    }
+    else if(shapeKind === 'heart'){
+      pctx.moveTo(cx, y0 + h*.3);
+      pctx.bezierCurveTo(cx, y0, x0, y0, x0, y0 + h*.3);
+      pctx.bezierCurveTo(x0, y0 + h*.6, cx, y0 + h*.8, cx, y0 + h);
+      pctx.bezierCurveTo(cx, y0 + h*.8, x0 + w, y0 + h*.6, x0 + w, y0 + h*.3);
+      pctx.bezierCurveTo(x0 + w, y0, cx, y0, cx, y0 + h*.3);
+    }
+    pctx.stroke();
+  }
+
+  // ---- your name in bubble letters, ready to color in ----
+  function bubbleName(text){
+    const t = text.trim().slice(0, 12);
+    if(!t){ toast('Type your name first'); return; }
+    const c = document.createElement('canvas'); c.width = paint.width; c.height = paint.height;
+    const o = c.getContext('2d'); o.scale(dpr, dpr);
+    let fs = Math.min(dH*.34, 170);
+    const setFont = () => { o.font = `800 ${fs}px Nunito, "Arial Rounded MT Bold", sans-serif`; };
+    setFont();
+    while(o.measureText(t).width + fs*.35 > dW*.9 && fs > 18){ fs -= 4; setFont(); }
+    const x = dW/2, y = dH*.56, fat = fs*.2, lw = Math.max(3, fs*.04);
+    o.textAlign = 'center'; o.textBaseline = 'middle'; o.lineJoin = 'round';
+    o.strokeStyle = INK; o.fillStyle = INK; o.lineWidth = fat;
+    o.strokeText(t, x, y); o.fillText(t, x, y);
+    o.globalCompositeOperation = 'destination-out'; o.lineWidth = fat - lw*2;
+    o.strokeText(t, x, y); o.fillText(t, x, y);
+    pushUndo();
+    pctx.save(); pctx.setTransform(1,0,0,1,0,0); pctx.drawImage(c, 0, 0); pctx.restore();
+    recordFrame(); syncDrawTools();
+    toast('Now color your name in — try 🪣 Fill and ✨ Glitter!');
+  }
+  $('dName').onclick = () => { const r = $('nameRow'); r.hidden = !r.hidden; $('dName').setAttribute('aria-pressed', !r.hidden); if(!r.hidden) $('dNameIn').focus(); };
+  $('dNameAdd').onclick = () => { bubbleName($('dNameIn').value); $('nameRow').hidden = true; $('dName').setAttribute('aria-pressed', false); };
+  $('dNameIn').onkeydown = e => { if(e.key === 'Enter') $('dNameAdd').click(); };
+
+  // ---- replay: watch your drawing build itself again ----
+  let drawFrames = [], replayT = 0;
+  function recordFrame(){
+    if(!paint.width) return;
+    const w = 360, h = Math.max(1, Math.round(paint.height*w/paint.width)), c = document.createElement('canvas');
+    c.width = w; c.height = h; c.getContext('2d').drawImage(paint, 0, 0, w, h);
+    drawFrames.push(c);
+    if(drawFrames.length > 400) drawFrames.splice(1, 1);
+  }
+  function stopReplay(){ clearTimeout(replayT); $('replayC').hidden = true; }
+  $('dReplay').onclick = () => {
+    if(drawFrames.length < 2){ toast('Draw something first, then watch it again!'); return; }
+    const rc = $('replayC'), r = dwrap.getBoundingClientRect(), rx = rc.getContext('2d');
+    rc.width = Math.round(r.width); rc.height = Math.round(r.height); rc.hidden = false;
+    const step = Math.max(40, Math.min(250, 4000/drawFrames.length));
+    let i = 0;
+    const show = () => {
+      rx.fillStyle = PAPERBASE[paper] || '#fbf8f0'; rx.fillRect(0, 0, rc.width, rc.height);
+      rx.drawImage(drawFrames[i], 0, 0, rc.width, rc.height);
+      i++;
+      replayT = setTimeout(i < drawFrames.length ? show : stopReplay, i < drawFrames.length ? step : 1200);
+    };
+    show();
+  };
+  $('replayC').onclick = stopReplay;
 
   // ---- lesson geometry: sample each path into points (for the "video" and for checking your drawing) ----
   const SVGNS = 'http://www.w3.org/2000/svg';
@@ -3590,6 +3794,7 @@
     drawRef(); gctx.clearRect(0,0,dW,dH);
     clearPaint(); undo = []; redo = [];
     drawColoringLines();
+    drawFrames = []; recordFrame();
     brush = 'fill'; color = '#f6c945'; syncDrawTools();
   }
   function goNextLesson(nextL){ stack[stack.length-1].arg = nextL.id; open('draw', nextL.id); }
@@ -3690,6 +3895,7 @@
       $('drawbar').hidden = false; paint.style.pointerEvents = ''; toastEl.hidden = true;
       brush = 'marker'; color = RED; mirror = 0; syncDrawTools();
       dW = dH = 0; sizeDraw(); clearPaint(); undo = []; redo = []; stepPts = []; syncDrawTools();
+      stopReplay(); drawFrames = []; recordFrame(); $('nameRow').hidden = true; $('dName').setAttribute('aria-pressed', false);
       if(raw){ $('dSay').innerHTML = `<span class="count">${raw.steps.length} STEPS</span>${raw.name}`; setBtns([]); drawRef(); askMode(); }
     },
     leave(){ cancelAnimationFrame(araf); }
