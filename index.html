@@ -501,6 +501,23 @@
   .bmcell:hover{border-color:#57505f}
   .bmcell.on{background:var(--c);border-color:var(--c);box-shadow:0 0 12px var(--c)}
   .bmcell.now{outline:2px solid #fbf7ecaa;outline-offset:-2px}
+  .bmname{min-height:38px;width:170px;max-width:100%;padding:6px 12px;border-radius:10px;border:1px solid var(--edge);background:#0e0c12;color:var(--ivory);font:700 14px inherit}
+  .bmname:focus{outline:2px solid var(--brass-lit);outline-offset:1px}
+  .bmsaved{min-height:0;overflow:auto;margin:0 12px 12px;padding:12px;border-radius:12px;background:#0e0c12;box-shadow:inset 0 0 0 1px #ffffff12}
+  .bmsaved h2{margin:0 0 10px;font-size:18px}
+  .bmlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+  .bmitem{display:grid;gap:8px;padding:12px;border-radius:12px;border:1px solid var(--edge);background:var(--panel)}
+  .bmitem.cur{border-color:var(--brass-lit)}
+  .bmitem b{font-size:16px}
+  .bmitem small{color:var(--muted);font-weight:700}
+  .bmmini{display:grid;grid-template-columns:repeat(16,1fr);gap:2px}
+  .bmmini i{height:6px;border-radius:2px;background:#25212b}
+  .bmmini i.on{background:var(--brass-lit)}
+  .bmacts{display:flex;flex-wrap:wrap;gap:6px}
+  .bmacts button{min-height:34px;padding:6px 10px;border-radius:999px;border:1px solid var(--edge);background:#1b1820;font-weight:800;font-size:13px}
+  .bmacts button:hover{border-color:var(--brass-deep)}
+  .bmacts button.warn{border-color:#d7263d;color:#ff8a95}
+  .bmempty{color:var(--muted);font-weight:700}
   .quiz-view{grid-template-rows:auto auto minmax(0,1fr) auto auto;background:linear-gradient(180deg,var(--lacquer),#161220)}
   .qzdots{display:flex;justify-content:center;gap:6px;padding:6px 12px}
   .qzdots i{width:12px;height:12px;border-radius:50%;background:#ffffff1c}
@@ -1001,10 +1018,16 @@
       <label class="bmtempo">Speed <input type="range" id="bmTempo" min="60" max="160" value="110"> <b id="bmBpm">110</b></label>
       <div class="bmpresets" id="bmPresets" role="group" aria-label="Starter beats"></div>
       <button class="btn" id="bmClear">Clear</button>
-      <button class="btn go" id="bmSave">Save my beat</button>
+      <input class="bmname" id="bmName" maxlength="30" placeholder="Name your beat" aria-label="Beat name">
+      <button class="btn go" id="bmSave">💾 Save</button>
+      <button class="btn" id="bmMine" aria-pressed="false">📂 My beats</button>
       <span class="status" id="bmStatus"></span>
     </div>
-    <div class="bmgridwrap"><div class="bmgrid" id="bmGrid"></div></div>
+    <div class="bmgridwrap" id="bmGridWrap"><div class="bmgrid" id="bmGrid"></div></div>
+    <div class="bmsaved" id="bmSaved" hidden>
+      <h2>📂 My saved beats</h2>
+      <div class="bmlist" id="bmList"></div>
+    </div>
   </section>
 
   <section class="view listview" data-view="gamesMenu" hidden>
@@ -1167,7 +1190,7 @@
       master = ctx.createGain(); master.gain.value = .7;
       master.connect(comp); comp.connect(ctx.destination);
     }
-    if(ctx.state !== 'running') ctx.resume();
+    if(ctx.state !== 'running' && !(window.OfflineAudioContext && ctx instanceof OfflineAudioContext)) ctx.resume();
   }
   const freq = m => 440*Math.pow(2,(m-69)/12);
   function makeVoice(m){
@@ -2898,8 +2921,8 @@
           { label:'Blushing cheeks', t:'Add blushing cheeks', p:'M30 56 A5 4 0 1 0 40 56 A5 4 0 1 0 30 56 M60 56 A5 4 0 1 0 70 56 A5 4 0 1 0 60 56' },
           { label:'Nothing', p:null } ] } ] },
   ];
-  const CATS = ['Basics','Crazy good','Crazy!','People','Animals','Monsters','Ocean','Space','Holidays','Sports','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
-  const CATICON = { Basics:'✏️', 'Crazy good':'💎', 'Crazy!':'🤪', People:'🧑', Animals:'🐟', Ocean:'🌊', Space:'🪐', Holidays:'🎃', Sports:'⚽', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
+  const CATS = ['Basics','Realistic','Crazy good','Crazy!','People','Animals','Monsters','Ocean','Space','Holidays','Sports','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
+  const CATICON = { Basics:'✏️', Realistic:'📷', 'Crazy good':'💎', 'Crazy!':'🤪', People:'🧑', Animals:'🐟', Ocean:'🌊', Space:'🪐', Holidays:'🎃', Sports:'⚽', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
 
   // ---- more drawings ----
   const MORE_LESSONS = [
@@ -3374,8 +3397,91 @@
   ];
   LESSONS.push(...PRO_LESSONS);
 
-  const lessonD = L => L.steps.filter(s => s.p && !s.helper).map(s => s.p).join(' ');
-  const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  // ---- realistic: soft shading, highlights, no hard outlines ----
+  const RBALL = 'M28 46 A22 22 0 1 0 72 46 A22 22 0 1 0 28 46';
+  const REGG = 'M50 18 Q72 18 74 52 Q74 82 50 82 Q26 82 26 52 Q28 18 50 18';
+  const RAPPLE = 'M50 30 C34 18 16 32 20 58 C24 80 40 88 50 82 C60 88 76 80 80 58 C84 32 66 18 50 30';
+  const REYE = 'M12 52 Q50 26 88 52 Q50 74 12 52', RIRIS = 'M38 52 A12 12 0 1 0 62 52 A12 12 0 1 0 38 52';
+  const REAL_LESSONS = [
+    { id:'rball', name:'Realistic ball', cat:'Realistic', hard:2, real:true, steps:[
+      { t:'Draw a circle very lightly', tip:'Real drawings don’t have dark outlines — keep this line soft.', faint:true, p:RBALL },
+      { t:'Decide where the light comes from', tip:'Here the light shines from the top left.', helper:true, p:'M6 6 L20 20 M20 20 L13 19 M20 20 L19 13' },
+      { t:'Shade the ball softly', tip:'Light near the top left, getting darker towards the bottom right.', p:RBALL, tone:{ type:'radial', a:[40,36], r:34, dark:.72 } },
+      { t:'Draw the shadow it casts on the table', tip:'Shadows stretch away from the light.', p:'M40 74 A26 6 0 1 0 92 74 A26 6 0 1 0 40 74', tone:{ type:'radial', a:[60,73], r:30, dark:.55, invert:true } },
+      { t:'Make it darkest right under the ball', p:'M38 69 A12 2.5 0 1 0 62 69 A12 2.5 0 1 0 38 69', tone:{ type:'radial', a:[50,69], r:12, dark:.85, invert:true } },
+      { t:'Lift out a shiny spot', p:'M36 35 A4.5 4 0 1 0 45 35 A4.5 4 0 1 0 36 35', erase:true } ] },
+    { id:'regg', name:'Realistic egg', cat:'Realistic', hard:1, real:true, steps:[
+      { t:'Draw the egg shape lightly', faint:true, p:REGG },
+      { t:'Shade from light to dark', tip:'The light is top left, so the bottom right is darkest.', p:REGG, tone:{ type:'linear', a:[32,26], b:[72,80], dark:.6 } },
+      { t:'Add a soft shadow on the table', p:'M40 86 A30 5.5 0 1 0 100 86 A30 5.5 0 1 0 40 86', tone:{ type:'radial', a:[64,85], r:32, dark:.5, invert:true } },
+      { t:'Darkest where it touches the table', p:'M36 81 A14 2.2 0 1 0 64 81 A14 2.2 0 1 0 36 81', tone:{ type:'radial', a:[50,81], r:14, dark:.9, invert:true } },
+      { t:'Lift out a soft highlight', p:'M36 34 Q40 26 46 28 Q42 36 36 34', erase:true } ] },
+    { id:'rapple', name:'Realistic apple', cat:'Realistic', hard:2, real:true, steps:[
+      { t:'Draw the apple shape lightly', faint:true, p:RAPPLE },
+      { t:'Draw the stem', p:'M50 30 Q50 20 55 12' },
+      { t:'Add a leaf', faint:true, p:'M53 20 Q66 10 76 16 Q66 26 53 20' },
+      { t:'Shade the apple — light top left, dark bottom right', p:RAPPLE, tone:{ type:'radial', a:[36,44], r:46, dark:.7 } },
+      { t:'Shade the dip around the stem', p:'M42 31 Q50 38 58 31 Q50 34 42 31 Z', tone:{ type:'radial', a:[50,33], r:10, dark:.6, invert:true } },
+      { t:'Shade the leaf', p:'M53 20 Q66 10 76 16 Q66 26 53 20', tone:{ type:'linear', a:[56,16], b:[74,20], dark:.45 } },
+      { t:'Add its shadow', p:'M36 90 A30 5.5 0 1 0 96 90 A30 5.5 0 1 0 36 90', tone:{ type:'radial', a:[62,89], r:32, dark:.5, invert:true } },
+      { t:'Lift out a shiny highlight', p:'M29 47 Q31 38 38 36 Q35 46 29 47', erase:true } ] },
+    { id:'rcherries', name:'Realistic cherries', cat:'Realistic', hard:2, real:true, steps:[
+      { t:'Draw two round cherries lightly', faint:true, p:'M22 66 A13 13 0 1 0 48 66 A13 13 0 1 0 22 66 M52 72 A13 13 0 1 0 78 72 A13 13 0 1 0 52 72' },
+      { t:'Draw the stems joining at the top', p:'M35 53 Q40 30 58 14 M65 59 Q63 36 58 14' },
+      { t:'Add a leaf', faint:true, p:'M58 14 Q72 6 84 12 Q72 22 58 14' },
+      { t:'Shade the leaf', p:'M58 14 Q72 6 84 12 Q72 22 58 14', tone:{ type:'linear', a:[60,12], b:[82,14], dark:.5 } },
+      { t:'Shade the first cherry', tip:'Cherries are dark — shade them strongly, but keep the top left lighter.', p:'M22 66 A13 13 0 1 0 48 66 A13 13 0 1 0 22 66', tone:{ type:'radial', a:[30,60], r:17, dark:1 } },
+      { t:'Shade the second cherry', p:'M52 72 A13 13 0 1 0 78 72 A13 13 0 1 0 52 72', tone:{ type:'radial', a:[60,66], r:17, dark:1 } },
+      { t:'A soft shadow underneath', p:'M24 88 A30 5 0 1 0 84 88 A30 5 0 1 0 24 88', tone:{ type:'radial', a:[54,88], r:32, dark:.5, invert:true } },
+      { t:'Lift out two shiny spots', p:'M27 60 A2.5 2.5 0 1 0 32 60 A2.5 2.5 0 1 0 27 60 M57 66 A2.5 2.5 0 1 0 62 66 A2.5 2.5 0 1 0 57 66', erase:true } ] },
+    { id:'rcube', name:'Realistic cube', cat:'Realistic', hard:2, real:true, steps:[
+      { t:'Draw the front face lightly', faint:true, p:'M22 40 L62 40 L62 80 L22 80 Z' },
+      { t:'Draw the top face', faint:true, p:'M22 40 L38 24 L78 24 L62 40 Z' },
+      { t:'Draw the side face', faint:true, p:'M62 40 L78 24 L78 64 L62 80 Z' },
+      { t:'Shade the top very lightly', tip:'The top faces the light, so it is the lightest.', p:'M22 40 L38 24 L78 24 L62 40 Z', tone:{ type:'linear', a:[30,30], b:[72,34], dark:.16 } },
+      { t:'Shade the front a medium grey', p:'M22 40 L62 40 L62 80 L22 80 Z', tone:{ type:'linear', a:[24,42], b:[60,80], dark:.36 } },
+      { t:'Shade the side darkest', p:'M62 40 L78 24 L78 64 L62 80 Z', tone:{ type:'linear', a:[64,34], b:[78,72], dark:.68 } },
+      { t:'Add the shadow on the ground', tip:'Darkest next to the cube, fading away.', p:'M62 80 L78 64 L98 67 L86 85 Z', tone:{ type:'linear', a:[68,76], b:[96,70], dark:.6, invert:true } } ] },
+    { id:'reye', name:'Realistic eye', cat:'Realistic', hard:3, real:true, steps:[
+      { t:'Draw the eye shape lightly', faint:true, p:REYE },
+      { t:'Add the crease above the eye', faint:true, p:'M18 45 Q50 20 82 45' },
+      { t:'Draw the round iris in the middle', faint:true, p:RIRIS },
+      { t:'Draw short lines out from the middle', tip:'Like the spokes of a bike wheel.', faint:true, p:'M50 41 L50 46 M58 44 L54.5 47.5 M61 52 L56 52 M58 60 L54.5 56.5 M50 63 L50 58 M42 60 L45.5 56.5 M39 52 L44 52 M42 44 L45.5 47.5' },
+      { t:'Shade the iris — darker at the edge', p:RIRIS, tone:{ type:'radial', a:[50,52], r:12, dark:.55 } },
+      { t:'Fill in the dark pupil', p:'M45 52 A5 5 0 1 0 55 52 A5 5 0 1 0 45 52', tone:{ type:'solid', dark:.92 } },
+      { t:'Shade under the top eyelid', tip:'The eyelid casts a soft shadow on the eyeball.', p:REYE, tone:{ type:'linear', a:[50,66], b:[50,32], dark:.38 } },
+      { t:'Lift out the shiny highlight', tip:'This tiny white spot makes the eye look alive!', p:'M53 45 A3 3 0 1 0 59 45 A3 3 0 1 0 53 45', erase:true },
+      { t:'Add eyelashes', faint:true, p:'M20 46 Q16 43 13 38 M30 40 Q26 36 25 30 M42 36 Q39 31 39 25 M56 36 Q58 31 58 25 M68 39 Q72 35 73 29 M79 45 Q83 42 86 37' } ] },
+  ];
+  LESSONS.push(...REAL_LESSONS);
+
+  const lessonD = L => L.steps.filter(s => s.p && !s.helper && !s.tone && !s.erase).map(s => s.p).join(' ');
+  // realistic lessons are drawn as SVG with soft graphite gradients, highlights and faint outlines
+  function svgArt(L, cur, uid){
+    let defs = '', body = '';
+    L.steps.forEach((st, i) => {
+      if(!st.p || st.helper) return;
+      const on = i === cur, ring = on ? ' stroke="#2f7fd8" stroke-width="2"' : ' stroke="none"';
+      if(st.tone){
+        const T = st.tone, id = `${uid}-${L.id}-${i}`, d = T.dark || .5;
+        if(T.type === 'solid'){ body += `<path d="${st.p}" fill="#2a2330" fill-opacity="${d}"${ring}/>`; return; }
+        const stops = T.invert
+          ? `<stop offset="0" stop-color="#2a2330" stop-opacity="${d}"/><stop offset="1" stop-color="#2a2330" stop-opacity="0"/>`
+          : `<stop offset="0" stop-color="#2a2330" stop-opacity="0"/><stop offset=".55" stop-color="#2a2330" stop-opacity="${d*.45}"/><stop offset="1" stop-color="#2a2330" stop-opacity="${d}"/>`;
+        defs += T.type === 'linear'
+          ? `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${T.a[0]}" y1="${T.a[1]}" x2="${T.b[0]}" y2="${T.b[1]}">${stops}</linearGradient>`
+          : `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${T.a[0]}" cy="${T.a[1]}" r="${T.r}">${stops}</radialGradient>`;
+        body += `<path d="${st.p}" fill="url(#${id})"${ring}/>`;
+      } else if(st.erase) body += `<path d="${st.p}" fill="#fbf8f0"${ring}/>`;
+      else if(st.shade) body += `<path d="${st.p}" fill="${on ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
+      else body += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : st.faint ? '#2a233055' : '#2a2330'}" stroke-width="${on ? 4 : st.faint ? 1.4 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    });
+    return `<defs>${defs}</defs>${body}`;
+  }
+  const thumb = L => L.real
+    ? `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true">${svgArt(L, -1, 't')}</svg>`
+    : `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const mk = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
   const STICKERS = ['⭐','❤️','🌈','😀','🐟','🦄','🔥','🍦'];
 
@@ -3500,7 +3606,7 @@
                   '#17c3b2','#3bb273','#9bd35a','#f6c945','#f28c28','#b5651d','#8a5a3b','#f5d6b4','#c0c0c0','#000000'];
   const RED = '#d7263d', INK = '#2a2330';
   const BRUSHES = [
-    ['pencil','✏️','Pencil'], ['marker','🖊️','Marker'], ['crayon','🖍️','Crayon'], ['water','💧','Watercolor'],
+    ['pencil','✏️','Pencil'], ['soft','🌫️','Soft shade'], ['smudge','👆','Blend'], ['marker','🖊️','Marker'], ['crayon','🖍️','Crayon'], ['water','💧','Watercolor'],
     ['spray','💨','Spray'], ['rainbow','🌈','Rainbow'], ['glitter','✨','Glitter'], ['neon','💡','Neon'],
     ['shape','🔷','Shapes'], ['fill','🪣','Fill'], ['stamp','⭐','Stamps'], ['eraser','🧽','Eraser']
   ];
@@ -3614,6 +3720,43 @@
     pctx.moveTo(x, y - s); pctx.quadraticCurveTo(x, y, x + s, y); pctx.quadraticCurveTo(x, y, x, y + s);
     pctx.quadraticCurveTo(x, y, x - s, y); pctx.quadraticCurveTo(x, y, x, y - s); pctx.fill();
   }
+  // soft graphite: overlapping soft dots that build up gently, like shading with the side of a pencil
+  const dabCache = {};
+  const hexRgb = h => { const s = (h || '#2a2330').replace('#',''); return [parseInt(s.slice(0,2),16), parseInt(s.slice(2,4),16), parseInt(s.slice(4,6),16)]; };
+  function dabSprite(){
+    const key = color + '|' + size + '|' + dpr;
+    if(dabCache[key]) return dabCache[key];
+    if(Object.keys(dabCache).length > 40) Object.keys(dabCache).forEach(k => delete dabCache[k]);
+    const r = Math.max(3, size*1.2), d = Math.ceil(r*2*dpr), c = document.createElement('canvas');
+    c.width = c.height = d;
+    const x = c.getContext('2d'), g = x.createRadialGradient(d/2, d/2, 0, d/2, d/2, d/2), [R, G, B] = hexRgb(color);
+    g.addColorStop(0, `rgba(${R},${G},${B},.14)`); g.addColorStop(.6, `rgba(${R},${G},${B},.06)`); g.addColorStop(1, `rgba(${R},${G},${B},0)`);
+    x.fillStyle = g; x.fillRect(0, 0, d, d);
+    return dabCache[key] = c;
+  }
+  function softPencil(a, b){
+    const spr = dabSprite(), r = spr.width/dpr/2, dist = Math.hypot(b.x - a.x, b.y - a.y), n = Math.max(1, Math.ceil(dist/(r*.3)));
+    for(let i = 0; i <= n; i++){ const x = a.x + (b.x - a.x)*i/n, y = a.y + (b.y - a.y)*i/n; pctx.drawImage(spr, x - r, y - r, r*2, r*2); }
+  }
+  // blend: pick up the drawing under your finger and push it along, softly
+  let tipC = null;
+  function smudge(a, b){
+    const r = Math.max(5, size*1.3), d = Math.ceil(r*2*dpr), dist = Math.hypot(b.x - a.x, b.y - a.y), n = Math.max(1, Math.ceil(dist/(r*.3)));
+    if(!tipC || tipC.width !== d){ tipC = document.createElement('canvas'); tipC.width = tipC.height = d; }
+    const tx = tipC.getContext('2d');
+    let px = a.x, py = a.y;
+    for(let i = 1; i <= n; i++){
+      const x = a.x + (b.x - a.x)*i/n, y = a.y + (b.y - a.y)*i/n;
+      tx.globalCompositeOperation = 'copy';
+      tx.drawImage(paint, (px - r)*dpr, (py - r)*dpr, d, d, 0, 0, d, d);
+      tx.globalCompositeOperation = 'destination-in';
+      const g = tx.createRadialGradient(d/2, d/2, 0, d/2, d/2, d/2);
+      g.addColorStop(0, 'rgba(0,0,0,.5)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      tx.fillStyle = g; tx.fillRect(0, 0, d, d);
+      pctx.save(); pctx.setTransform(1,0,0,1,0,0); pctx.drawImage(tipC, (x - r)*dpr, (y - r)*dpr); pctx.restore();
+      px = x; py = y;
+    }
+  }
   function roundPen(lw){ pctx.lineCap = 'round'; pctx.lineJoin = 'round'; pctx.lineWidth = lw; }
   function curve(seg, q, style){ // one smooth piece of line from the last point towards q
     const mid = { x:(seg.last.x + q.x)/2, y:(seg.last.y + q.y)/2 };
@@ -3625,6 +3768,8 @@
     const a = seg.last;
     resetPen();
     if(brush === 'pencil' || brush === 'crayon') grain(a, q, brush === 'pencil');
+    else if(brush === 'soft') softPencil(a, q);
+    else if(brush === 'smudge') smudge(a, q);
     else if(brush === 'spray') spray(a, q);
     else if(brush === 'eraser') curve(seg, q, () => { roundPen(size*2.2); pctx.strokeStyle = '#000'; pctx.globalCompositeOperation = 'destination-out'; });
     else if(brush === 'water') curve(seg, q, () => { roundPen(size*1.9); pctx.strokeStyle = color; pctx.globalAlpha = .09; pctx.shadowColor = color; pctx.shadowBlur = size*.7; });
@@ -3653,6 +3798,8 @@
   function dab(p){ // the very first touch of a stroke
     resetPen();
     if(brush === 'pencil' || brush === 'crayon') return grain(p, p, brush === 'pencil');
+    if(brush === 'soft') return softPencil(p, p);
+    if(brush === 'smudge') return;
     if(brush === 'spray') return spray(p, p);
     if(brush === 'glitter') return sparkle(p.x, p.y, 2 + size*.3, GLIT[0]);
     const r = (brush === 'eraser' ? size*2.2 : brush === 'water' ? size*1.9 : size)/2;
@@ -3860,6 +4007,21 @@
     gctx.fillStyle = '#f28bb5'; gctx.fillRect(33,-4,6,8);
     gctx.restore();
   }
+  // soft tonal shading for realistic lessons (k = how strong, 0–1)
+  function toneFill(s, b, k){
+    const P = pathPx(s.p, b);
+    gctx.save(); gctx.setLineDash([]); gctx.clip(P);
+    if(s.erase){ gctx.fillStyle = `rgba(251,248,240,${k})`; gctx.fill(P); gctx.restore(); return; }
+    const T = s.tone, dark = (T.dark || .5)*k, ink = a => `rgba(42,35,48,${a})`;
+    if(T.type === 'solid'){ gctx.fillStyle = ink(dark); gctx.fill(P); gctx.restore(); return; }
+    let g;
+    if(T.type === 'linear'){ const A = mapP(b, { x:T.a[0], y:T.a[1] }), B = mapP(b, { x:T.b[0], y:T.b[1] }); g = gctx.createLinearGradient(A.x, A.y, B.x, B.y); }
+    else { const A = mapP(b, { x:T.a[0], y:T.a[1] }); g = gctx.createRadialGradient(A.x, A.y, 0, A.x, A.y, T.r*b.S/100); }
+    if(T.invert){ g.addColorStop(0, ink(dark)); g.addColorStop(1, ink(0)); }
+    else { g.addColorStop(0, ink(0)); g.addColorStop(.55, ink(dark*.45)); g.addColorStop(1, ink(dark)); }
+    gctx.fillStyle = g; gctx.fillRect(0, 0, dW, dH);
+    gctx.restore();
+  }
   // frac = how much of the current step the "video" has drawn (null = finished)
   function drawGuide(frac){
     gctx.clearRect(0,0,dW,dH);
@@ -3871,6 +4033,11 @@
       if(!s.p || i > step) return;
       const pts = samples(s.p), cur = i === step, anim = cur && frac != null;
       if(s.helper && i < step){ gctx.setLineDash([lw, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.22)'; gctx.lineWidth = lw*.6; strokePts(pts, b, pts.length); gctx.setLineDash([]); return; }
+      if(s.tone || s.erase){
+        toneFill(s, b, anim ? frac : paper ? 1 : i < step ? .35 : .3);
+        if(!paper && cur && showGuideOn){ gctx.setLineDash([lw*2, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw*.8; gctx.stroke(pathPx(s.p, b)); gctx.setLineDash([]); }
+        return;
+      }
       if(s.shade){
         if(i < step){ if(paper) hatch(s.p, b, 'rgba(42,35,48,.55)', 1); return; }
         if(anim || paper) hatch(s.p, b, paper ? 'rgba(42,35,48,.55)' : 'rgba(47,127,216,.45)', anim ? frac : 1);
@@ -3879,7 +4046,7 @@
       }
       if(i < step){
         if(!paper && !showGuideOn) return;
-        gctx.setLineDash([]); gctx.strokeStyle = paper ? '#2a2330' : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? lw : lw*.8;
+        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? 'rgba(42,35,48,.38)' : '#2a2330') : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? (s.faint ? lw*.6 : lw) : lw*.8;
         strokePts(pts, b, pts.length); return;
       }
       if(anim){
@@ -3887,7 +4054,7 @@
         gctx.setLineDash([]); gctx.strokeStyle = paper ? '#2a2330' : '#2f7fd8'; gctx.lineWidth = lw*1.15;
         strokePts(pts, b, k); tip = mapP(b, pts[k-1]);
       } else if(paper){
-        gctx.setLineDash([]); gctx.strokeStyle = '#2a2330'; gctx.lineWidth = lw; strokePts(pts, b, pts.length);
+        gctx.setLineDash([]); gctx.strokeStyle = s.faint ? 'rgba(42,35,48,.38)' : '#2a2330'; gctx.lineWidth = s.faint ? lw*.6 : lw; strokePts(pts, b, pts.length);
       } else if(showGuideOn){
         gctx.setLineDash([lw*2.2, lw*1.8]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw; strokePts(pts, b, pts.length);
       }
@@ -3933,6 +4100,7 @@
   $('vSpeed').onclick = () => { vid.speed = vid.speed === 1 ? .5 : 1; vidSync(); };
   $('vLoop').onclick = () => { vid.loop = !vid.loop; if(vid.loop && !vid.playing){ vid.p = 0; vid.playing = true; vid.last = performance.now(); } vidSync(); };
   function drawRef(){
+    if(lesson.real){ $('dRefSvg').innerHTML = svgArt(lesson, dmode ? step : -1, 'ref'); return; }
     let s = '';
     lesson.steps.forEach((st,i) => {
       if(!st.p || st.helper) return;
@@ -4001,7 +4169,7 @@
     const b = box(), lw = Math.max(3, b.S*.013);
     pctx.save(); resetPen();
     pctx.strokeStyle = INK; pctx.lineWidth = lw; pctx.lineCap = 'round'; pctx.lineJoin = 'round';
-    lesson.steps.forEach(s => { if(s.p && !s.helper) pctx.stroke(pathPx(s.p, b)); });
+    lesson.steps.forEach(s => { if(s.p && !s.helper && !s.tone && !s.erase) pctx.stroke(pathPx(s.p, b)); });
     pctx.restore();
   }
   const shortName = () => raw.name.toLowerCase().replace(/^(a|an) /,'');
@@ -4033,18 +4201,20 @@
   function showStep(i){
     step = i; stepPts = []; warned = false;
     const s = lesson.steps[step], n = lesson.steps.length, last = step === n-1;
-    $('dSay').innerHTML = `<span class="count">STEP ${step+1} OF ${n}</span>${s.t}${s.tip ? `<span class="tipline">Tip: ${s.tip}</span>` : !s.p ? '<span class="tipline">Tip: pick 🪣 Fill and tap inside a shape to color it in.</span>' : ''}`;
+    $('dSay').innerHTML = `<span class="count">STEP ${step+1} OF ${n}</span>${s.t}${s.tip ? `<span class="tipline">Tip: ${s.tip}</span>` : s.tone ? '<span class="tipline">Tip: use 🌫️ Soft shade, then 👆 Blend to make it smooth.</span>' : s.erase ? '<span class="tipline">Tip: use the 🧽 eraser to lift out a shiny spot.</span>' : !s.p ? '<span class="tipline">Tip: pick 🪣 Fill and tap inside a shape to color it in.</span>' : ''}`;
     setBtns([
       s.p && { label:'▶ Watch again', fn:watch },
       step > 0 && { label:'◀', fn:() => showStep(step-1) },
       { label:last ? 'Finish ✓' : 'Next step ▶', cls:'go', fn:nextStep }
     ]);
+    // realistic lessons hand you the right tool for each step
+    if(dmode === 'screen' && lesson.real){ brush = s.tone ? 'soft' : s.erase ? 'eraser' : 'pencil'; color = INK; syncDrawTools(); }
     drawRef(); watch();
   }
   function scoreStep(s){
     if(!stepPts.length) return 0;
     const b = box();
-    if(s.shade){ const P = pathPx(s.p, b); let inside = 0; stepPts.forEach(p => { if(hitCtx.isPointInPath(P, p.x, p.y)) inside++; }); return Math.min(1, inside/60); }
+    if(s.shade || s.tone || s.erase){ const P = pathPx(s.p, b); let inside = 0; stepPts.forEach(p => { if(hitCtx.isPointInPath(P, p.x, p.y)) inside++; }); return Math.min(1, inside/(s.erase ? 15 : 60)); }
     const pts = samples(s.p).filter((_,i) => i % 3 === 0), thr = b.S*.055, t2 = thr*thr;
     let cov = 0;
     pts.forEach(p => { const q = mapP(b, p); for(const u of stepPts){ const dx = u.x-q.x, dy = u.y-q.y; if(dx*dx + dy*dy < t2){ cov++; break; } } });
@@ -4054,7 +4224,7 @@
     const s = lesson.steps[step];
     if(dmode === 'screen' && s.p){
       const sc = scoreStep(s);
-      if(sc < .25 && !warned){ warned = true; toast(s.shade ? 'Shade inside the blue area first — or tap Next again to skip' : 'Trace the blue dotted line first — or tap Next again to skip'); return; }
+      if(sc < .25 && !warned){ warned = true; toast(s.erase ? 'Rub out a shiny spot with the 🧽 eraser — or tap Next again to skip' : (s.shade || s.tone) ? 'Shade inside the blue area first — or tap Next again to skip' : 'Trace the blue dotted line first — or tap Next again to skip'); return; }
       scores.push(sc);
       toast(sc >= .8 ? 'Awesome! Super close to the line ⭐' : sc >= .5 ? 'Good job! 👍' : 'Nice try — keep practicing!');
     }
@@ -4120,7 +4290,7 @@
     leave(){ cancelAnimationFrame(araf); }
   };
 
-  // ================= GUITAR =================
+// ================= GUITAR =================
   const CHORDS = { C:'x32010', G:'320003', D:'xx0232', A:'x02220', E:'022100', Am:'x02210', Em:'022000', Dm:'xx0231', F:'xx3211' };
   const OPEN = [40,45,50,55,59,64], SNAMES = ['E','A','D','G','B','e'];
   const chordNotes = c => [...CHORDS[c]].map((ch,i) => ch === 'x' ? null : OPEN[i] + +ch);
@@ -5382,14 +5552,119 @@
     function syncSound(){ $('bmSound').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === bm.sound)); voice = bm.sound; }
     $('bmSound').querySelectorAll('button').forEach(b => b.onclick = () => { bm.sound = b.dataset.v; syncSound(); unlock(); noteOn(72); setTimeout(() => noteOff(72), 250); });
     $('bmClear').onclick = () => { bm.drums = blank(5); bm.mel = blank(8); renderGrid(); sayB('Cleared — tap the squares to make a new beat.'); };
+    // ---- saved beats: a list you can open, play, download or delete ----
+    const copyBeat = b => JSON.parse(JSON.stringify({ drums:b.drums, mel:b.mel, bpm:b.bpm, sound:b.sound || 'box' }));
+    const countOn = b => b.drums.flat().filter(Boolean).length + b.mel.flat().filter(Boolean).length;
+    let saved = null; // kept in memory too, so saving still works when the browser won't store things
+    const loadSaved = () => { if(!saved){ const s = store.get('beats', []); saved = Array.isArray(s) ? s : []; } return saved; };
+    const putSaved = () => { store.set('beats', saved); };
     $('bmSave').onclick = () => {
-      store.set('beat', bm);
+      const list = loadSaved(), on = countOn(bm);
+      if(!on) return sayB('It’s empty! Tap some squares first, then save.');
+      let nm = $('bmName').value.trim().slice(0, 30);
+      if(!nm){ let k = list.length + 1; while(list.some(x => x.name === 'Beat ' + k)) k++; nm = 'Beat ' + k; $('bmName').value = nm; }
+      const old = list.find(x => x.name.toLowerCase() === nm.toLowerCase());
+      const item = { ...copyBeat(bm), name:nm, date:Date.now(), id:old ? old.id : 'b' + Date.now().toString(36) };
+      if(old) list[list.indexOf(old)] = item; else list.unshift(item);
+      if(list.length > 60) list.length = 60;
+      putSaved(); store.set('beat', bm);
       saveStars('game.beats', 3); gainXP(10);
-      const on = bm.drums.flat().filter(Boolean).length + bm.mel.flat().filter(Boolean).length;
-      sayB(on ? `Saved your beat! +10 XP 🎉 (${on} sounds)` : 'Saved — but it’s empty! Tap some squares first.');
+      sayB(`${old ? 'Updated' : 'Saved'} <b>${nm.replace(/</g,'&lt;')}</b>! +10 XP 🎉 Find it in 📂 My beats.`);
+      if(!$('bmSaved').hidden) renderSaved();
     };
+    function showSaved(on){
+      $('bmSaved').hidden = !on; $('bmGridWrap').hidden = on;
+      $('bmMine').setAttribute('aria-pressed', on);
+      $('bmMine').textContent = on ? '🎹 Back to grid' : '📂 My beats';
+      if(on){ bmStop(); renderSaved(); }
+    }
+    $('bmMine').onclick = () => showSaved($('bmSaved').hidden);
+    function openBeat(x, play){
+      bmStop();
+      bm = copyBeat(x); $('bmName').value = x.name;
+      syncSound(); syncTempo(); renderGrid(); showSaved(false);
+      sayB(`Opened <b>${x.name.replace(/</g,'&lt;')}</b> — change it and press 💾 Save to update it.`);
+      if(play) $('bmPlay').onclick();
+    }
+    function renderSaved(){
+      const el = $('bmList'), list = loadSaved(); el.innerHTML = '';
+      if(!list.length){ el.appendChild(mkEl('p', 'bmempty', 'No saved beats yet. Make a beat, give it a name and press 💾 Save!')); return; }
+      list.forEach(x => {
+        const card = mkEl('div', 'bmitem' + (x.name === $('bmName').value ? ' cur' : ''));
+        card.appendChild(mkEl('b', null, x.name.replace(/</g,'&lt;')));
+        card.appendChild(mkEl('small', null, `${new Date(x.date).toLocaleDateString()} · ${x.bpm} bpm · ${countOn(x)} sounds`));
+        const mini = mkEl('div', 'bmmini');
+        for(let s = 0; s < STEPS; s++) mini.appendChild(mkEl('i', x.drums.some(r => r[s]) || x.mel.some(r => r[s]) ? 'on' : null));
+        card.appendChild(mini);
+        const acts = mkEl('div', 'bmacts');
+        const act = (label, fn, cls) => { const b = mkEl('button', cls || null, label); b.onclick = () => fn(b); acts.appendChild(b); };
+        act('▶ Play', () => { unlock(); openBeat(x, true); });
+        act('✏️ Open', () => openBeat(x, false));
+        act('⬇ Download', b => downloadBeat(x, b));
+        act('🗑', b => {
+          if(!b.classList.contains('warn')){ b.classList.add('warn'); b.textContent = 'Tap again to delete'; setTimeout(() => { b.classList.remove('warn'); b.textContent = '🗑'; }, 2500); return; }
+          saved = list.filter(y => y !== x); putSaved(); renderSaved();
+        });
+        card.appendChild(acts);
+        el.appendChild(card);
+      });
+    }
+    // ---- download: render the beat to a WAV sound file (2 times round) ----
+    function wavBlob(buf){
+      const ch = buf.numberOfChannels, len = buf.length, rate = buf.sampleRate, data = new DataView(new ArrayBuffer(44 + len*ch*2));
+      const w = (o, s) => [...s].forEach((c, i) => data.setUint8(o + i, c.charCodeAt(0)));
+      w(0, 'RIFF'); data.setUint32(4, 36 + len*ch*2, true); w(8, 'WAVE'); w(12, 'fmt ');
+      data.setUint32(16, 16, true); data.setUint16(20, 1, true); data.setUint16(22, ch, true); data.setUint32(24, rate, true);
+      data.setUint32(28, rate*ch*2, true); data.setUint16(32, ch*2, true); data.setUint16(34, 16, true); w(36, 'data'); data.setUint32(40, len*ch*2, true);
+      const chans = Array.from({ length:ch }, (_, c) => buf.getChannelData(c));
+      let o = 44;
+      for(let i = 0; i < len; i++) for(let c = 0; c < ch; c++){ const v = Math.max(-1, Math.min(1, chans[c][i])); data.setInt16(o, v < 0 ? v*0x8000 : v*0x7fff, true); o += 2; }
+      return new Blob([data], { type:'audio/wav' });
+    }
+    let rendering = false;
+    async function downloadBeat(x, btn){
+      const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+      if(!OAC || rendering) return;
+      rendering = true; btn.textContent = '⏳ Making file…'; bmStop(); unlock();
+      Object.keys(voices).forEach(m => delete voices[m]); // live notes just ring out
+      const rate = 44100, step = 60/x.bpm/4, loops = 2, secs = STEPS*loops*step + 2.5;
+      const oc = new OAC(2, Math.ceil(secs*rate), rate);
+      const liveCtx = ctx, liveMaster = master, liveVoice = voice;
+      const comp = oc.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+      const om = oc.createGain(); om.gain.value = .7; om.connect(comp); comp.connect(oc.destination);
+      // run every sound at its moment by pausing the offline render there
+      const events = new Map(), q = t => Math.round(t*rate/128)*128/rate;
+      const at = (t, fn) => { const k = q(t); if(!events.has(k)) events.set(k, []); events.get(k).push(fn); };
+      for(let L = 0; L < loops; L++) for(let s = 0; s < STEPS; s++){
+        const t = (L*STEPS + s)*step;
+        x.drums.forEach((r, i) => { if(r[s]) at(t, () => hit(BM_DRUMS[i][0])); });
+        x.mel.forEach((r, i) => { if(r[s]){ const m = BM_NOTES[i]; at(t, () => noteOn(m)); at(t + step*1.8, () => noteOff(m)); } });
+      }
+      [...events.keys()].sort((a, b) => a - b).forEach(k => {
+        if(k <= 0){ return; }
+        oc.suspend(k).then(() => { ctx = oc; master = om; voice = x.sound || 'box'; events.get(k).forEach(f => f()); ctx = liveCtx; master = liveMaster; voice = liveVoice; oc.resume(); });
+      });
+      try{
+        ctx = oc; master = om; voice = x.sound || 'box';
+        (events.get(0) || []).forEach(f => f());
+        ctx = liveCtx; master = liveMaster; voice = liveVoice;
+        const buf = await oc.startRendering();
+        Object.keys(voices).forEach(m => delete voices[m]);
+        const url = URL.createObjectURL(wavBlob(buf)), a = document.createElement('a');
+        a.href = url; a.download = (x.name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'my-beat') + '.wav';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+        btn.textContent = '✅ Downloaded';
+        sayB(window.top !== window.self ? 'If nothing downloaded, open the app on its website — this preview blocks downloads.' : `Downloaded <b>${x.name.replace(/</g,'&lt;')}</b> as a sound file 🎧`);
+      }catch(e){
+        ctx = liveCtx; master = liveMaster; voice = liveVoice;
+        btn.textContent = '⬇ Download'; sayB('Sorry — couldn’t make the sound file on this device.');
+      }
+      rendering = false;
+      setTimeout(() => { if(btn.isConnected) btn.textContent = '⬇ Download'; }, 3000);
+    }
     hooks.beats = {
-      enter(){ bmPrevVoice = voice; bm = loadBeat(); if(!bm.sound) bm.sound = 'box'; syncSound(); syncTempo(); renderGrid(); sayB('Tap squares to turn sounds on, or try a starter beat.'); },
+      enter(){ bmPrevVoice = voice; bm = loadBeat(); if(!bm.sound) bm.sound = 'box'; showSaved(false); syncSound(); syncTempo(); renderGrid(); sayB('Tap squares to turn sounds on, or try a starter beat.'); },
       leave(){ bmStop(); if(bmPrevVoice) voice = bmPrevVoice; }
     };
 
