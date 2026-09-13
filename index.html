@@ -376,6 +376,35 @@
   .vbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
   .vbar b{flex:1 1 auto;font-size:16px}
 
+  /* ---- draw studio: brushes, fill, stamps, mirror, papers ---- */
+  .drawbar{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:8px;padding:8px 12px 12px}
+  .toolrow,.optrow,.stamprow{display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:thin;padding-bottom:3px}
+  .stamprow[hidden]{display:none}
+  .tool{flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:64px;padding:6px 6px 5px;
+    border-radius:12px;border:1px solid var(--edge);background:var(--panel)}
+  .tool span{font-size:22px;line-height:1.15}
+  .tool b{font-size:11px;font-weight:800;color:var(--muted)}
+  .tool:hover{border-color:#57505f}
+  .tool[aria-pressed="true"]{background:var(--ivory);border-color:var(--ivory)}
+  .tool[aria-pressed="true"] b{color:var(--ink)}
+  .optrow .swatches{flex:none;flex-wrap:nowrap;gap:5px}
+  .optrow .sw{flex:none;width:30px;height:30px}
+  .custom{flex:none;position:relative;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+    background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red);box-shadow:inset 0 0 0 2px #0005}
+  .custom input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+  .custom span{font-size:14px;pointer-events:none}
+  .sizebox{flex:none;display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:999px;border:1px solid var(--edge);background:var(--panel)}
+  .sizedot{flex:none;display:block;width:10px;height:10px;border-radius:50%;box-shadow:0 0 0 1px #fff6}
+  .sizebox input{width:110px;accent-color:var(--brass)}
+  .optrow .btn{flex:none}
+  .stampbtn{flex:none;width:46px;height:46px;border-radius:12px;border:1px solid var(--edge);background:var(--panel);font-size:24px;line-height:1}
+  .stampbtn[aria-pressed="true"]{border-color:var(--brass-lit);box-shadow:0 0 0 2px var(--brass-lit)}
+  .dwrap.paper-cream{background:#fbf8f0}
+  .dwrap.paper-white{background:#ffffff}
+  .dwrap.paper-dots{background:#fbf8f0 radial-gradient(circle,#c9bfae 1.3px,transparent 1.7px) 0 0/22px 22px}
+  .dwrap.paper-lines{background:#fbf8f0 repeating-linear-gradient(180deg,transparent 0 27px,#cfe0ef 27px 28px)}
+  .dwrap.paper-black{background:#15121a}
+
   /* ---- guitar ---- */
   .guitar-view{grid-template-rows:auto auto auto minmax(0,1fr)}
   .chordbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:2px 16px 10px}
@@ -647,20 +676,18 @@
       <div class="toast" id="dToast" hidden></div>
     </div>
     <div class="drawbar" id="drawbar">
-      <div class="seg" id="brushes" role="group" aria-label="Brush">
-        <button data-b="pencil" aria-pressed="false">Pencil</button>
-        <button data-b="marker" aria-pressed="true">Marker</button>
-        <button data-b="crayon" aria-pressed="false">Crayon</button>
+      <div class="stamprow" id="stampRow" role="group" aria-label="Stamps" hidden></div>
+      <div class="toolrow" id="brushes" role="group" aria-label="Brushes and tools"></div>
+      <div class="optrow">
+        <div class="swatches" id="swatches" role="group" aria-label="Colors"></div>
+        <label class="custom" title="Pick any color"><input type="color" id="dCustom" value="#d7263d" aria-label="Pick any color"><span>🎨</span></label>
+        <div class="sizebox" title="Brush size"><span class="sizedot" id="dSizeDot"></span><input type="range" id="dSize" min="2" max="60" value="10" aria-label="Brush size"></div>
+        <button class="btn" id="dMirror" aria-pressed="false">⧉ Mirror: off</button>
+        <button class="btn" id="dPaper">📄 Cream</button>
+        <button class="btn" id="dUndo" aria-label="Undo">↶</button>
+        <button class="btn" id="dRedo" aria-label="Redo">↷</button>
+        <button class="btn" id="dClear">Clear</button>
       </div>
-      <div class="swatches" id="swatches" role="group" aria-label="Colors"></div>
-      <div class="sizes" id="sizes" role="group" aria-label="Brush size">
-        <button data-s="4" aria-label="Thin"><i style="width:5px;height:5px"></i></button>
-        <button data-s="10" aria-pressed="true" aria-label="Medium"><i style="width:10px;height:10px"></i></button>
-        <button data-s="24" aria-label="Thick"><i style="width:18px;height:18px"></i></button>
-      </div>
-      <button class="btn" id="dErase" aria-pressed="false">Eraser</button>
-      <button class="btn" id="dUndo">↶ Undo</button>
-      <button class="btn" id="dClear">Clear</button>
     </div>
     <input type="file" id="photoIn" accept="image/*" capture="environment" hidden>
   </section>
@@ -2785,6 +2812,8 @@
     remove(id){ this.save(this.list().filter(e => e.id !== id)); }
   };
 
+  const canStore = (() => { try{ localStorage.setItem('ultimateLearn._t','1'); localStorage.removeItem('ultimateLearn._t'); return true; }catch(e){ return false; } })();
+  const saveMsg = ok => ok ? 'Saved to My drawings' : canStore ? 'My drawings is full — delete some first' : 'This browser can’t save drawings';
   // ---- what do you like to draw? (personalises the path, like Simply Draw) ----
   const likes = () => store.get('likes', null);
   function askLikes(){
@@ -2880,23 +2909,50 @@
   // ---- canvas + tools ----
   const paint = $('paint'), guideC = $('guide'), dwrap = $('dwrap');
   const pctx = paint.getContext('2d'), gctx = guideC.getContext('2d'), hitCtx = document.createElement('canvas').getContext('2d');
-  const COLORS = ['#2a2330','#d7263d','#f28bb5','#f28c28','#f6c945','#3bb273','#2f7fd8','#7b4fc9','#8a5a3b','#ffffff'];
-  let dW = 0, dH = 0, dpr = 1, color = COLORS[1], size = 10, brush = 'marker', erasing = false, undo = [];
+  const COLORS = ['#2a2330','#6d6272','#ffffff','#d7263d','#ff6b6b','#f28bb5','#e056fd','#7b4fc9','#2f7fd8','#48c6ef',
+                  '#17c3b2','#3bb273','#9bd35a','#f6c945','#f28c28','#b5651d','#8a5a3b','#f5d6b4','#c0c0c0','#000000'];
+  const RED = '#d7263d', INK = '#2a2330';
+  const BRUSHES = [
+    ['pencil','✏️','Pencil'], ['marker','🖊️','Marker'], ['crayon','🖍️','Crayon'], ['water','💧','Watercolor'],
+    ['spray','💨','Spray'], ['rainbow','🌈','Rainbow'], ['glitter','✨','Glitter'], ['neon','💡','Neon'],
+    ['fill','🪣','Fill'], ['stamp','⭐','Stamps'], ['eraser','🧽','Eraser']
+  ];
+  const STAMPS = ['⭐','❤️','🌸','🦋','🌈','✨','🐾','🍭','☁️','🌙','🍀','🎈'];
+  const PAPERS = [['cream','Cream'],['white','White'],['dots','Dots'],['lines','Lines'],['black','Black']];
+  const PAPERBASE = { cream:'#fbf8f0', white:'#ffffff', dots:'#fbf8f0', lines:'#fbf8f0', black:'#15121a' };
+  let dW = 0, dH = 0, dpr = 1, color = RED, size = 10, brush = 'marker', undo = [], redo = [], stamp = STAMPS[0], mirror = 0;
+  let paper = store.get('paper', 'cream');
   let raw = null, lesson = null, dmode = null, step = 0, stepPts = [], scores = [], warned = false, showGuideOn = true;
-  const sw = $('swatches');
+  const sw = $('swatches'), brushRow = $('brushes'), stampRow = $('stampRow');
+  BRUSHES.forEach(([id, e, n]) => {
+    const b = mk('button','tool', `<span>${e}</span><b>${n}</b>`); b.dataset.b = id; b.title = n;
+    b.onclick = () => { brush = id; syncDrawTools(); };
+    brushRow.appendChild(b);
+  });
   COLORS.forEach(c => {
     const b = mk('button','sw'); b.style.background = c; b.dataset.c = c; b.setAttribute('aria-label','Color ' + c);
-    b.onclick = () => { color = c; erasing = false; syncDrawTools(); };
+    b.onclick = () => { color = c; if(brush === 'eraser') brush = 'marker'; syncDrawTools(); };
     sw.appendChild(b);
   });
-  document.querySelectorAll('#sizes button').forEach(b => b.onclick = () => { size = +b.dataset.s; syncDrawTools(); });
-  document.querySelectorAll('#brushes button').forEach(b => b.onclick = () => { brush = b.dataset.b; erasing = false; syncDrawTools(); });
-  $('dErase').onclick = () => { erasing = !erasing; syncDrawTools(); };
+  $('dCustom').oninput = e => { color = e.target.value; if(brush === 'eraser') brush = 'marker'; syncDrawTools(); };
+  STAMPS.forEach(s => { const b = mk('button','stampbtn', s); b.onclick = () => { stamp = s; brush = 'stamp'; syncDrawTools(); }; stampRow.appendChild(b); });
+  $('dSize').oninput = e => { size = +e.target.value; syncDrawTools(); };
+  $('dMirror').onclick = () => { mirror = (mirror + 1) % 3; syncDrawTools(); };
+  $('dPaper').onclick = () => { const i = PAPERS.findIndex(p => p[0] === paper); paper = PAPERS[(i + 1) % PAPERS.length][0]; store.set('paper', paper); syncDrawTools(); };
   function syncDrawTools(){
-    sw.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', !erasing && b.dataset.c === color));
-    document.querySelectorAll('#sizes button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.s === size));
-    document.querySelectorAll('#brushes button').forEach(b => b.setAttribute('aria-pressed', !erasing && b.dataset.b === brush));
-    $('dErase').setAttribute('aria-pressed', erasing);
+    brushRow.querySelectorAll('.tool').forEach(b => b.setAttribute('aria-pressed', b.dataset.b === brush));
+    sw.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', brush !== 'eraser' && b.dataset.c.toLowerCase() === color.toLowerCase()));
+    stampRow.hidden = brush !== 'stamp';
+    stampRow.querySelectorAll('.stampbtn').forEach(b => b.setAttribute('aria-pressed', b.textContent === stamp));
+    $('dSize').value = size;
+    const dot = $('dSizeDot'), px = Math.max(4, Math.min(30, size));
+    dot.style.width = dot.style.height = px + 'px';
+    dot.style.background = brush === 'rainbow' ? 'conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red)' : brush === 'eraser' ? 'transparent' : color;
+    $('dMirror').setAttribute('aria-pressed', mirror > 0);
+    $('dMirror').textContent = ['⧉ Mirror: off', '⧉ Mirror', '✳ 4-way'][mirror];
+    PAPERS.forEach(([id]) => dwrap.classList.toggle('paper-' + id, id === paper));
+    $('dPaper').textContent = '📄 ' + PAPERS.find(p => p[0] === paper)[1];
+    $('dUndo').disabled = !undo.length; $('dRedo').disabled = !redo.length;
   }
   function sizeDraw(){
     const r = dwrap.getBoundingClientRect(), w = Math.round(r.width), h = Math.round(r.height);
@@ -2907,68 +2963,177 @@
     [paint, guideC].forEach(c => { c.width = w*dpr; c.height = h*dpr; c.style.width = w+'px'; c.style.height = h+'px'; });
     pctx.setTransform(1,0,0,1,0,0); if(old.width) pctx.drawImage(old, 0, 0);
     pctx.setTransform(dpr,0,0,dpr,0,0); gctx.setTransform(dpr,0,0,dpr,0,0);
-    dW = w; dH = h; undo = []; drawGuide();
+    dW = w; dH = h; undo = []; redo = []; drawGuide();
   }
   function clearPaint(){ pctx.save(); pctx.setTransform(1,0,0,1,0,0); pctx.clearRect(0,0,paint.width,paint.height); pctx.restore(); }
-  function pushUndo(){ try{ undo.push(pctx.getImageData(0,0,paint.width,paint.height)); if(undo.length > 10) undo.shift(); }catch(e){} }
-  $('dUndo').onclick = () => { const img = undo.pop(); if(img) pctx.putImageData(img, 0, 0); };
-  $('dClear').onclick = () => { pushUndo(); clearPaint(); stepPts = []; };
+  function grab(){ try{ return pctx.getImageData(0,0,paint.width,paint.height); }catch(e){ return null; } }
+  function pushUndo(){ const img = grab(); if(img){ undo.push(img); if(undo.length > 12) undo.shift(); } redo = []; }
+  $('dUndo').onclick = () => { const img = undo.pop(); if(!img) return; const cur = grab(); if(cur) redo.push(cur); pctx.putImageData(img, 0, 0); syncDrawTools(); };
+  $('dRedo').onclick = () => { const img = redo.pop(); if(!img) return; const cur = grab(); if(cur) undo.push(cur); pctx.putImageData(img, 0, 0); syncDrawTools(); };
+  $('dClear').onclick = () => { pushUndo(); clearPaint(); stepPts = []; if(dmode === 'color') drawColoringLines(); syncDrawTools(); };
   function snapshot(){
     const w = Math.min(720, paint.width), h = Math.round(paint.height*w/paint.width);
     const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const x = c.getContext('2d'); x.fillStyle = '#fbf8f0'; x.fillRect(0,0,w,h); x.drawImage(paint, 0, 0, w, h);
+    const x = c.getContext('2d'); x.fillStyle = PAPERBASE[paper] || '#fbf8f0'; x.fillRect(0,0,w,h); x.drawImage(paint, 0, 0, w, h);
     return c.toDataURL('image/jpeg', .72);
   }
   const toastEl = $('dToast'); let toastT = 0;
   function toast(msg){ toastEl.textContent = msg; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => toastEl.hidden = true, 2200); }
-  $('dSave').onclick = () => toast(J.add({ name:'Playground drawing', img:snapshot() }) ? 'Saved to My drawings! ✨' : 'My drawings is full — delete some first');
+  $('dSave').onclick = () => { const ok = J.add({ name:'Playground drawing', img:snapshot() }); toast(ok ? 'Saved to My drawings! ✨' : saveMsg(false)); };
 
-  // strokes: marker = smooth line; pencil & crayon = grainy texture
+  // ---- strokes: every brush, mirror drawing, fill and stamps ----
   let stroke = null;
   const ptOf = e => { const r = paint.getBoundingClientRect(); return { x:e.clientX - r.left, y:e.clientY - r.top }; };
-  function grain(a, b){
-    const pencil = brush === 'pencil';
+  function mirrors(){
+    const f = [p => p];
+    if(mirror >= 1) f.push(p => ({ x:dW - p.x, y:p.y }));
+    if(mirror === 2) f.push(p => ({ x:p.x, y:dH - p.y }), p => ({ x:dW - p.x, y:dH - p.y }));
+    return f;
+  }
+  function resetPen(){ pctx.globalCompositeOperation = 'source-over'; pctx.globalAlpha = 1; pctx.shadowBlur = 0; }
+  function grain(a, b, pencil){
     const w = pencil ? Math.max(1.6, size*.4) : size*.9, d = Math.hypot(b.x-a.x, b.y-a.y), n = Math.max(1, Math.ceil(d/(pencil ? .7 : 1.4)));
     const dot = pencil ? 1.1 : 1.8, k = pencil ? 3 : 5;
-    pctx.globalCompositeOperation = 'source-over'; pctx.fillStyle = color; pctx.globalAlpha = pencil ? .3 : .45;
+    pctx.fillStyle = color; pctx.globalAlpha = pencil ? .3 : .45;
     for(let i = 0; i <= n; i++){
       const x = a.x + (b.x-a.x)*i/n, y = a.y + (b.y-a.y)*i/n;
       for(let j = 0; j < k; j++){ const r = Math.random()*w/2, an = Math.random()*6.283; pctx.fillRect(x + Math.cos(an)*r - dot/2, y + Math.sin(an)*r - dot/2, dot, dot); }
     }
     pctx.globalAlpha = 1;
   }
-  function smoothStyle(){
-    pctx.lineCap = 'round'; pctx.lineJoin = 'round'; pctx.lineWidth = erasing ? size*2.2 : size;
-    pctx.strokeStyle = color; pctx.fillStyle = erasing ? '#000' : color;
-    pctx.globalCompositeOperation = erasing ? 'destination-out' : 'source-over';
+  function spray(a, b){
+    const d = Math.hypot(b.x-a.x, b.y-a.y), n = Math.max(1, Math.ceil(d/3)), R = size*1.3;
+    pctx.fillStyle = color;
+    for(let i = 0; i <= n; i++){
+      const x = a.x + (b.x-a.x)*i/n, y = a.y + (b.y-a.y)*i/n;
+      for(let j = 0; j < Math.ceil(size*1.2); j++){
+        const r = Math.sqrt(Math.random())*R, an = Math.random()*6.283;
+        pctx.globalAlpha = .35 + Math.random()*.5; pctx.fillRect(x + Math.cos(an)*r, y + Math.sin(an)*r, 1.4, 1.4);
+      }
+    }
+    pctx.globalAlpha = 1;
+  }
+  const GLIT = ['#fff6c8','#f6c945','#ff9ad5','#9be7ff','#ffffff','#c9a0ff'];
+  function sparkle(x, y, s, c){
+    pctx.fillStyle = c; pctx.beginPath();
+    pctx.moveTo(x, y - s); pctx.quadraticCurveTo(x, y, x + s, y); pctx.quadraticCurveTo(x, y, x, y + s);
+    pctx.quadraticCurveTo(x, y, x - s, y); pctx.quadraticCurveTo(x, y, x, y - s); pctx.fill();
+  }
+  function roundPen(lw){ pctx.lineCap = 'round'; pctx.lineJoin = 'round'; pctx.lineWidth = lw; }
+  function curve(seg, q, style){ // one smooth piece of line from the last point towards q
+    const mid = { x:(seg.last.x + q.x)/2, y:(seg.last.y + q.y)/2 };
+    style();
+    pctx.beginPath(); pctx.moveTo(seg.mid.x, seg.mid.y); pctx.quadraticCurveTo(seg.last.x, seg.last.y, mid.x, mid.y); pctx.stroke();
+    seg.mid = mid;
+  }
+  function paintSeg(seg, q){
+    const a = seg.last;
+    resetPen();
+    if(brush === 'pencil' || brush === 'crayon') grain(a, q, brush === 'pencil');
+    else if(brush === 'spray') spray(a, q);
+    else if(brush === 'eraser') curve(seg, q, () => { roundPen(size*2.2); pctx.strokeStyle = '#000'; pctx.globalCompositeOperation = 'destination-out'; });
+    else if(brush === 'water') curve(seg, q, () => { roundPen(size*1.9); pctx.strokeStyle = color; pctx.globalAlpha = .09; pctx.shadowColor = color; pctx.shadowBlur = size*.7; });
+    else if(brush === 'rainbow'){
+      stroke.hue = (stroke.hue + Math.hypot(q.x-a.x, q.y-a.y)*.9) % 360;
+      curve(seg, q, () => { roundPen(size); pctx.strokeStyle = `hsl(${stroke.hue},90%,55%)`; });
+    }
+    else if(brush === 'neon'){
+      const m0 = seg.mid;
+      curve(seg, q, () => { roundPen(size); pctx.strokeStyle = color; pctx.shadowColor = color; pctx.shadowBlur = size*1.6; });
+      resetPen(); roundPen(Math.max(1.5, size*.3)); pctx.strokeStyle = '#ffffffcc';
+      pctx.beginPath(); pctx.moveTo(m0.x, m0.y); pctx.quadraticCurveTo(a.x, a.y, seg.mid.x, seg.mid.y); pctx.stroke();
+    }
+    else if(brush === 'glitter'){
+      curve(seg, q, () => { roundPen(size*.7); pctx.strokeStyle = color; pctx.globalAlpha = .55; });
+      pctx.globalAlpha = 1;
+      const d = Math.hypot(q.x-a.x, q.y-a.y), r = size*1.1;
+      for(let i = 0; i < Math.ceil(d/5); i++){
+        const t = Math.random();
+        sparkle(a.x + (q.x-a.x)*t + (Math.random()-.5)*r*2, a.y + (q.y-a.y)*t + (Math.random()-.5)*r*2, 1.5 + Math.random()*size*.35, GLIT[Math.floor(Math.random()*GLIT.length)]);
+      }
+    }
+    else curve(seg, q, () => { roundPen(size); pctx.strokeStyle = color; }); // marker
+    resetPen();
+  }
+  function dab(p){ // the very first touch of a stroke
+    resetPen();
+    if(brush === 'pencil' || brush === 'crayon') return grain(p, p, brush === 'pencil');
+    if(brush === 'spray') return spray(p, p);
+    if(brush === 'glitter') return sparkle(p.x, p.y, 2 + size*.3, GLIT[0]);
+    const r = (brush === 'eraser' ? size*2.2 : brush === 'water' ? size*1.9 : size)/2;
+    pctx.save();
+    if(brush === 'eraser') pctx.globalCompositeOperation = 'destination-out';
+    if(brush === 'water') pctx.globalAlpha = .09;
+    if(brush === 'neon'){ pctx.shadowColor = color; pctx.shadowBlur = size*1.6; }
+    pctx.fillStyle = brush === 'rainbow' ? `hsl(${stroke.hue},90%,55%)` : brush === 'eraser' ? '#000' : color;
+    pctx.beginPath(); pctx.arc(p.x, p.y, r, 0, 7); pctx.fill();
+    pctx.restore();
+  }
+  function putStamp(p){
+    pctx.save(); resetPen(); pctx.textAlign = 'center'; pctx.textBaseline = 'middle';
+    pctx.font = `${Math.round(size*3 + 12)}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
+    pctx.fillText(stamp, p.x, p.y);
+    pctx.restore();
+  }
+  // paint bucket: fill the area you tap, stopping at lines
+  function floodFill(p){
+    const W = paint.width, H = paint.height, x0 = Math.floor(p.x*dpr), y0 = Math.floor(p.y*dpr);
+    if(x0 < 0 || y0 < 0 || x0 >= W || y0 >= H) return;
+    const img = pctx.getImageData(0, 0, W, H), d = img.data, i0 = (y0*W + x0)*4;
+    const sr = d[i0], sg = d[i0+1], sb = d[i0+2], sa = d[i0+3];
+    const hex = color.replace('#',''), fr = parseInt(hex.slice(0,2),16), fg = parseInt(hex.slice(2,4),16), fb = parseInt(hex.slice(4,6),16);
+    if(sa > 245 && Math.abs(sr-fr) + Math.abs(sg-fg) + Math.abs(sb-fb) < 12) return;
+    const same = j => sa < 40 ? d[j+3] < 110 : (Math.abs(d[j]-sr) + Math.abs(d[j+1]-sg) + Math.abs(d[j+2]-sb) + Math.abs(d[j+3]-sa) < 120);
+    const mask = new Uint8Array(W*H), stack = [[x0, y0]];
+    while(stack.length){
+      let [x, y] = stack.pop(), j = y*W + x;
+      while(x >= 0 && !mask[j] && same(j*4)){ x--; j--; }
+      x++; j++;
+      let up = false, down = false;
+      while(x < W && !mask[j] && same(j*4)){
+        mask[j] = 1;
+        if(y > 0){ const u = j - W; if(!mask[u] && same(u*4)){ if(!up){ stack.push([x, y-1]); up = true; } } else up = false; }
+        if(y < H-1){ const v = j + W; if(!mask[v] && same(v*4)){ if(!down){ stack.push([x, y+1]); down = true; } } else down = false; }
+        x++; j++;
+      }
+    }
+    // grow the filled area by one pixel so no pale edge is left next to the lines
+    for(let j = 0; j < W*H; j++){
+      if(mask[j] !== 1) continue;
+      const x = j % W;
+      if(x > 0 && !mask[j-1]) mask[j-1] = 2;
+      if(x < W-1 && !mask[j+1]) mask[j+1] = 2;
+      if(j >= W && !mask[j-W]) mask[j-W] = 2;
+      if(j + W < W*H && !mask[j+W]) mask[j+W] = 2;
+    }
+    for(let j = 0; j < W*H; j++){ if(mask[j]){ const k = j*4; d[k] = fr; d[k+1] = fg; d[k+2] = fb; d[k+3] = 255; } }
+    pctx.putImageData(img, 0, 0);
   }
   paint.addEventListener('pointerdown', e => {
     if(stroke) return;
     e.preventDefault(); try{ paint.setPointerCapture(e.pointerId); }catch(_){}
     pushUndo();
     const p = ptOf(e);
-    stroke = { id:e.pointerId, last:p, mid:p };
     stepPts.push(p);
-    if(erasing || brush === 'marker'){ smoothStyle(); pctx.beginPath(); pctx.arc(p.x, p.y, pctx.lineWidth/2, 0, 7); pctx.fill(); }
-    else grain(p, p);
+    if(brush === 'fill'){ mirrors().forEach(f => floodFill(f(p))); syncDrawTools(); return; }
+    stroke = { id:e.pointerId, hue:Math.random()*360, segs:mirrors().map(f => ({ f, last:f(p), mid:f(p), stampAt:f(p) })) };
+    stroke.segs.forEach(s => brush === 'stamp' ? putStamp(s.last) : dab(s.last));
   });
   paint.addEventListener('pointermove', e => {
     if(!stroke || e.pointerId !== stroke.id) return;
     const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
-    const smooth = erasing || brush === 'marker';
-    if(smooth) smoothStyle();
     (evs.length ? evs : [e]).forEach(ev => {
       const p = ptOf(ev);
-      if(smooth){
-        const mid = { x:(stroke.last.x + p.x)/2, y:(stroke.last.y + p.y)/2 };
-        pctx.beginPath(); pctx.moveTo(stroke.mid.x, stroke.mid.y); pctx.quadraticCurveTo(stroke.last.x, stroke.last.y, mid.x, mid.y); pctx.stroke();
-        stroke.mid = mid;
-      } else grain(stroke.last, p);
-      stroke.last = p;
+      stroke.segs.forEach(s => {
+        const q = s.f(p);
+        if(brush === 'stamp'){ if(Math.hypot(q.x - s.stampAt.x, q.y - s.stampAt.y) > size*3 + 14){ putStamp(q); s.stampAt = q; } }
+        else paintSeg(s, q);
+        s.last = q;
+      });
       if(stepPts.length < 6000) stepPts.push(p);
     });
   });
-  const dUp = e => { if(stroke && e.pointerId === stroke.id){ pctx.globalCompositeOperation = 'source-over'; stroke = null; } };
+  const dUp = e => { if(stroke && e.pointerId === stroke.id){ resetPen(); stroke = null; syncDrawTools(); } };
   ['pointerup','pointercancel','lostpointercapture'].forEach(t => paint.addEventListener(t, dUp));
 
   // ---- lesson geometry: sample each path into points (for the "video" and for checking your drawing) ----
@@ -3019,7 +3184,7 @@
   // frac = how much of the current step the "video" has drawn (null = finished)
   function drawGuide(frac){
     gctx.clearRect(0,0,dW,dH);
-    if(!lesson || !dmode) return;
+    if(!lesson || !dmode || dmode === 'color') return;
     const b = box(), paper = dmode === 'paper', lw = Math.max(2, b.S*.012);
     gctx.lineCap = 'round'; gctx.lineJoin = 'round';
     let tip = null;
@@ -3109,6 +3274,7 @@
     const opt = (title, sub, fn) => { const b = mk('button','choice',`<b>${title}</b><span>${sub}</span>`); b.onclick = fn; card.appendChild(b); };
     opt('On the screen', 'Trace the lines with your finger or the mouse. I’ll tell you how close you got.', () => afterMode('screen'));
     opt('On paper', 'Watch each step, then draw it with a real pencil. Take a photo at the end.', () => afterMode('paper'));
+    opt('Coloring page', 'The lines are drawn for you. Pick colors, tap 🪣 Fill, add glitter and stamps!', () => afterMode('color'));
     $('modeAsk').hidden = false;
   }
   function afterMode(mode){
@@ -3144,14 +3310,49 @@
     lesson = { ...raw, steps:buildSteps(picks) };
     paint.style.pointerEvents = mode === 'paper' ? 'none' : '';
     $('drawbar').hidden = mode === 'paper';
-    $('dGuide').hidden = mode === 'paper';
-    if(mode === 'screen'){ brush = 'pencil'; color = COLORS[0]; size = 10; erasing = false; syncDrawTools(); }
-    scores = []; sizeDraw(); showStep(0);
+    $('dGuide').hidden = mode !== 'screen';
+    if(mode === 'screen'){ brush = 'pencil'; color = INK; size = 10; syncDrawTools(); }
+    scores = []; sizeDraw();
+    if(mode === 'color') return startColoring();
+    showStep(0);
+  }
+  // ---- coloring page: the lines are already there, you color them in ----
+  function drawColoringLines(){
+    const b = box(), lw = Math.max(3, b.S*.013);
+    pctx.save(); resetPen();
+    pctx.strokeStyle = INK; pctx.lineWidth = lw; pctx.lineCap = 'round'; pctx.lineJoin = 'round';
+    lesson.steps.forEach(s => { if(s.p) pctx.stroke(pathPx(s.p, b)); });
+    pctx.restore();
+  }
+  const shortName = () => raw.name.toLowerCase().replace(/^(a|an) /,'');
+  function startColoring(){
+    cancelAnimationFrame(araf); vid.playing = false; $('vidBar').hidden = true;
+    step = -1;
+    $('dSay').innerHTML = `<span class="count">COLORING PAGE</span>Color in your ${shortName()}!<span class="tipline">Pick a color, choose 🪣 Fill and tap inside a shape. Try ✨ Glitter and ⭐ Stamps too!</span>`;
+    setBtns([{ label:'Done ✓', cls:'go', fn:finishColoring }]);
+    drawRef(); gctx.clearRect(0,0,dW,dH);
+    clearPaint(); undo = []; redo = [];
+    drawColoringLines();
+    brush = 'fill'; color = '#f6c945'; syncDrawTools();
+  }
+  function goNextLesson(nextL){ stack[stack.length-1].arg = nextL.id; open('draw', nextL.id); }
+  function finishColoring(){
+    const xp = 30, ok = J.add({ name:raw.name + ' (colored in)', img:snapshot() });
+    saveStars('draw.' + raw.id, 3); gainXP(xp);
+    const nextL = LESSONS[LESSONS.indexOf(raw) + 1];
+    $('dSay').innerHTML = `<span class="count">ALL DONE</span>What a colorful ${shortName()}! ${starText(3)}<span class="tipline">${saveMsg(ok)}</span>`;
+    setBtns([
+      { label:'Color it again', fn:startColoring },
+      nextL && { label:'Next lesson ▶', cls:'go', fn:() => goNextLesson(nextL) }
+    ]);
+    showResult({ title:'Beautiful colors!', stars:3, xp, lines:[saveMsg(ok)],
+      retry:startColoring, next:nextL ? () => goNextLesson(nextL) : null, nextLabel:nextL ? 'Next lesson ▶' : null });
+    tada();
   }
   function showStep(i){
     step = i; stepPts = []; warned = false;
     const s = lesson.steps[step], n = lesson.steps.length, last = step === n-1;
-    $('dSay').innerHTML = `<span class="count">STEP ${step+1} OF ${n}</span>${s.t}${s.tip ? `<span class="tipline">Tip: ${s.tip}</span>` : ''}`;
+    $('dSay').innerHTML = `<span class="count">STEP ${step+1} OF ${n}</span>${s.t}${s.tip ? `<span class="tipline">Tip: ${s.tip}</span>` : !s.p ? '<span class="tipline">Tip: pick 🪣 Fill and tap inside a shape to color it in.</span>' : ''}`;
     setBtns([
       s.p && { label:'▶ Watch again', fn:watch },
       step > 0 && { label:'◀', fn:() => showStep(step-1) },
@@ -3188,10 +3389,17 @@
       saveStars('draw.'+raw.id, st);
       const ok = J.add({ name:raw.name, img:snapshot() });
       showGuideOn = false; drawGuide();
-      $('dSay').innerHTML = `<span class="count">ALL DONE</span>Beautiful drawing! ${starText(st)}<span class="tipline">${ok ? 'Saved to My drawings.' : 'Couldn’t save — My drawings is full.'}</span>`;
+      $('dSay').innerHTML = `<span class="count">ALL DONE</span>Beautiful drawing! ${starText(st)}<span class="tipline">${saveMsg(ok)}</span>`;
+      const xp = 15 + st*10; gainXP(xp);
+      showResult({ title: st === 3 ? 'Beautiful drawing!' : st === 2 ? 'Nice drawing!' : 'You finished it!', stars:st, xp,
+        lines:[`You stayed ${Math.round(avg*100)}% on the lines`, saveMsg(ok)],
+        retry:() => { clearPaint(); undo = []; redo = []; scores = []; showGuideOn = true; showStep(0); },
+        next:nextL ? () => goNextLesson(nextL) : null, nextLabel:nextL ? 'Next lesson ▶' : null });
     } else {
-      saveStars('draw.'+raw.id, 3);
+      saveStars('draw.'+raw.id, 3); gainXP(30);
       $('dSay').innerHTML = `<span class="count">ALL DONE</span>Great work! ${starText(3)}<span class="tipline">Take a photo of your paper to keep it in My drawings.</span>`;
+      showResult({ title:'Great work on paper!', stars:3, xp:30, lines:['Tap “📷 Take a photo” to keep it in My drawings'],
+        next:nextL ? () => goNextLesson(nextL) : null, nextLabel:nextL ? 'Next lesson ▶' : null });
     }
     setBtns([
       dmode === 'paper' && { label:'📷 Take a photo', cls:'go', fn:() => $('photoIn').click() },
@@ -3208,7 +3416,7 @@
       c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(img.src);
-      toast(J.add({ name:(raw ? raw.name : 'Drawing') + ' (on paper)', img:c.toDataURL('image/jpeg', .75) }) ? 'Photo saved to My drawings! 📷' : 'My drawings is full — delete some first');
+      toast(J.add({ name:(raw ? raw.name : 'Drawing') + ' (on paper)', img:c.toDataURL('image/jpeg', .75) }) ? 'Photo saved to My drawings! 📷' : saveMsg(false));
     };
     img.src = URL.createObjectURL(f); e.target.value = '';
   };
@@ -3223,8 +3431,8 @@
       $('vidBar').hidden = true; vid.playing = false;
       $('modeAsk').hidden = true;
       $('drawbar').hidden = false; paint.style.pointerEvents = ''; toastEl.hidden = true;
-      brush = 'marker'; color = COLORS[1]; erasing = false; syncDrawTools();
-      dW = dH = 0; sizeDraw(); clearPaint(); undo = []; stepPts = [];
+      brush = 'marker'; color = RED; mirror = 0; syncDrawTools();
+      dW = dH = 0; sizeDraw(); clearPaint(); undo = []; redo = []; stepPts = []; syncDrawTools();
       if(raw){ $('dSay').innerHTML = `<span class="count">${raw.steps.length} STEPS</span>${raw.name}`; setBtns([]); drawRef(); askMode(); }
     },
     leave(){ cancelAnimationFrame(araf); }
