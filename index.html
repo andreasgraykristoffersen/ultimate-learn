@@ -568,6 +568,16 @@
   .askpreview svg{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
   .askpreview.dragging svg{cursor:grabbing}
   .askpreview .dragme{position:absolute;left:6px;bottom:6px;padding:2px 8px;border-radius:999px;background:#2a2330cc;color:#fbf7ec;font:800 11px var(--ui);pointer-events:none}
+  .askhead{position:sticky;top:-18px;z-index:3;display:grid;gap:8px;justify-items:center;margin:0 -18px;padding:10px 18px 8px;background:var(--paper);border-bottom:1px solid #d6cab1}
+  .asktabs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  .asktab{padding:7px 12px;border-radius:999px;border:1px solid #cdbfa3;background:#fffaf0;color:var(--ink);font-weight:800;font-size:14px}
+  .asktab[aria-pressed="true"]{background:var(--brass);border-color:var(--brass-deep);color:#1b150c}
+  .askpanel{display:flex;flex-direction:column;gap:9px}
+  .stickpal{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px}
+  .stickbtn{height:44px;border-radius:12px;border:1px solid #cdbfa3;background:#fffaf0;font-size:24px;line-height:1}
+  .stickbtn:hover{border-color:var(--ink)}
+  .signin{min-height:42px;padding:8px 12px;border-radius:12px;border:1px solid #cdbfa3;background:#fffaf0;color:var(--ink);font:italic 700 18px "Segoe Script","Bradley Hand","Comic Sans MS",cursive}
+  .movebox input[type=range]:disabled{opacity:.4}
   .movebox{display:grid;gap:8px}
   .movebox label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px}
   .movebox input[type=range]{flex:1;accent-color:var(--ink)}
@@ -3703,7 +3713,21 @@
   const rPaper = () => RPAPERS.find(p => p[0] === RS.paper) || RPAPERS[0];
   const isToned = () => ['grey','tan','blue'].includes(RS.paper);
   const rgbHex = s => '#' + s.split(',').map(n => (+n).toString(16).padStart(2, '0')).join('');
-  const LI = () => lesson && lesson.real ? inkRGB() : '42,35,48';
+  // ---- line color + paper for the plain (non-realistic) lessons ----
+  const LINE_COLORS = [['ink','⚫ Black','42,35,48'], ['blue','🔵 Blue','34,96,200'], ['red','🔴 Red','215,38,61'], ['purple','🟣 Purple','123,79,201'],
+    ['green','🟢 Green','34,139,84'], ['brown','🟤 Brown','120,72,40'], ['white','⚪ White','250,248,240'], ['rainbow','🌈 Rainbow','']];
+  const PLAIN_PAPERS = [['cream','Cream','#fbf8f0'], ['white','White','#ffffff'], ['sky','Sky blue','#d9ecfb'], ['pink','Pink','#fde0eb'],
+    ['mint','Mint','#d8f3e4'], ['lemon','Lemon','#fff3c2'], ['night','🌙 Night','#1e1b2b']];
+  const hueRGB = h => { const f = n => { const k = (n + h/30) % 12; return Math.round(255*(.45 - .405*Math.max(-1, Math.min(k - 3, 9 - k, 1)))); }; return `${f(0)},${f(8)},${f(4)}`; };
+  function plainInk(i, L){
+    L = L || lesson;
+    const c = (L && L.lineColor) || 'ink';
+    if(c === 'rainbow') return hueRGB(((i || 0)*47) % 360);
+    if(c === 'ink' && L && L.paperId === 'night') return '250,248,240';
+    return (LINE_COLORS.find(x => x[0] === c) || LINE_COLORS[0])[2];
+  }
+  const LI = i => lesson && lesson.real ? inkRGB() : plainInk(i);
+  const escHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   // a tone's darkness curve: [offset, darkness] pairs (core shadow, reflected light…)
   const toneStops = T => T.stops || (T.invert ? [[0,1],[1,0]] : [[0,0],[.55,.45],[1,1]]);
   const toneDark = T => T.dark != null ? T.dark : T.stops ? 1 : .5;
@@ -3714,7 +3738,21 @@
     if(L.flip) t += ' translate(100 0) scale(-1 1)';
     return t.trim();
   }
-  const wrapMove = (L, main, scene) => { const t = svgMove(L); return (t ? `<g transform="${t}">${main}</g>` : main) + scene; };
+  const svgCopyT = c => !c || !(c.dx || c.dy || (c.s && c.s !== 1) || c.mirror) ? ''
+    : `translate(${50 + (c.dx || 0)} ${50 + (c.dy || 0)}) scale(${c.s || 1}) translate(-50 -50)` + (c.mirror ? ' translate(100 0) scale(-1 1)' : '');
+  function wrapMove(L, main, scene){
+    const t = svgMove(L), inner = t ? `<g transform="${t}">${main}</g>` : main;
+    return (L.copies || [{}]).map(c => { const ct = svgCopyT(c); return ct ? `<g transform="${ct}">${inner}</g>` : inner; }).join('') + scene;
+  }
+  function svgExtras(L, sel){
+    let s = '';
+    (L.stickers || []).forEach((st, i) => {
+      if(i === sel) s += `<circle cx="${st.x}" cy="${st.y}" r="${st.s*.66}" fill="none" stroke="#2f7fd8" stroke-width="1" stroke-dasharray="2 1.5"/>`;
+      s += `<text data-si="${i}" x="${st.x}" y="${st.y}" font-size="${st.s}" text-anchor="middle" dominant-baseline="central" style="font-family:${EMOJI_FONT.replace(/"/g, "'")};cursor:move">${st.e}</text>`;
+    });
+    if(L.sign) s += `<text x="100" y="100" text-anchor="end" font-size="7" font-style="italic" font-weight="700" fill="rgb(${L.real ? inkRGB() : plainInk(0, L)})" style="font-family:${SIGN_FONT.replace(/"/g, "'")}">${escHtml(L.sign)}</text>`;
+    return s;
+  }
   function svgArt(L, cur, uid){
     const pre = `${uid}-${L.id}`, ink = inkRGB(), pap = rPaper(), dk = L.darkness || 1, lwk = L.lineW || 1;
     // paper grain: noise punches tiny holes in the graphite, like pencil on real paper
@@ -3747,20 +3785,24 @@
       if(st.scene) scene += s; else main += s;
     });
     const bg = pap[0] === 'cream' ? '' : `<rect x="-6" y="-6" width="112" height="112" fill="${pap[2]}"/>`;
-    return `<defs>${defs}</defs>${bg}<g filter="url(#${pre}-grain)">${wrapMove(L, main, scene)}</g>`;
+    return `<defs>${defs}</defs>${bg}<g filter="url(#${pre}-grain)">${wrapMove(L, main, scene)}</g>${svgExtras(L, L.sel)}`;
   }
   // plain line drawings (all the other lessons)
   function plainArt(L, cur){
     let main = '', scene = '';
-    const lwk = L.lineW || 1;
+    const lwk = L.lineW || 1, ls = L.lineStyle || 'solid';
+    const dash = ls === 'dashed' ? ' stroke-dasharray="7 5"' : ls === 'dotted' ? ' stroke-dasharray="0.1 6"' : '';
     L.steps.forEach((st, i) => {
       if(!st.p || st.helper) return;
-      const on = i === cur;
-      const s = st.shade ? `<path d="${st.p}" fill="${on ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`
-        : `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : '#2a2330'}" stroke-width="${on ? 4 : 3*lwk}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const on = i === cur, ink = plainInk(i, L);
+      let s = st.shade ? `<path d="${st.p}" fill="${on ? '#2f7fd855' : `rgba(${ink},.25)`}" stroke="none"/>`
+        : `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : `rgb(${ink})`}" stroke-width="${on ? 4 : 3*lwk}" stroke-linecap="round" stroke-linejoin="round"${on ? '' : dash}/>`;
+      if(!st.shade && !on && ls === 'sketchy') s += `<path d="${st.p}" fill="none" stroke="rgb(${ink})" stroke-opacity=".5" stroke-width="${1.8*lwk}" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.1 -.8)"/>`;
       if(st.scene) scene += s; else main += s;
     });
-    return wrapMove(L, main, scene);
+    const pp = PLAIN_PAPERS.find(p => p[0] === L.paperId);
+    const bg = pp && pp[0] !== 'cream' ? `<rect x="-6" y="-6" width="112" height="112" fill="${pp[2]}"/>` : '';
+    return bg + wrapMove(L, main, scene) + svgExtras(L, L.sel);
   }
   const thumb = L => L.real
     ? `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true">${svgArt(L, -1, 't')}</svg>`
@@ -3958,7 +4000,7 @@
   function snapshot(){
     const w = Math.min(720, paint.width), h = Math.round(paint.height*w/paint.width);
     const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const x = c.getContext('2d'); x.fillStyle = dwrap.style.background && lesson && lesson.real ? rPaper()[2] : PAPERBASE[paper] || '#fbf8f0'; x.fillRect(0,0,w,h); x.drawImage(paint, 0, 0, w, h);
+    const x = c.getContext('2d'); x.fillStyle = dmode && lesson && lesson.bgHex ? lesson.bgHex : PAPERBASE[paper] || '#fbf8f0'; x.fillRect(0,0,w,h); x.drawImage(paint, 0, 0, w, h);
     return c.toDataURL('image/jpeg', .72);
   }
   const toastEl = $('dToast'); let toastT = 0;
@@ -4264,16 +4306,37 @@
     const tip = $('steptip'), topPad = lesson && !tip.hidden ? tip.offsetHeight + 18 : 12;
     const avail = dH - topPad - 10, S = Math.max(40, Math.min(dW*.9, avail*.94));
     const ox = (dW - S)/2, oy = topPad + (avail - S)/2, k = S/100, M0 = new DOMMatrix([k,0,0,k,ox,oy]);
-    return { S, ox, oy, M0, M:lessonMatrix(M0, lesson), sc:k*((lesson && lesson.move && lesson.move.s) || 1) };
+    const mvs = (lesson && lesson.move && lesson.move.s) || 1;
+    const Ms = ((lesson && lesson.copies) || [{}]).map(c => ({ M:lessonMatrix(M0, lesson, c), sc:k*mvs*(c.s || 1) }));
+    return { S, ox, oy, M0, Ms, M:Ms[0].M, sc:Ms[0].sc };
   }
-  // your drawing can be flipped, moved, made bigger/smaller and turned (scenes and frames stay put)
-  function lessonMatrix(M0, L){
+  // your drawing can be copied, flipped, moved, made bigger/smaller and turned (scenes and frames stay put)
+  const hasCopyT = c => c && (c.dx || c.dy || (c.s && c.s !== 1) || c.mirror);
+  function lessonMatrix(M0, L, c){
     const mv = (L && L.move) || {};
-    let M = M0.translate(50 + (mv.x || 0), 50 + (mv.y || 0)).rotate(mv.r || 0).scale(mv.s || 1).translate(-50, -50);
+    let M = M0;
+    if(hasCopyT(c)){ M = M.translate(50 + (c.dx || 0), 50 + (c.dy || 0)).scale(c.s || 1).translate(-50, -50); if(c.mirror) M = M.translate(100, 0).scale(-1, 1); }
+    M = M.translate(50 + (mv.x || 0), 50 + (mv.y || 0)).rotate(mv.r || 0).scale(mv.s || 1).translate(-50, -50);
     if(L && L.flip) M = M.translate(100, 0).scale(-1, 1);
     return M;
   }
-  const sb = (s, b) => s && s.scene ? { ...b, M:b.M0, sc:b.S/100 } : b;
+  const sb = (s, b) => s && s.scene ? { ...b, M:b.M0, sc:b.S/100, Ms:[{ M:b.M0, sc:b.S/100 }] } : b;
+  const each = (b, fn) => b.Ms.forEach(m => fn({ ...b, M:m.M, sc:m.sc }));
+  // ---- stickers + your name, drawn on top of everything ----
+  const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  const SIGN_FONT = '"Segoe Script","Bradley Hand","Comic Sans MS",cursive';
+  function drawExtras(ctx, B){
+    if(!lesson || (!(lesson.stickers || []).length && !lesson.sign)) return;
+    const k = B.S/100;
+    ctx.save(); ctx.setLineDash([]); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.shadowBlur = 0;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    (lesson.stickers || []).forEach(st => { ctx.font = `${st.s*k}px ${EMOJI_FONT}`; ctx.fillText(st.e, B.ox + st.x*k, B.oy + st.y*k); });
+    if(lesson.sign){
+      ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic'; ctx.font = `italic 700 ${7*k}px ${SIGN_FONT}`;
+      ctx.fillStyle = `rgb(${lesson.real ? inkRGB() : plainInk(0)})`; ctx.fillText(lesson.sign, B.ox + 100*k, B.oy + 100*k);
+    }
+    ctx.restore();
+  }
   const mapP = (b,p) => { const m = b.M; return { x:m.a*p.x + m.c*p.y + m.e, y:m.b*p.x + m.d*p.y + m.f }; };
   function pathPx(d, b){ const P = new Path2D(); P.addPath(new Path2D(d), b.M); return P; }
   function strokePts(pts, b, upto){
@@ -4317,6 +4380,15 @@
     gctx.restore();
   }
   // frac = how much of the current step the "video" has drawn (null = finished)
+  // finished lines on paper can be dashed, dotted or sketchy (realistic lessons stay solid)
+  function paperStroke(pts, b, upto, w){
+    const st = lesson.real ? 'solid' : (lesson.lineStyle || 'solid');
+    if(st === 'dashed') gctx.setLineDash([w*2.6, w*1.9]);
+    else if(st === 'dotted') gctx.setLineDash([.01, w*2.1]);
+    strokePts(pts, b, upto);
+    gctx.setLineDash([]);
+    if(st === 'sketchy'){ gctx.save(); gctx.globalAlpha *= .5; gctx.translate(w*.5, -w*.35); gctx.lineWidth = w*.6; strokePts(pts, b, upto); gctx.restore(); }
+  }
   function drawGuide(frac){
     gctx.clearRect(0,0,dW,dH);
     if(!lesson || !dmode || dmode === 'color') return;
@@ -4325,37 +4397,42 @@
     let tip = null;
     lesson.steps.forEach((s,i) => {
       if(!s.p || i > step) return;
-      const b = sb(s, B);
-      const pts = samples(s.p), cur = i === step, anim = cur && frac != null;
-      if(s.helper && i < step){ gctx.setLineDash([lw, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.22)'; gctx.lineWidth = lw*.6; strokePts(pts, b, pts.length); gctx.setLineDash([]); return; }
-      if(s.tone || s.erase){
-        toneFill(s, b, anim ? frac : paper ? 1 : i < step ? .35 : .3);
-        if(!paper && cur && showGuideOn){ gctx.setLineDash([lw*2, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw*.8; gctx.stroke(pathPx(s.p, b)); gctx.setLineDash([]); }
-        return;
-      }
-      if(s.shade){
-        if(i < step){ if(paper) hatch(s.p, b, 'rgba(42,35,48,.55)', 1); return; }
-        if(anim || paper) hatch(s.p, b, paper ? 'rgba(42,35,48,.55)' : 'rgba(47,127,216,.45)', anim ? frac : 1);
-        if(!paper && showGuideOn){ gctx.setLineDash([lw*2, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw*.8; gctx.stroke(pathPx(s.p, b)); }
-        return;
-      }
-      if(i < step){
-        if(!paper && !showGuideOn) return;
-        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? `rgba(${LI()},.3)` : `rgb(${LI()})`) : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? (s.faint ? lw*.45 : s.thin ? lw*.55 : lw) : lw*.8;
-        strokePts(pts, b, pts.length); return;
-      }
-      if(anim){
-        const k = Math.max(1, Math.floor(pts.length*frac));
-        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? `rgba(${LI()},.45)` : `rgb(${LI()})`) : '#2f7fd8'; gctx.lineWidth = paper && (s.faint || s.thin) ? lw*.6 : lw*1.15;
-        strokePts(pts, b, k); tip = mapP(b, pts[k-1]);
-      } else if(paper){
-        gctx.setLineDash([]); gctx.strokeStyle = s.faint ? `rgba(${LI()},.3)` : `rgb(${LI()})`; gctx.lineWidth = s.faint ? lw*.45 : s.thin ? lw*.55 : lw; strokePts(pts, b, pts.length);
-      } else if(showGuideOn){
-        gctx.setLineDash([lw*2.2, lw*1.8]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw; strokePts(pts, b, pts.length);
-      }
+      const pts = samples(s.p), cur = i === step, anim = cur && frac != null, ink = LI(i);
+      each(sb(s, B), b => {
+        if(s.helper && i < step){ gctx.setLineDash([lw, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.22)'; gctx.lineWidth = lw*.6; strokePts(pts, b, pts.length); gctx.setLineDash([]); return; }
+        if(s.tone || s.erase){
+          toneFill(s, b, anim ? frac : paper ? 1 : i < step ? .35 : .3);
+          if(!paper && cur && showGuideOn){ gctx.setLineDash([lw*2, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw*.8; gctx.stroke(pathPx(s.p, b)); gctx.setLineDash([]); }
+          return;
+        }
+        if(s.shade){
+          if(i < step){ if(paper) hatch(s.p, b, `rgba(${ink},.55)`, 1); return; }
+          if(anim || paper) hatch(s.p, b, paper ? `rgba(${ink},.55)` : 'rgba(47,127,216,.45)', anim ? frac : 1);
+          if(!paper && showGuideOn){ gctx.setLineDash([lw*2, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw*.8; gctx.stroke(pathPx(s.p, b)); gctx.setLineDash([]); }
+          return;
+        }
+        const w = s.faint ? lw*.45 : s.thin ? lw*.55 : lw;
+        if(i < step){
+          if(!paper && !showGuideOn) return;
+          gctx.setLineDash([]);
+          if(paper){ gctx.strokeStyle = s.faint ? `rgba(${ink},.3)` : `rgb(${ink})`; gctx.lineWidth = w; paperStroke(pts, b, pts.length, w); }
+          else { gctx.strokeStyle = 'rgba(42,35,48,.16)'; gctx.lineWidth = lw*.8; strokePts(pts, b, pts.length); }
+          return;
+        }
+        if(anim){
+          const k = Math.max(1, Math.floor(pts.length*frac));
+          gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? `rgba(${ink},.45)` : `rgb(${ink})`) : '#2f7fd8'; gctx.lineWidth = paper && (s.faint || s.thin) ? lw*.6 : lw*1.15;
+          strokePts(pts, b, k); tip = mapP(b, pts[k-1]);
+        } else if(paper){
+          gctx.setLineDash([]); gctx.strokeStyle = s.faint ? `rgba(${ink},.3)` : `rgb(${ink})`; gctx.lineWidth = w; paperStroke(pts, b, pts.length, w);
+        } else if(showGuideOn){
+          gctx.setLineDash([lw*2.2, lw*1.8]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw; strokePts(pts, b, pts.length); gctx.setLineDash([]);
+        }
+      });
     });
     gctx.setLineDash([]);
     if(lesson.real && paper) paperGrain();
+    drawExtras(gctx, B);
     if(tip) pencilTip(tip);
   }
   // rub a paper-tooth texture out of the graphite so the finished drawing looks hand-shaded
@@ -4482,47 +4559,93 @@
     frame('🖼️ Fancy corners', 'Draw fancy curly corners', 'M-3 16 Q-3 -3 16 -3 M4 10 Q4 4 10 4 M84 -3 Q103 -3 103 16 M96 10 Q96 4 90 4 M103 84 Q103 103 84 103 M96 90 Q96 96 90 96 M16 103 Q-3 103 -3 84 M4 90 Q4 96 10 96'),
     frame('⭐ Star border', 'Draw stars around the edge', [[-1,-1],[50,-2],[101,-1],[-2,50],[102,50],[-1,101],[50,102],[101,101]].map(([x, y]) => starP(x, y, 3.5)).join(' '))
   ];
-  // the questions for this lesson: its own "make it yours" ones plus the ones every drawing gets
+  // the questions for this lesson: its own "make it yours" ones plus the ones every drawing gets (each lives on a tab)
+  const COPIES = [
+    { label:'1️⃣ One' },
+    { label:'2️⃣ Two', copies:[{ dx:-25, s:.5 }, { dx:25, s:.5 }] },
+    { label:'3️⃣ Three', copies:[{ dx:-31, dy:14, s:.38 }, { dy:-14, s:.38 }, { dx:31, dy:14, s:.38 }] },
+    { label:'4️⃣ Four', copies:[{ dx:-25, dy:-25, s:.48 }, { dx:25, dy:-25, s:.48 }, { dx:-25, dy:25, s:.48 }, { dx:25, dy:25, s:.48 }] },
+    { label:'🪞 Mirror twins', copies:[{ dx:-25, s:.5 }, { dx:25, s:.5, mirror:true }] },
+    { label:'👨‍👧 Big + little', copies:[{ dx:-12, dy:4, s:.74 }, { dx:34, dy:28, s:.34 }] }
+  ];
   function lessonQuestions(){
-    const own = (raw.variants || []).map(v => ({ ...v }));
+    const own = (raw.variants || []).map(v => ({ ...v, tab:'pic' }));
+    const copies = { q:'How many?', tab:'move', choices:COPIES };
+    const frames = { q:'Add a frame?', kind:'scene', tab:'pic', choices:FRAMES };
     if(raw.real) return own.concat([
-      { q:'Where is the light?', kind:'flip', choices:[{ label:'☀️ Top left' }, { label:'Top right ☀️', flip:true }] },
-      { q:'Pencil color', kind:'pencil', def:Math.max(0, PENCILS.findIndex(p => p[0] === RS.pencil)), choices:PENCILS.map(p => ({ label:p[1], pencil:p[0] })) },
-      { q:'Paper', kind:'paper', def:Math.max(0, RPAPERS.findIndex(p => p[0] === RS.paper)), choices:RPAPERS.map(p => ({ label:p[1], paper:p[0] })) },
-      { q:'How dark is the shading?', def:1, choices:[{ label:'🌫️ Soft', darkness:.7 }, { label:'Normal', darkness:1 }, { label:'🖤 Bold', darkness:1.35 }] },
-      { q:'Add a frame?', kind:'scene', choices:FRAMES }
+      { q:'Where is the light?', kind:'flip', tab:'pic', choices:[{ label:'☀️ Top left' }, { label:'Top right ☀️', flip:true }] },
+      frames, copies,
+      { q:'Pencil color', tab:'style', def:Math.max(0, PENCILS.findIndex(p => p[0] === RS.pencil)), choices:PENCILS.map(p => ({ label:p[1], pencil:p[0] })) },
+      { q:'Paper', tab:'style', def:Math.max(0, RPAPERS.findIndex(p => p[0] === RS.paper)), choices:RPAPERS.map(p => ({ label:p[1], paper:p[0] })) },
+      { q:'How dark is the shading?', tab:'style', def:1, choices:[{ label:'🌫️ Soft', darkness:.7 }, { label:'Normal', darkness:1 }, { label:'🖤 Bold', darkness:1.35 }] }
     ]);
     return own.concat([
-      { q:'Which way should it face?', kind:'flip', choices:[{ label:'→ Normal' }, { label:'← Flipped', flip:true }] },
-      { q:'Add a scene around it?', kind:'scene', choices:SCENES },
-      { q:'Add a frame?', kind:'scene', choices:FRAMES },
-      { q:'Line thickness', def:1, choices:[{ label:'Thin', lineW:.6 }, { label:'Normal', lineW:1 }, { label:'Thick', lineW:1.5 }, { label:'Extra thick', lineW:2.1 }] }
+      { q:'Which way should it face?', kind:'flip', tab:'pic', choices:[{ label:'→ Normal' }, { label:'← Flipped', flip:true }] },
+      { q:'Add a scene around it?', kind:'scene', tab:'pic', choices:SCENES },
+      frames, copies,
+      { q:'Line color', tab:'style', choices:LINE_COLORS.map(c => ({ label:c[1], lineColor:c[0] })) },
+      { q:'Paper color', tab:'style', choices:PLAIN_PAPERS.map(p => ({ label:p[1], paperId:p[0] })) },
+      { q:'Line style', tab:'style', choices:[{ label:'━ Solid', lineStyle:'solid' }, { label:'┅ Dashed', lineStyle:'dashed' }, { label:'┈ Dotted', lineStyle:'dotted' }, { label:'✏️ Sketchy', lineStyle:'sketchy' }] },
+      { q:'Line thickness', tab:'style', def:1, choices:[{ label:'Thin', lineW:.6 }, { label:'Normal', lineW:1 }, { label:'Thick', lineW:1.5 }, { label:'Extra thick', lineW:2.1 }] }
     ]);
   }
   const optOf = (qs, picks, key) => { let v; qs.forEach((q, i) => { const c = q.choices[picks[i] || 0]; if(c[key] != null) v = c[key]; }); return v; };
+  // everything you picked, turned into the lesson you'll draw
+  function lessonFrom(qs, picks, ext){
+    ext = ext || {};
+    const L = { ...raw, steps:buildSteps(qs, picks), flip:flipOf(qs, picks), move:ext.move ? { ...ext.move } : null,
+      stickers:(ext.stickers || []).map(s => ({ ...s })), sign:ext.sign || '' };
+    ['lineW', 'darkness', 'copies', 'lineColor', 'lineStyle', 'paperId'].forEach(k => L[k] = optOf(qs, picks, k));
+    return L;
+  }
+  const STICKER_SET = ['⭐','❤️','🌈','🌸','🦋','🐞','🍀','🎈','🎀','👑','🔥','⚡','💎','🎵','🌙','☀️','☁️','🍭','🍩','🐾','😀','😎','🤩','👻'];
+  const STICK_SPOTS = [[12,12],[88,12],[12,88],[88,88],[50,8],[8,50],[92,50],[50,92],[30,14],[70,86]];
+  const ASK_TABS = [['pic','🖼️ Picture'], ['move','✋ Move'], ['style','🎨 Style'], ['stick','⭐ Stickers']];
   function afterMode(mode){
-    const qs = lessonQuestions(), picks = qs.map(q => q.def || 0), card = $('askCard'), move = { x:0, y:0, s:1, r:0 };
+    const qs = lessonQuestions(), picks = qs.map(q => q.def || 0), card = $('askCard');
+    const ext = { move:{ x:0, y:0, s:1, r:0 }, stickers:[], sign:'' }, move = ext.move;
+    let sel = -1;
     card.innerHTML = `<h2>Make it yours!</h2><p class="asksub">Pick what your ${raw.name.toLowerCase().replace(/^(a|an) /,'')} looks like — the picture changes as you choose.</p>`;
-    const pv = mk('div', 'askpreview', '<svg viewBox="-6 -6 112 112" aria-label="Preview of your drawing — drag it to move your drawing"></svg><span class="dragme">✋ Drag to move</span>');
-    card.appendChild(pv);
+    const head = mk('div', 'askhead');
+    const pv = mk('div', 'askpreview', '<svg viewBox="-6 -6 112 112" aria-label="Preview of your drawing — drag it to move your drawing or a sticker"></svg><span class="dragme">✋ Drag to move</span>');
+    const tabs = mk('div', 'asktabs');
+    head.append(pv, tabs); card.appendChild(head);
+    const panels = {};
+    ASK_TABS.forEach(([id, label], ti) => {
+      const b = mk('button', 'asktab', label);
+      b.setAttribute('aria-pressed', ti === 0);
+      b.onclick = () => { Object.entries(panels).forEach(([k, p]) => p.hidden = k !== id); [...tabs.children].forEach(x => x.setAttribute('aria-pressed', x === b)); };
+      tabs.appendChild(b);
+      panels[id] = mk('div', 'askpanel'); panels[id].hidden = ti !== 0; card.appendChild(panels[id]);
+    });
+    const svgEl = pv.firstChild;
+    let syncStick = () => {};
     const preview = () => {
       const keep = RS; RS = { ...RS, ...styleOf(qs, picks) };
-      const L = { ...raw, steps:buildSteps(qs, picks), flip:flipOf(qs, picks), move, lineW:optOf(qs, picks, 'lineW'), darkness:optOf(qs, picks, 'darkness') };
-      pv.firstChild.innerHTML = raw.real ? svgArt(L, -1, 'pv') : plainArt(L, -1);
+      const L = lessonFrom(qs, picks, ext); L.sel = sel;
+      svgEl.innerHTML = raw.real ? svgArt(L, -1, 'pv') : plainArt(L, -1);
       RS = keep;
+      syncStick();
     };
-    // move it: drag the picture, then size + turn sliders
+    // drag the drawing — or a sticker, if you grab one
     let drag = null;
-    const svgEl = pv.firstChild;
-    svgEl.onpointerdown = e => { e.preventDefault(); try{ svgEl.setPointerCapture(e.pointerId); }catch(_){} drag = { id:e.pointerId, x:e.clientX, y:e.clientY, mx:move.x, my:move.y }; pv.classList.add('dragging'); };
+    const clamp = (v, a, z) => Math.max(a, Math.min(z, v));
+    svgEl.onpointerdown = e => {
+      e.preventDefault(); try{ svgEl.setPointerCapture(e.pointerId); }catch(_){}
+      const hit = e.target.closest && e.target.closest('[data-si]');
+      if(hit){ sel = +hit.dataset.si; const st = ext.stickers[sel]; drag = { id:e.pointerId, x:e.clientX, y:e.clientY, sx:st.x, sy:st.y, st }; preview(); }
+      else drag = { id:e.pointerId, x:e.clientX, y:e.clientY, mx:move.x, my:move.y };
+      pv.classList.add('dragging');
+    };
     svgEl.onpointermove = e => {
       if(!drag || e.pointerId !== drag.id) return;
-      const k = 112/svgEl.getBoundingClientRect().width;
-      move.x = Math.max(-45, Math.min(45, drag.mx + (e.clientX - drag.x)*k));
-      move.y = Math.max(-45, Math.min(45, drag.my + (e.clientY - drag.y)*k));
+      const k = 112/svgEl.getBoundingClientRect().width, dx = (e.clientX - drag.x)*k, dy = (e.clientY - drag.y)*k;
+      if(drag.st){ drag.st.x = clamp(drag.sx + dx, -4, 104); drag.st.y = clamp(drag.sy + dy, -4, 104); }
+      else { move.x = clamp(drag.mx + dx, -45, 45); move.y = clamp(drag.my + dy, -45, 45); }
       preview();
     };
     svgEl.onpointerup = svgEl.onpointercancel = () => { drag = null; pv.classList.remove('dragging'); };
+    // ✋ Move tab: size, turn, nudge buttons
     const mv = mk('div', 'movebox', `<label>↔️ Size <input type="range" min="40" max="140" value="100" aria-label="Size"></label>
       <label>🔄 Turn <input type="range" min="-45" max="45" value="0" aria-label="Turn"></label>
       <div class="chips-pick"><button class="taste" data-m="c">🎯 Center</button><button class="taste" data-m="l">⬅️ Left</button><button class="taste" data-m="r">➡️ Right</button><button class="taste" data-m="up">⬆️ Up</button><button class="taste" data-m="dn">⬇️ Down</button><button class="taste" data-m="0">↺ Reset</button></div>`);
@@ -4530,19 +4653,20 @@
     sizeIn.oninput = () => { move.s = +sizeIn.value/100; preview(); };
     turnIn.oninput = () => { move.r = +turnIn.value; preview(); };
     mv.querySelectorAll('button').forEach(b => b.onclick = () => {
-      const m = b.dataset.m, step = 10;
+      const m = b.dataset.m, st = 10;
       if(m === 'c'){ move.x = 0; move.y = 0; }
-      else if(m === 'l') move.x = Math.max(-45, move.x - step);
-      else if(m === 'r') move.x = Math.min(45, move.x + step);
-      else if(m === 'up') move.y = Math.max(-45, move.y - step);
-      else if(m === 'dn') move.y = Math.min(45, move.y + step);
+      else if(m === 'l') move.x = Math.max(-45, move.x - st);
+      else if(m === 'r') move.x = Math.min(45, move.x + st);
+      else if(m === 'up') move.y = Math.max(-45, move.y - st);
+      else if(m === 'dn') move.y = Math.min(45, move.y + st);
       else { Object.assign(move, { x:0, y:0, s:1, r:0 }); sizeIn.value = 100; turnIn.value = 0; }
       preview();
     });
-    card.appendChild(mk('p', 'askq', 'Move it'));
-    card.appendChild(mv);
+    panels.move.append(mk('p', 'askq', 'Move it'), mk('p', 'asksub', 'Drag the picture above, or use these.'), mv);
+    // the choice questions, each on its tab
     qs.forEach((v,vi) => {
-      card.appendChild(mk('p','askq', v.q));
+      const panel = panels[v.tab || 'pic'];
+      panel.appendChild(mk('p','askq', v.q));
       const row = mk('div','chips-pick');
       v.choices.forEach((c,ci) => {
         const b = mk('button','taste', c.label);
@@ -4550,10 +4674,43 @@
         b.onclick = () => { picks[vi] = ci; [...row.children].forEach((x,xi) => x.setAttribute('aria-pressed', xi === ci)); preview(); };
         row.appendChild(b);
       });
-      card.appendChild(row);
+      panel.appendChild(row);
     });
+    // ⭐ Stickers tab: add emoji, drag them in the picture, resize, sign your name
+    const sp = panels.stick;
+    sp.appendChild(mk('p', 'askq', 'Tap to add a sticker'));
+    const pal = mk('div', 'stickpal');
+    STICKER_SET.forEach(e => {
+      const b = mk('button', 'stickbtn', e); b.setAttribute('aria-label', 'Add sticker ' + e);
+      b.onclick = () => {
+        if(ext.stickers.length >= 20) return;
+        const [x, y] = STICK_SPOTS[ext.stickers.length % STICK_SPOTS.length];
+        ext.stickers.push({ e, x, y, s:14 }); sel = ext.stickers.length - 1; preview();
+      };
+      pal.appendChild(b);
+    });
+    sp.appendChild(pal);
+    const sctl = mk('div', 'movebox', `<p class="asksub">Drag a sticker in the picture to move it. The one with the blue ring is picked.</p>
+      <label>🔍 Sticker size <input type="range" min="6" max="40" value="14" aria-label="Sticker size"></label>
+      <div class="chips-pick"><button class="taste" data-a="del">🗑 Remove picked</button><button class="taste" data-a="all">✖ Remove all</button></div>`);
+    const sSize = sctl.querySelector('input');
+    sSize.oninput = () => { const st = ext.stickers[sel]; if(st){ st.s = +sSize.value; preview(); } };
+    sctl.querySelector('[data-a="del"]').onclick = () => { if(sel >= 0){ ext.stickers.splice(sel, 1); sel = ext.stickers.length - 1; preview(); } };
+    sctl.querySelector('[data-a="all"]').onclick = () => { ext.stickers = []; sel = -1; preview(); };
+    sp.appendChild(sctl);
+    sp.appendChild(mk('p', 'askq', '✍️ Sign your name'));
+    const signIn = mk('input', 'signin'); signIn.maxLength = 18; signIn.placeholder = 'Your name'; signIn.setAttribute('aria-label', 'Your name');
+    signIn.value = store.get('drawSign', '');
+    signIn.oninput = () => { ext.sign = signIn.value.trim(); preview(); };
+    ext.sign = signIn.value.trim();
+    sp.appendChild(signIn);
+    syncStick = () => {
+      const st = ext.stickers[sel];
+      sctl.querySelector('label').style.opacity = st ? 1 : .45; sSize.disabled = !st;
+      if(st && document.activeElement !== sSize) sSize.value = st.s;
+    };
     const go = mk('button','choice go-choice','<b>Start drawing ▶</b>');
-    go.onclick = () => { $('modeAsk').hidden = true; startLesson(mode, qs, picks, move); };
+    go.onclick = () => { store.set('drawSign', ext.sign); $('modeAsk').hidden = true; startLesson(mode, qs, picks, ext); };
     card.appendChild(go);
     preview();
   }
@@ -4575,28 +4732,34 @@
     if(!extra.length) return base;
     return base.length && !base[base.length-1].p ? [...base.slice(0,-1), ...extra, base[base.length-1]] : [...base, ...extra];
   }
-  function startLesson(mode, qs, picks, move){
+  function startLesson(mode, qs, picks, ext){
     dmode = mode;
     qs = qs || []; picks = picks || [];
-    lesson = { ...raw, steps:buildSteps(qs, picks), flip:flipOf(qs, picks), move:move ? { ...move } : null,
-      lineW:optOf(qs, picks, 'lineW'), darkness:optOf(qs, picks, 'darkness') };
+    lesson = lessonFrom(qs, picks, ext);
     if(raw.real){ RS = { ...RS, ...styleOf(qs, picks) }; store.set('realStyle', RS); }
-    dwrap.style.background = raw.real && RS.paper !== 'cream' ? rPaper()[2] : '';
+    const pp = PLAIN_PAPERS.find(p => p[0] === lesson.paperId);
+    lesson.bgHex = raw.real ? (RS.paper !== 'cream' ? rPaper()[2] : '') : (pp && pp[0] !== 'cream' ? pp[2] : '');
+    dwrap.style.background = lesson.bgHex;
     paint.style.pointerEvents = mode === 'paper' ? 'none' : '';
     $('drawbar').hidden = mode === 'paper';
     $('dGuide').hidden = mode !== 'screen';
-    if(mode === 'screen'){ brush = 'pencil'; color = raw.real ? rgbHex(inkRGB()) : INK; size = 10; syncDrawTools(); }
+    if(mode === 'screen'){ brush = 'pencil'; color = rgbHex(LI(0)); size = 10; syncDrawTools(); }
     scores = []; sizeDraw();
     if(mode === 'color') return startColoring();
     showStep(0);
   }
   // ---- coloring page: the lines are already there, you color them in ----
   function drawColoringLines(){
-    const b = box(), lw = Math.max(3, b.S*.013)*(lesson.lineW || 1);
+    const B = box(), lw = Math.max(3, B.S*.013)*(lesson.lineW || 1);
     pctx.save(); resetPen();
-    pctx.strokeStyle = INK; pctx.lineWidth = lw; pctx.lineCap = 'round'; pctx.lineJoin = 'round';
-    lesson.steps.forEach(s => { if(s.p && !s.helper && !s.tone && !s.erase) pctx.stroke(pathPx(s.p, sb(s, b))); });
+    pctx.lineWidth = lw; pctx.lineCap = 'round'; pctx.lineJoin = 'round';
+    lesson.steps.forEach((s, i) => {
+      if(!s.p || s.helper || s.tone || s.erase) return;
+      pctx.strokeStyle = `rgb(${LI(i)})`;
+      each(sb(s, B), b => pctx.stroke(pathPx(s.p, b)));
+    });
     pctx.restore();
+    drawExtras(pctx, B);
   }
   const shortName = () => raw.name.toLowerCase().replace(/^(a|an) /,'');
   function startColoring(){
@@ -4642,9 +4805,14 @@
     }
     drawRef(); watch();
   }
+  // with copies, tracing any one of them counts
   function scoreStep(s){
     if(!stepPts.length) return 0;
-    const b = sb(s, box());
+    let best = 0;
+    each(sb(s, box()), b => { best = Math.max(best, scoreOne(s, b)); });
+    return best;
+  }
+  function scoreOne(s, b){
     if(s.shade || s.tone || s.erase){ const P = pathPx(s.p, b); let inside = 0; stepPts.forEach(p => { if(hitCtx.isPointInPath(P, p.x, p.y)) inside++; }); return Math.min(1, inside/(s.erase ? 15 : 60)); }
     const pts = samples(s.p).filter((_,i) => i % 3 === 0), thr = b.S*.055, t2 = thr*thr;
     let cov = 0;
@@ -4669,6 +4837,7 @@
       const avg = scores.length ? scores.reduce((a,b) => a+b, 0)/scores.length : 1;
       const st = avg >= .7 ? 3 : avg >= .45 ? 2 : 1;
       saveStars('draw.'+raw.id, st);
+      drawExtras(pctx, box());
       const ok = J.add({ name:raw.name, img:snapshot() });
       showGuideOn = false; drawGuide();
       $('dSay').innerHTML = `<span class="count">ALL DONE</span>Beautiful drawing! ${starText(st)}<span class="tipline">${saveMsg(ok)}</span>`;
