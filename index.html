@@ -3398,86 +3398,201 @@
   LESSONS.push(...PRO_LESSONS);
 
 
-  // ---- realistic: soft shading, highlights, no hard outlines ----
+  // ---- realistic: soft shading, core shadows, reflected light, soft cast shadows ----
+  // tone.stops = [offset, darkness] — light → core shadow (darkest band) → reflected light at the edge
+  const ROUND = [[0,0],[.3,.15],[.62,.6],[.8,1],[.92,.85],[1,.62]];
+  const dots = (pts, r) => pts.map(([x, y]) => `M${x - r} ${y} a${r} ${r} 0 1 0 ${2*r} 0 a${r} ${r} 0 1 0 ${-2*r} 0`).join(' ');
   const RBALL = 'M28 46 A22 22 0 1 0 72 46 A22 22 0 1 0 28 46';
   const REGG = 'M50 18 Q72 18 74 52 Q74 82 50 82 Q26 82 26 52 Q28 18 50 18';
   const RAPPLE = 'M50 30 C34 18 16 32 20 58 C24 80 40 88 50 82 C60 88 76 80 80 58 C84 32 66 18 50 30';
   const REYE = 'M12 52 Q50 26 88 52 Q50 74 12 52', RIRIS = 'M38 52 A12 12 0 1 0 62 52 A12 12 0 1 0 38 52';
+  const RPEAR = 'M50 16 Q58 16 58 30 Q58 40 66 50 Q78 64 72 78 Q64 92 50 92 Q36 92 28 78 Q22 64 34 50 Q42 40 42 30 Q42 16 50 16';
+  const RDROP = 'M30 55 Q30 36 50 36 Q72 36 72 56 Q72 72 50 72 Q30 72 30 55';
+  const MUGBODY = 'M26 34 A20 6 0 0 0 66 34 L66 80 Q66 88 46 88 Q26 88 26 80 Z', MUGTOP = 'M26 34 A20 6 0 1 0 66 34 A20 6 0 1 0 26 34';
+  const MUGHANDLE = 'M66 44 Q84 44 84 58 Q84 72 66 74 L66 68 Q77 67 77 58 Q77 50 66 50 Z';
+  const CANDLE = 'M36 44 A14 4 0 0 0 64 44 L64 92 L36 92 Z', CANDLETOP = 'M36 44 A14 4 0 1 0 64 44 A14 4 0 1 0 36 44';
+  const FLAME = 'M50 12 Q58 26 56 32 Q54 38 50 38 Q46 38 44 32 Q42 26 50 12';
+  const ROSECUP = 'M24 42 Q20 64 36 76 Q50 84 64 76 Q80 64 76 42 Q70 52 60 50 Q50 58 40 50 Q30 52 24 42';
+  const ROSEBUD = 'M40 40 Q40 24 52 24 Q64 26 62 40 Q60 50 50 48 Q42 46 44 38 Q46 32 52 32 Q56 34 54 40';
+  const BERRY = 'M50 90 Q30 80 24 56 Q20 36 36 30 Q50 26 64 30 Q80 36 76 56 Q70 80 50 90';
+  const BERRYLEAF = 'M36 30 Q40 18 50 26 Q56 14 62 28 Q72 24 66 34 Q58 30 50 32 Q42 30 34 34 Q28 26 36 30';
+  const SEEDS = [[38,44],[50,42],[62,44],[31,54],[43,54],[56,54],[68,54],[36,64],[49,64],[62,64],[42,74],[55,74],[49,83]];
+  const LIPUP = 'M20 50 Q32 42 42 38 Q47 36 50 40 Q53 36 58 38 Q68 42 80 50 Q65 53 50 52 Q35 53 20 50 Z';
+  const LIPLOW = 'M20 50 Q35 54 50 53 Q65 54 80 50 Q70 66 50 68 Q30 66 20 50 Z';
   const REAL_LESSONS = [
     { id:'rball', name:'Realistic ball', cat:'Realistic', hard:2, real:true, steps:[
       { t:'Draw a circle very lightly', tip:'Real drawings don’t have dark outlines — keep this line soft.', faint:true, p:RBALL },
       { t:'Decide where the light comes from', tip:'Here the light shines from the top left.', helper:true, p:'M6 6 L20 20 M20 20 L13 19 M20 20 L19 13' },
-      { t:'Shade the ball softly', tip:'Light near the top left, getting darker towards the bottom right.', p:RBALL, tone:{ type:'radial', a:[40,36], r:34, dark:.72 } },
-      { t:'Draw the shadow it casts on the table', tip:'Shadows stretch away from the light.', p:'M40 74 A26 6 0 1 0 92 74 A26 6 0 1 0 40 74', tone:{ type:'radial', a:[60,73], r:30, dark:.55, invert:true } },
-      { t:'Make it darkest right under the ball', p:'M38 69 A12 2.5 0 1 0 62 69 A12 2.5 0 1 0 38 69', tone:{ type:'radial', a:[50,69], r:12, dark:.85, invert:true } },
-      { t:'Lift out a shiny spot', p:'M36 35 A4.5 4 0 1 0 45 35 A4.5 4 0 1 0 36 35', erase:true } ] },
+      { t:'Draw the cast shadow on the table', tip:'Shadows stretch away from the light, with soft blurry edges.', p:'M40 72 A28 7 0 1 0 96 72 A28 7 0 1 0 40 72', tone:{ type:'radial', a:[58,71], r:32, stops:[[0,.6],[.5,.35],[1,0]] }, blur:1.6 },
+      { t:'Shade the ball — lightest near the light', tip:'The darkest band (the core shadow) is NOT at the edge. Leave a lighter rim near the table: that’s reflected light.', p:RBALL, tone:{ type:'radial', a:[40,35], r:36, stops:ROUND, dark:.85 } },
+      { t:'Make it darkest right under the ball', tip:'Where the ball touches the table, no light gets in.', p:'M38 68 A12 2.6 0 1 0 62 68 A12 2.6 0 1 0 38 68', tone:{ type:'solid', dark:.85 }, blur:.8 },
+      { t:'Lift out a shiny spot', tip:'Rub gently with the eraser — soft edges look real.', p:'M35 35 A5 4.2 0 1 0 45 35 A5 4.2 0 1 0 35 35', erase:true, blur:1 } ] },
     { id:'regg', name:'Realistic egg', cat:'Realistic', hard:1, real:true, steps:[
-      { t:'Draw the egg shape lightly', faint:true, p:REGG },
-      { t:'Shade from light to dark', tip:'The light is top left, so the bottom right is darkest.', p:REGG, tone:{ type:'linear', a:[32,26], b:[72,80], dark:.6 } },
-      { t:'Add a soft shadow on the table', p:'M40 86 A30 5.5 0 1 0 100 86 A30 5.5 0 1 0 40 86', tone:{ type:'radial', a:[64,85], r:32, dark:.5, invert:true } },
-      { t:'Darkest where it touches the table', p:'M36 81 A14 2.2 0 1 0 64 81 A14 2.2 0 1 0 36 81', tone:{ type:'radial', a:[50,81], r:14, dark:.9, invert:true } },
-      { t:'Lift out a soft highlight', p:'M36 34 Q40 26 46 28 Q42 36 36 34', erase:true } ] },
+      { t:'Draw the egg shape lightly', tip:'Eggs are narrower at the top.', faint:true, p:REGG },
+      { t:'Add a soft shadow on the table', p:'M42 84 A30 6 0 1 0 102 84 A30 6 0 1 0 42 84', tone:{ type:'radial', a:[60,83], r:34, stops:[[0,.55],[.6,.25],[1,0]] }, blur:1.8 },
+      { t:'Shade from light to dark', tip:'The light is top left. Keep a thin lighter rim on the shadow side.', p:REGG, tone:{ type:'radial', a:[40,36], r:50, stops:[[0,0],[.35,.1],[.7,.45],[.88,.7],[1,.5]], dark:.75 } },
+      { t:'Darkest where it touches the table', p:'M38 81 A12 2 0 1 0 62 81 A12 2 0 1 0 38 81', tone:{ type:'solid', dark:.9 }, blur:.7 },
+      { t:'Lift out a soft highlight', p:'M35 36 Q39 26 47 27 Q42 36 35 36', erase:true, blur:1.2 } ] },
     { id:'rapple', name:'Realistic apple', cat:'Realistic', hard:2, real:true, steps:[
       { t:'Draw the apple shape lightly', faint:true, p:RAPPLE },
-      { t:'Draw the stem', p:'M50 30 Q50 20 55 12' },
+      { t:'Draw the stem', thin:true, p:'M50 30 Q50 20 55 12' },
       { t:'Add a leaf', faint:true, p:'M53 20 Q66 10 76 16 Q66 26 53 20' },
-      { t:'Shade the apple — light top left, dark bottom right', p:RAPPLE, tone:{ type:'radial', a:[36,44], r:46, dark:.7 } },
-      { t:'Shade the dip around the stem', p:'M42 31 Q50 38 58 31 Q50 34 42 31 Z', tone:{ type:'radial', a:[50,33], r:10, dark:.6, invert:true } },
-      { t:'Shade the leaf', p:'M53 20 Q66 10 76 16 Q66 26 53 20', tone:{ type:'linear', a:[56,16], b:[74,20], dark:.45 } },
-      { t:'Add its shadow', p:'M36 90 A30 5.5 0 1 0 96 90 A30 5.5 0 1 0 36 90', tone:{ type:'radial', a:[62,89], r:32, dark:.5, invert:true } },
-      { t:'Lift out a shiny highlight', p:'M29 47 Q31 38 38 36 Q35 46 29 47', erase:true } ] },
+      { t:'Add its soft shadow', p:'M40 88 A32 6 0 1 0 104 88 A32 6 0 1 0 40 88', tone:{ type:'radial', a:[62,87], r:34, stops:[[0,.55],[.6,.25],[1,0]] }, blur:1.8 },
+      { t:'Shade the apple — light top left, dark bottom right', tip:'Leave a lighter rim at the bottom right: light bounces up from the table.', p:RAPPLE, tone:{ type:'radial', a:[36,44], r:48, stops:ROUND, dark:.8 } },
+      { t:'Add soft stripes down the apple', tip:'Apples have faint streaks that follow the round shape.', faint:true, p:'M42 36 Q32 56 40 80 M50 40 Q46 60 50 82 M60 36 Q68 56 62 80' },
+      { t:'Shade the dip around the stem', p:'M40 31 Q50 40 60 31 Q50 35 40 31 Z', tone:{ type:'solid', dark:.6 }, blur:.8 },
+      { t:'Shade the leaf', p:'M53 20 Q66 10 76 16 Q66 26 53 20', tone:{ type:'linear', a:[56,16], b:[74,20], stops:[[0,.15],[1,.6]] } },
+      { t:'Lift out a shiny highlight', p:'M28 48 Q30 38 38 35 Q35 46 28 48', erase:true, blur:.9 } ] },
     { id:'rcherries', name:'Realistic cherries', cat:'Realistic', hard:2, real:true, steps:[
       { t:'Draw two round cherries lightly', faint:true, p:'M22 66 A13 13 0 1 0 48 66 A13 13 0 1 0 22 66 M52 72 A13 13 0 1 0 78 72 A13 13 0 1 0 52 72' },
-      { t:'Draw the stems joining at the top', p:'M35 53 Q40 30 58 14 M65 59 Q63 36 58 14' },
+      { t:'Draw the stems joining at the top', thin:true, p:'M35 53 Q40 30 58 14 M65 59 Q63 36 58 14' },
       { t:'Add a leaf', faint:true, p:'M58 14 Q72 6 84 12 Q72 22 58 14' },
-      { t:'Shade the leaf', p:'M58 14 Q72 6 84 12 Q72 22 58 14', tone:{ type:'linear', a:[60,12], b:[82,14], dark:.5 } },
-      { t:'Shade the first cherry', tip:'Cherries are dark — shade them strongly, but keep the top left lighter.', p:'M22 66 A13 13 0 1 0 48 66 A13 13 0 1 0 22 66', tone:{ type:'radial', a:[30,60], r:17, dark:1 } },
-      { t:'Shade the second cherry', p:'M52 72 A13 13 0 1 0 78 72 A13 13 0 1 0 52 72', tone:{ type:'radial', a:[60,66], r:17, dark:1 } },
-      { t:'A soft shadow underneath', p:'M24 88 A30 5 0 1 0 84 88 A30 5 0 1 0 24 88', tone:{ type:'radial', a:[54,88], r:32, dark:.5, invert:true } },
-      { t:'Lift out two shiny spots', p:'M27 60 A2.5 2.5 0 1 0 32 60 A2.5 2.5 0 1 0 27 60 M57 66 A2.5 2.5 0 1 0 62 66 A2.5 2.5 0 1 0 57 66', erase:true } ] },
+      { t:'Shade the leaf', p:'M58 14 Q72 6 84 12 Q72 22 58 14', tone:{ type:'linear', a:[60,12], b:[82,14], stops:[[0,.15],[1,.6]] } },
+      { t:'A soft shadow underneath', p:'M24 88 A32 5 0 1 0 88 88 A32 5 0 1 0 24 88', tone:{ type:'radial', a:[56,88], r:34, stops:[[0,.55],[.6,.25],[1,0]] }, blur:1.6 },
+      { t:'Shade the first cherry dark', tip:'Cherries are dark — shade strongly, but keep the top left lighter.', p:'M22 66 A13 13 0 1 0 48 66 A13 13 0 1 0 22 66', tone:{ type:'radial', a:[30,59], r:19, stops:[[0,.2],[.4,.6],[.78,1],[1,.75]] } },
+      { t:'Shade the second cherry', p:'M52 72 A13 13 0 1 0 78 72 A13 13 0 1 0 52 72', tone:{ type:'radial', a:[60,65], r:19, stops:[[0,.2],[.4,.6],[.78,1],[1,.75]] } },
+      { t:'Lift out two shiny spots', p:'M26 60 A3 2.5 0 1 0 32 60 A3 2.5 0 1 0 26 60 M56 66 A3 2.5 0 1 0 62 66 A3 2.5 0 1 0 56 66', erase:true, blur:.4 } ] },
     { id:'rcube', name:'Realistic cube', cat:'Realistic', hard:2, real:true, steps:[
       { t:'Draw the front face lightly', faint:true, p:'M22 40 L62 40 L62 80 L22 80 Z' },
       { t:'Draw the top face', faint:true, p:'M22 40 L38 24 L78 24 L62 40 Z' },
       { t:'Draw the side face', faint:true, p:'M62 40 L78 24 L78 64 L62 80 Z' },
-      { t:'Shade the top very lightly', tip:'The top faces the light, so it is the lightest.', p:'M22 40 L38 24 L78 24 L62 40 Z', tone:{ type:'linear', a:[30,30], b:[72,34], dark:.16 } },
-      { t:'Shade the front a medium grey', p:'M22 40 L62 40 L62 80 L22 80 Z', tone:{ type:'linear', a:[24,42], b:[60,80], dark:.36 } },
-      { t:'Shade the side darkest', p:'M62 40 L78 24 L78 64 L62 80 Z', tone:{ type:'linear', a:[64,34], b:[78,72], dark:.68 } },
-      { t:'Add the shadow on the ground', tip:'Darkest next to the cube, fading away.', p:'M62 80 L78 64 L98 67 L86 85 Z', tone:{ type:'linear', a:[68,76], b:[96,70], dark:.6, invert:true } } ] },
+      { t:'Add the shadow on the ground', tip:'Darkest next to the cube, fading away.', p:'M62 80 L78 64 L98 67 L86 85 Z', tone:{ type:'linear', a:[68,76], b:[96,70], stops:[[0,.65],[1,.05]] }, blur:.9 },
+      { t:'Shade the top very lightly', tip:'The top faces the light, so it is the lightest.', p:'M22 40 L38 24 L78 24 L62 40 Z', tone:{ type:'linear', a:[30,30], b:[72,34], stops:[[0,.05],[1,.2]] } },
+      { t:'Shade the front a medium grey', p:'M22 40 L62 40 L62 80 L22 80 Z', tone:{ type:'linear', a:[24,42], b:[60,80], stops:[[0,.25],[1,.42]] } },
+      { t:'Shade the side darkest', tip:'It gets a little lighter near the bottom — light bounces off the ground.', p:'M62 40 L78 24 L78 64 L62 80 Z', tone:{ type:'linear', a:[70,28], b:[70,78], stops:[[0,.78],[.7,.7],[1,.55]] } },
+      { t:'Make the front edge crisp', tip:'Edges that face you look sharpest.', thin:true, p:'M62 40 L62 80' } ] },
     { id:'reye', name:'Realistic eye', cat:'Realistic', hard:3, real:true, steps:[
       { t:'Draw the eye shape lightly', faint:true, p:REYE },
       { t:'Add the crease above the eye', faint:true, p:'M18 45 Q50 20 82 45' },
       { t:'Draw the round iris in the middle', faint:true, p:RIRIS },
+      { t:'Shade the corners of the eyeball', tip:'The white of the eye is round, so its corners are in shadow.', p:REYE, tone:{ type:'radial', a:[50,52], r:40, stops:[[0,0],[.5,.05],[1,.55]] } },
+      { t:'Shade the iris — darkest at the outer ring', p:RIRIS, tone:{ type:'radial', a:[50,52], r:12, stops:[[0,.7],[.42,.3],[.85,.6],[1,.95]] } },
       { t:'Draw short lines out from the middle', tip:'Like the spokes of a bike wheel.', faint:true, p:'M50 41 L50 46 M58 44 L54.5 47.5 M61 52 L56 52 M58 60 L54.5 56.5 M50 63 L50 58 M42 60 L45.5 56.5 M39 52 L44 52 M42 44 L45.5 47.5' },
-      { t:'Shade the iris — darker at the edge', p:RIRIS, tone:{ type:'radial', a:[50,52], r:12, dark:.55 } },
-      { t:'Fill in the dark pupil', p:'M45 52 A5 5 0 1 0 55 52 A5 5 0 1 0 45 52', tone:{ type:'solid', dark:.92 } },
-      { t:'Shade under the top eyelid', tip:'The eyelid casts a soft shadow on the eyeball.', p:REYE, tone:{ type:'linear', a:[50,66], b:[50,32], dark:.38 } },
-      { t:'Lift out the shiny highlight', tip:'This tiny white spot makes the eye look alive!', p:'M53 45 A3 3 0 1 0 59 45 A3 3 0 1 0 53 45', erase:true },
-      { t:'Add eyelashes', faint:true, p:'M20 46 Q16 43 13 38 M30 40 Q26 36 25 30 M42 36 Q39 31 39 25 M56 36 Q58 31 58 25 M68 39 Q72 35 73 29 M79 45 Q83 42 86 37' } ] },
+      { t:'Fill in the dark pupil', p:'M45 52 A5 5 0 1 0 55 52 A5 5 0 1 0 45 52', tone:{ type:'solid', dark:.95 }, blur:.3 },
+      { t:'Shade under the top eyelid', tip:'The eyelid and lashes cast a soft shadow on the eyeball.', p:'M13 51 Q50 26 87 51 Q50 38 13 51 Z', tone:{ type:'solid', dark:.5 }, blur:1.2 },
+      { t:'Shade the skin around the eye', p:'M8 50 Q50 14 92 50 Q84 40 72 34 Q50 26 28 34 Q16 40 8 50 Z', tone:{ type:'linear', a:[50,20], b:[50,46], stops:[[0,0],[1,.35]] }, blur:1.5 },
+      { t:'Lift out the shiny highlight', tip:'This tiny white spot makes the eye look alive!', p:'M53 45 A3 3 0 1 0 59 45 A3 3 0 1 0 53 45', erase:true, blur:.2 },
+      { t:'Add eyelashes that curve', tip:'Flick each lash out quickly so it gets thin at the end.', thin:true, p:'M20 46 Q16 43 13 38 M30 40 Q26 36 25 30 M42 36 Q39 31 39 25 M56 36 Q58 31 58 25 M68 39 Q72 35 73 29 M79 45 Q83 42 86 37' } ] },
+
+    // ---- new, even more realistic ----
+    { id:'rdrop', name:'Realistic water drop', cat:'Realistic', hard:2, real:true, steps:[
+      { t:'Draw a round blob lightly', tip:'A water drop sitting on paper is a squashed round shape.', faint:true, p:RDROP },
+      { t:'Draw its shadow on the bottom right', tip:'The shadow sits next to the drop, away from the light.', p:'M34 62 Q38 80 56 80 Q78 78 78 58 Q74 72 56 73 Q40 73 34 62 Z', tone:{ type:'solid', dark:.55 }, blur:1.6 },
+      { t:'Shade INSIDE the drop — dark on the light side!', tip:'Water is a lens: the dark part is on the side nearest the light. It feels backwards, but that’s what makes it look real.', p:RDROP, tone:{ type:'linear', a:[33,40], b:[68,70], stops:[[0,.8],[.45,.25],[1,0]] } },
+      { t:'Make a dark rim on the top left edge', p:'M31 55 Q31 37 50 37 Q40 41 36 50 Q34 56 31 55 Z', tone:{ type:'solid', dark:.7 }, blur:.6 },
+      { t:'Lift out the glowing light at the bottom right', tip:'Light shines THROUGH the drop and lands here.', p:'M50 63 Q63 65 66 54 Q68 67 55 69 Q46 68 50 63', erase:true, blur:1.6 },
+      { t:'Add a sharp white highlight', tip:'Tiny and crisp — this is the shine.', p:'M38 46 A4.5 3 0 1 0 47 46 A4.5 3 0 1 0 38 46', erase:true, blur:.2 } ] },
+    { id:'rpear', name:'Realistic pear', cat:'Realistic', hard:2, real:true, steps:[
+      { t:'Draw the pear shape lightly', tip:'Small round top, big round bottom.', faint:true, p:RPEAR },
+      { t:'Draw the stem', thin:true, p:'M50 17 Q51 10 56 5' },
+      { t:'Add the soft shadow', p:'M40 92 A32 5.5 0 1 0 104 92 A32 5.5 0 1 0 40 92', tone:{ type:'radial', a:[62,91], r:34, stops:[[0,.55],[.6,.25],[1,0]] }, blur:1.8 },
+      { t:'Shade the round bottom', tip:'Light top left, core shadow bottom right, lighter rim at the very edge.', p:RPEAR, tone:{ type:'radial', a:[40,58], r:44, stops:[[0,.02],[.4,.18],[.72,.6],[.88,.8],[1,.55]], dark:.8 } },
+      { t:'Shade the neck a little', p:'M44 20 Q42 36 36 48 Q46 44 52 52 Q58 40 56 20 Z', tone:{ type:'linear', a:[42,30], b:[58,30], stops:[[0,.05],[1,.45]] }, blur:1.5 },
+      { t:'Dark right where it sits', p:'M36 90 A14 2 0 1 0 64 90 A14 2 0 1 0 36 90', tone:{ type:'solid', dark:.85 }, blur:.6 },
+      { t:'Add tiny freckles', tip:'Pears have little dots — draw them lightly and not in rows.', p:dots([[58,66],[64,74],[46,78],[54,84],[66,60],[40,70],[60,52]], .8), tone:{ type:'solid', dark:.4 } },
+      { t:'Lift out a soft highlight', p:'M33 68 Q35 57 42 54 Q40 65 33 68', erase:true, blur:1.1 } ] },
+    { id:'rmug', name:'Realistic mug', cat:'Realistic', hard:3, real:true, steps:[
+      { t:'Draw the top oval lightly', tip:'The top of a cup is an oval, not a circle.', faint:true, p:MUGTOP },
+      { t:'Draw the sides and the round bottom', faint:true, p:'M26 34 L26 80 Q26 88 46 88 Q66 88 66 80 L66 34' },
+      { t:'Draw the handle', faint:true, p:'M66 44 Q84 44 84 58 Q84 72 66 74 M66 50 Q77 50 77 58 Q77 67 66 68' },
+      { t:'Add the shadow on the table', p:'M34 88 A30 5 0 1 0 94 88 A30 5 0 1 0 34 88', tone:{ type:'radial', a:[62,88], r:32, stops:[[0,.55],[.6,.25],[1,0]] }, blur:1.8 },
+      { t:'Shade the mug in stripes of light and dark', tip:'Round things like cups go: light, lightest, then darker and darker round the side.', p:MUGBODY, tone:{ type:'linear', a:[26,0], b:[66,0], stops:[[0,.45],[.16,.2],[.3,.04],[.52,.22],[.84,.72],[1,.5]], dark:.85 } },
+      { t:'Shade the inside of the mug', tip:'Inside, it’s the opposite: the left wall is in shadow.', p:MUGTOP, tone:{ type:'linear', a:[26,34], b:[66,34], stops:[[0,.85],[.6,.5],[1,.2]], dark:.8 } },
+      { t:'Shade the handle', p:MUGHANDLE, tone:{ type:'linear', a:[66,50], b:[84,62], stops:[[0,.2],[1,.75]], dark:.85 } },
+      { t:'Handle shadow on the mug', p:'M66 50 Q70 60 66 68 Q64 60 66 50 Z', tone:{ type:'solid', dark:.5 }, blur:1 },
+      { t:'Lift out a tall shiny stripe', p:'M34 42 L37 42 L37 80 L34 79 Z', erase:true, blur:.9 },
+      { t:'Make the rim crisp', thin:true, p:'M26 34 A20 6 0 0 0 66 34' } ] },
+    { id:'rcandle', name:'Realistic glowing candle', cat:'Realistic', hard:3, real:true, steps:[
+      { t:'Draw the candle lightly', faint:true, p:'M36 44 L36 92 L64 92 L64 44 M36 44 A14 4 0 1 0 64 44 A14 4 0 1 0 36 44' },
+      { t:'Draw the wick and the flame', faint:true, p:'M50 44 L50 38 M50 12 Q58 26 56 32 Q54 38 50 38 Q46 38 44 32 Q42 26 50 12' },
+      { t:'Shade the whole background dark', tip:'Glow only shows up against darkness — so shade around it. Keep it lighter near the flame.', p:'M6 2 L94 2 L94 98 L6 98 Z', tone:{ type:'radial', a:[50,28], r:66, stops:[[0,0],[.18,.05],[.5,.6],[1,.95]], dark:.95 } },
+      { t:'Lift out a soft glow around the flame', tip:'Rub gently in circles with the eraser.', p:'M32 28 A18 18 0 1 0 68 28 A18 18 0 1 0 32 28', erase:true, blur:5 },
+      { t:'Clean out the candle with the eraser', p:CANDLE, erase:true },
+      { t:'Shade the candle — bright on top, dark at the bottom', tip:'The flame lights the candle from above.', p:CANDLE, tone:{ type:'linear', a:[50,44], b:[50,94], stops:[[0,.02],[.45,.3],[1,.8]], dark:.9 } },
+      { t:'Darken the sides of the candle', p:CANDLE, tone:{ type:'linear', a:[36,0], b:[64,0], stops:[[0,.45],[.35,0],[.65,0],[1,.45]] } },
+      { t:'Clean out the flame', p:FLAME, erase:true, blur:.5 },
+      { t:'Shade the dark blue bottom of the flame', p:'M45 32 Q50 40 55 32 Q55 38 50 38 Q45 38 45 32 Z', tone:{ type:'solid', dark:.55 }, blur:.8 },
+      { t:'Draw the dark wick', p:'M50 45 L50 36', thin:true },
+      { t:'Add a wax drip', faint:true, p:'M58 46 Q60 54 58 60 Q56 64 57 58 Q56 52 56 46' } ] },
+    { id:'rrose', name:'Realistic rose', cat:'Realistic', hard:3, real:true, steps:[
+      { t:'Draw the outer petals like a cup', thin:true, p:ROSECUP },
+      { t:'Draw the back petals behind', faint:true, p:'M30 44 Q30 24 50 18 Q70 22 70 44' },
+      { t:'Draw the tight bud curling in the middle', tip:'It’s like a spiral that tucks inside itself.', thin:true, p:ROSEBUD },
+      { t:'Add the petals curling out at the sides', thin:true, p:'M24 42 Q26 30 40 30 M76 42 Q74 30 62 28' },
+      { t:'Draw the stem and a leaf', faint:true, p:'M50 81 Q48 92 50 100 M49 92 Q34 86 28 94 Q38 100 49 94' },
+      { t:'Shade the back petals', p:'M30 44 Q30 24 50 18 Q70 22 70 44 Q60 36 50 36 Q40 36 30 44 Z', tone:{ type:'linear', a:[30,24], b:[70,40], stops:[[0,.25],[1,.6]] } },
+      { t:'Shade the cup — darker towards the bottom', p:ROSECUP, tone:{ type:'radial', a:[40,50], r:36, stops:[[0,.1],[.5,.3],[.85,.7],[1,.9]], dark:.9 } },
+      { t:'Shade the bud', p:ROSEBUD, tone:{ type:'linear', a:[42,26], b:[62,46], stops:[[0,.1],[1,.55]] } },
+      { t:'Deep shadow where the petals tuck in', tip:'Real flowers have very dark gaps between petals — don’t be scared to go dark.', p:'M36 47 Q50 58 64 47 Q58 53 50 54 Q42 53 36 47 Z M44 38 Q46 31 52 31 Q57 33 55 40 Q53 35 49 35 Q46 36 44 38 Z M40 40 Q41 47 50 49 Q44 49 40 44 Z', tone:{ type:'solid', dark:.85 }, blur:.7 },
+      { t:'Shade the curled edges', p:'M24 42 Q26 30 40 30 Q30 36 28 46 Z M76 42 Q74 30 62 28 Q72 34 72 46 Z', tone:{ type:'solid', dark:.45 }, blur:1 },
+      { t:'Lift out light along the petal edges', tip:'Petal edges catch the light — it makes them look thin and soft.', p:'M27 45 Q33 50 40 50 Q33 53 27 45 Z M60 50 Q68 50 73 45 Q68 53 60 50 Z M42 26 Q50 22 58 25 Q50 26 42 29 Z', erase:true, blur:.6 },
+      { t:'Shade the stem and leaf', p:'M47 81 L53 81 L52 100 L48 100 Z M49 92 Q34 86 28 94 Q38 100 49 94 Z', tone:{ type:'linear', a:[30,90], b:[50,96], stops:[[0,.3],[1,.75]] } } ] },
+    { id:'rberry', name:'Realistic strawberry', cat:'Realistic', hard:3, real:true, steps:[
+      { t:'Draw the strawberry shape lightly', faint:true, p:BERRY },
+      { t:'Draw the leaves on top', faint:true, p:BERRYLEAF },
+      { t:'Add the soft shadow', p:'M34 90 A30 5 0 1 0 94 90 A30 5 0 1 0 34 90', tone:{ type:'radial', a:[60,90], r:32, stops:[[0,.55],[.6,.25],[1,0]] }, blur:1.8 },
+      { t:'Shade the berry', tip:'Strawberries are red, so in pencil they are a medium-dark grey all over.', p:BERRY, tone:{ type:'radial', a:[40,46], r:50, stops:[[0,.25],[.45,.45],[.8,.8],[.92,.9],[1,.7]], dark:.85 } },
+      { t:'Shadow under the leaves', p:'M32 34 Q50 44 68 34 Q58 40 50 40 Q42 40 32 34 Z', tone:{ type:'solid', dark:.7 }, blur:1.2 },
+      { t:'Shade the leaves', p:BERRYLEAF, tone:{ type:'linear', a:[36,20], b:[62,34], stops:[[0,.4],[1,.85]] } },
+      { t:'Lift out a little light dimple for each seed', tip:'Each seed sits in a tiny dip in the berry.', p:dots(SEEDS.map(([x, y]) => [x + .8, y + .8]), 2.2), erase:true, blur:.5 },
+      { t:'Dot in the dark seeds', p:dots(SEEDS, 1), tone:{ type:'solid', dark:.9 } },
+      { t:'Lift out a big soft highlight', p:'M29 52 Q31 40 40 37 Q36 49 29 52', erase:true, blur:1.2 } ] },
+    { id:'rnose', name:'Realistic nose', cat:'Realistic', hard:3, real:true, steps:[
+      { t:'Draw light helper circles', tip:'A nose is a ball in the middle and two small balls for the sides.', helper:true, p:'M50 10 L50 90 M40 64 A10 10 0 1 0 60 64 A10 10 0 1 0 40 64 M28 70 A7 7 0 1 0 42 70 A7 7 0 1 0 28 70 M58 70 A7 7 0 1 0 72 70 A7 7 0 1 0 58 70' },
+      { t:'Draw the sides of the nostrils lightly', tip:'Real noses have almost no lines — shading does the work.', faint:true, p:'M36 60 Q26 64 28 74 Q30 80 40 78 M64 60 Q74 64 72 74 Q70 80 60 78' },
+      { t:'Shade the dark nostrils', p:'M37 77 Q42 72 47 76 Q44 80 37 77 Z M63 77 Q58 72 53 76 Q56 80 63 77 Z', tone:{ type:'solid', dark:.9 }, blur:.6 },
+      { t:'Shade the shadow side of the nose', tip:'Light from the top left — so the right side of the nose is darker.', p:'M54 10 Q58 40 64 56 Q68 64 60 64 Q55 40 51 10 Z', tone:{ type:'solid', dark:.55 }, blur:2.2 },
+      { t:'Shade the other side very lightly', p:'M46 10 Q44 40 38 56 Q41 60 44 56 Q48 40 49 10 Z', tone:{ type:'solid', dark:.18 }, blur:2.2 },
+      { t:'Shade round the ball of the nose', p:'M40 64 A10 10 0 1 0 60 64 A10 10 0 1 0 40 64', tone:{ type:'radial', a:[46,60], r:14, stops:[[0,0],[.55,.08],[1,.5]] }, blur:1 },
+      { t:'Shade the sides of the nostrils', p:'M28 70 A7 7 0 1 0 42 70 A7 7 0 1 0 28 70 M58 70 A7 7 0 1 0 72 70 A7 7 0 1 0 58 70', tone:{ type:'radial', a:[50,68], r:26, stops:[[0,.1],[1,.5]] }, blur:1.2 },
+      { t:'Add the shadow under the nose', p:'M34 80 Q50 90 66 80 Q57 87 50 87 Q43 87 34 80 Z', tone:{ type:'solid', dark:.55 }, blur:1.6 },
+      { t:'Lift out highlights on the tip and the bridge', tip:'Shiny spots make skin look real.', p:'M45 59 A3.5 2.6 0 1 0 52 59 A3.5 2.6 0 1 0 45 59 M48 22 L50 22 L50 48 L48 48 Z', erase:true, blur:.8 } ] },
+    { id:'rlips', name:'Realistic lips', cat:'Realistic', hard:3, real:true, steps:[
+      { t:'Draw the upper lip lightly', tip:'It has a little dip in the middle, like a flying bird.', faint:true, p:LIPUP },
+      { t:'Draw the lower lip lightly', tip:'The lower lip is fuller and rounder.', faint:true, p:'M20 50 Q30 66 50 68 Q70 66 80 50' },
+      { t:'Shade the upper lip darker', tip:'The upper lip faces down, away from the light.', p:LIPUP, tone:{ type:'linear', a:[50,36], b:[50,53], stops:[[0,.35],[1,.72]], dark:.85 } },
+      { t:'Shade the lower lip', tip:'Keep the middle lighter — it bulges out into the light.', p:LIPLOW, tone:{ type:'linear', a:[50,52], b:[50,68], stops:[[0,.55],[.45,.18],[1,.45]], dark:.85 } },
+      { t:'Draw the dark line where the lips meet', tip:'This is the darkest part — it’s not a line, it’s a shadow.', p:'M20 50 Q35 55 50 53.5 Q65 55 80 50 Q65 52 50 51 Q35 52 20 50 Z', tone:{ type:'solid', dark:.95 }, blur:.5 },
+      { t:'Add soft lines on the lips', tip:'Lips have tiny creases that follow their shape.', faint:true, p:'M36 57 Q35 61 37 64 M44 56 Q43 61 45 66 M56 56 Q57 61 55 66 M64 57 Q65 61 63 64 M40 46 Q41 44 42 42 M60 46 Q59 44 58 42' },
+      { t:'Add the shadow under the lower lip', p:'M34 70 Q50 79 66 70 Q58 75 50 75 Q42 75 34 70 Z', tone:{ type:'solid', dark:.45 }, blur:2 },
+      { t:'Shade the little groove above the lip', p:'M44 30 Q46 35 45 38 L50 40 L55 38 Q54 35 56 30 Z', tone:{ type:'linear', a:[50,30], b:[50,40], stops:[[0,0],[1,.3]] }, blur:1.8 },
+      { t:'Lift out a shine on the lower lip', p:'M40 59 Q50 55 60 59 Q50 62 40 59 Z', erase:true, blur:1.2 } ] },
   ];
   LESSONS.push(...REAL_LESSONS);
 
   const lessonD = L => L.steps.filter(s => s.p && !s.helper && !s.tone && !s.erase).map(s => s.p).join(' ');
   // realistic lessons are drawn as SVG with soft graphite gradients, highlights and faint outlines
+  // a tone's darkness curve: [offset, darkness] pairs (core shadow, reflected light…)
+  const toneStops = T => T.stops || (T.invert ? [[0,1],[1,0]] : [[0,0],[.55,.45],[1,1]]);
+  const toneDark = T => T.dark != null ? T.dark : T.stops ? 1 : .5;
   function svgArt(L, cur, uid){
-    let defs = '', body = '';
+    const pre = `${uid}-${L.id}`;
+    // paper grain: noise punches tiny holes in the graphite, like pencil on real paper
+    let defs = `<filter id="${pre}-grain" filterUnits="userSpaceOnUse" x="-6" y="-6" width="112" height="112"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="3"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.9 1.3"/><feComposite in="SourceGraphic" operator="in"/></filter>`;
+    let body = '';
+    const blurs = {};
+    const blurAttr = st => {
+      if(!st.blur) return '';
+      const k = String(st.blur).replace('.', '_');
+      if(!blurs[k]){ blurs[k] = 1; defs += `<filter id="${pre}-b${k}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="${st.blur}"/></filter>`; }
+      return ` filter="url(#${pre}-b${k})"`;
+    };
     L.steps.forEach((st, i) => {
       if(!st.p || st.helper) return;
       const on = i === cur, ring = on ? ' stroke="#2f7fd8" stroke-width="2"' : ' stroke="none"';
       if(st.tone){
-        const T = st.tone, id = `${uid}-${L.id}-${i}`, d = T.dark || .5;
-        if(T.type === 'solid'){ body += `<path d="${st.p}" fill="#2a2330" fill-opacity="${d}"${ring}/>`; return; }
-        const stops = T.invert
-          ? `<stop offset="0" stop-color="#2a2330" stop-opacity="${d}"/><stop offset="1" stop-color="#2a2330" stop-opacity="0"/>`
-          : `<stop offset="0" stop-color="#2a2330" stop-opacity="0"/><stop offset=".55" stop-color="#2a2330" stop-opacity="${d*.45}"/><stop offset="1" stop-color="#2a2330" stop-opacity="${d}"/>`;
+        const T = st.tone, id = `${pre}-${i}`, d = toneDark(T);
+        if(T.type === 'solid'){ body += `<path d="${st.p}" fill="#2a2330" fill-opacity="${Math.min(1, d)}"${ring}${blurAttr(st)}/>`; return; }
+        const stops = toneStops(T).map(([o, a]) => `<stop offset="${o}" stop-color="#2a2330" stop-opacity="${Math.min(1, a*d)}"/>`).join('');
         defs += T.type === 'linear'
           ? `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${T.a[0]}" y1="${T.a[1]}" x2="${T.b[0]}" y2="${T.b[1]}">${stops}</linearGradient>`
           : `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${T.a[0]}" cy="${T.a[1]}" r="${T.r}">${stops}</radialGradient>`;
-        body += `<path d="${st.p}" fill="url(#${id})"${ring}/>`;
-      } else if(st.erase) body += `<path d="${st.p}" fill="#fbf8f0"${ring}/>`;
+        body += `<path d="${st.p}" fill="url(#${id})"${ring}${blurAttr(st)}/>`;
+      } else if(st.erase) body += `<path d="${st.p}" fill="#fbf8f0"${ring}${blurAttr(st)}/>`;
       else if(st.shade) body += `<path d="${st.p}" fill="${on ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
-      else body += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : st.faint ? '#2a233055' : '#2a2330'}" stroke-width="${on ? 4 : st.faint ? 1.4 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      else body += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : st.faint ? '#2a233055' : '#2a2330'}" stroke-width="${on ? 4 : st.faint ? 1.1 : st.thin ? 1.6 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
     });
-    return `<defs>${defs}</defs>${body}`;
+    return `<defs>${defs}</defs><g filter="url(#${pre}-grain)">${body}</g>`;
   }
   const thumb = L => L.real
     ? `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true">${svgArt(L, -1, 't')}</svg>`
@@ -4009,17 +4124,19 @@
   }
   // soft tonal shading for realistic lessons (k = how strong, 0–1)
   function toneFill(s, b, k){
-    const P = pathPx(s.p, b);
-    gctx.save(); gctx.setLineDash([]); gctx.clip(P);
+    const P = pathPx(s.p, b), blur = (s.blur || 0)*b.S/100;
+    gctx.save(); gctx.setLineDash([]);
+    // soft edges: blur the fill instead of clipping it
+    if(blur) gctx.filter = `blur(${blur.toFixed(2)}px)`; else gctx.clip(P);
     if(s.erase){ gctx.fillStyle = `rgba(251,248,240,${k})`; gctx.fill(P); gctx.restore(); return; }
-    const T = s.tone, dark = (T.dark || .5)*k, ink = a => `rgba(42,35,48,${a})`;
+    const T = s.tone, dark = toneDark(T)*k, ink = a => `rgba(42,35,48,${Math.max(0, Math.min(1, a))})`;
     if(T.type === 'solid'){ gctx.fillStyle = ink(dark); gctx.fill(P); gctx.restore(); return; }
     let g;
     if(T.type === 'linear'){ const A = mapP(b, { x:T.a[0], y:T.a[1] }), B = mapP(b, { x:T.b[0], y:T.b[1] }); g = gctx.createLinearGradient(A.x, A.y, B.x, B.y); }
     else { const A = mapP(b, { x:T.a[0], y:T.a[1] }); g = gctx.createRadialGradient(A.x, A.y, 0, A.x, A.y, T.r*b.S/100); }
-    if(T.invert){ g.addColorStop(0, ink(dark)); g.addColorStop(1, ink(0)); }
-    else { g.addColorStop(0, ink(0)); g.addColorStop(.55, ink(dark*.45)); g.addColorStop(1, ink(dark)); }
-    gctx.fillStyle = g; gctx.fillRect(0, 0, dW, dH);
+    toneStops(T).forEach(([o, a]) => g.addColorStop(o, ink(a*dark)));
+    gctx.fillStyle = g;
+    if(blur) gctx.fill(P); else gctx.fillRect(0, 0, dW, dH);
     gctx.restore();
   }
   // frac = how much of the current step the "video" has drawn (null = finished)
@@ -4046,21 +4163,38 @@
       }
       if(i < step){
         if(!paper && !showGuideOn) return;
-        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? 'rgba(42,35,48,.38)' : '#2a2330') : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? (s.faint ? lw*.6 : lw) : lw*.8;
+        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? 'rgba(42,35,48,.3)' : '#2a2330') : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? (s.faint ? lw*.45 : s.thin ? lw*.55 : lw) : lw*.8;
         strokePts(pts, b, pts.length); return;
       }
       if(anim){
         const k = Math.max(1, Math.floor(pts.length*frac));
-        gctx.setLineDash([]); gctx.strokeStyle = paper ? '#2a2330' : '#2f7fd8'; gctx.lineWidth = lw*1.15;
+        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? 'rgba(42,35,48,.45)' : '#2a2330') : '#2f7fd8'; gctx.lineWidth = paper && (s.faint || s.thin) ? lw*.6 : lw*1.15;
         strokePts(pts, b, k); tip = mapP(b, pts[k-1]);
       } else if(paper){
-        gctx.setLineDash([]); gctx.strokeStyle = s.faint ? 'rgba(42,35,48,.38)' : '#2a2330'; gctx.lineWidth = s.faint ? lw*.6 : lw; strokePts(pts, b, pts.length);
+        gctx.setLineDash([]); gctx.strokeStyle = s.faint ? 'rgba(42,35,48,.3)' : '#2a2330'; gctx.lineWidth = s.faint ? lw*.45 : s.thin ? lw*.55 : lw; strokePts(pts, b, pts.length);
       } else if(showGuideOn){
         gctx.setLineDash([lw*2.2, lw*1.8]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw; strokePts(pts, b, pts.length);
       }
     });
     gctx.setLineDash([]);
+    if(lesson.real && paper) paperGrain();
     if(tip) pencilTip(tip);
+  }
+  // rub a paper-tooth texture out of the graphite so the finished drawing looks hand-shaded
+  let grainPat = null;
+  function paperGrain(){
+    if(!grainPat){
+      const c = document.createElement('canvas'); c.width = c.height = 160;
+      const x = c.getContext('2d'), img = x.createImageData(160, 160);
+      for(let i = 0; i < img.data.length; i += 4){ const n = Math.random(); img.data[i+3] = n > .72 ? 150*(n - .72)/.28 : 0; }
+      x.putImageData(img, 0, 0);
+      x.strokeStyle = 'rgba(0,0,0,.12)'; x.lineWidth = .6;
+      for(let k = 0; k < 70; k++){ const px = Math.random()*160, py = Math.random()*160; x.beginPath(); x.moveTo(px, py); x.lineTo(px + 7, py - 7); x.stroke(); }
+      grainPat = gctx.createPattern(c, 'repeat');
+    }
+    gctx.save(); gctx.setLineDash([]);
+    gctx.globalCompositeOperation = 'destination-out'; gctx.fillStyle = grainPat; gctx.fillRect(0, 0, dW, dH);
+    gctx.restore();
   }
   // ---- the step player: watch the pencil draw it, like a little video ----
   let araf = 0, vid = { p:0, dur:1400, playing:false, speed:1, loop:false, last:0 };
