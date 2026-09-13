@@ -1161,6 +1161,9 @@
     }).join('');
     const cnt = $('badgeCount'); if(cnt) cnt.textContent = `${earned.length} of ${BADGES.length}`;
     store.set('badgesSeen', earned);
+    // badges you already have when you open the app are not announced again
+    const told = store.get('badgesTold', []);
+    store.set('badgesTold', [...new Set(told.concat(earned))]);
   }
 
   // ---- home cards: keep going + today's challenge ----
