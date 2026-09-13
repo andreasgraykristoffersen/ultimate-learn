@@ -275,6 +275,14 @@
   .goalring i{width:42px;height:42px;border-radius:50%;background:var(--lacquer);display:grid;place-items:center;
     font:800 13px var(--ui);color:var(--brass-lit);font-style:normal}
 
+  /* ---- step player (the "video" between the steps) ---- */
+  .vidbar{flex-basis:100%;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:12px;
+    background:#fffdf7f2;box-shadow:0 2px 10px #0002}
+  .vidbar[hidden]{display:none}
+  .vbtn{min-width:40px;height:34px;border-radius:999px;border:1px solid #cdbfa3;background:#fffaf0;color:var(--ink);font-weight:800;font-size:15px}
+  .vbtn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--brass-lit)}
+  .vscrub{flex:1;min-width:60px;height:22px;accent-color:#2f7fd8}
+
   /* ---- draw ---- */
   .draw-view{grid-template-rows:auto minmax(0,1fr) auto}
   .dwrap{position:relative;min-height:0;margin:0 12px;border-radius:6px;overflow:hidden;background:#fbf8f0;
@@ -573,6 +581,12 @@
       <div class="steptip" id="steptip">
         <div class="say" id="dSay"></div>
         <div class="stepbtns" id="stepBtns"></div>
+        <div class="vidbar" id="vidBar" hidden>
+          <button class="vbtn" id="vPlay" aria-label="Pause">⏸</button>
+          <input class="vscrub" type="range" id="vScrub" min="0" max="1000" value="0" aria-label="How much of the step is drawn">
+          <button class="vbtn" id="vSpeed" title="Half speed">1×</button>
+          <button class="vbtn" id="vLoop" aria-pressed="false" title="Play it over and over">⟳</button>
+        </div>
       </div>
       <div class="modeask" id="modeAsk" hidden><div class="card" id="askCard"></div></div>
       <div class="toast" id="dToast" hidden></div>
@@ -2676,19 +2690,43 @@
     gctx.setLineDash([]);
     if(tip) pencilTip(tip);
   }
-  let araf = 0;
+  // ---- the step player: watch the pencil draw it, like a little video ----
+  let araf = 0, vid = { p:0, dur:1400, playing:false, speed:1, loop:false, last:0 };
+  function vidSync(){
+    const pb = $('vPlay');
+    pb.textContent = vid.playing ? '⏸' : '▶';
+    pb.setAttribute('aria-label', vid.playing ? 'Pause' : 'Play');
+    $('vSpeed').textContent = vid.speed === 1 ? '1×' : '½×';
+    $('vLoop').setAttribute('aria-pressed', vid.loop);
+    const sc = $('vScrub');
+    if(document.activeElement !== sc) sc.value = Math.round(vid.p*1000);
+  }
+  function vidFrame(){
+    araf = requestAnimationFrame(vidFrame);
+    const now = performance.now(), dt = Math.min(60, now - vid.last);
+    vid.last = now;
+    if(vid.playing){
+      vid.p += dt/vid.dur*vid.speed;
+      if(vid.p >= 1){ vid.p = vid.loop ? 0 : 1; if(!vid.loop) vid.playing = false; }
+      vidSync();
+    }
+    drawGuide(!vid.playing && vid.p >= 1 ? null : vid.p);
+  }
   function watch(){
     cancelAnimationFrame(araf);
-    const s = lesson.steps[step];
-    if(!s.p || matchMedia('(prefers-reduced-motion:reduce)').matches){ drawGuide(); return; }
-    const t0 = performance.now(), dur = Math.max(900, Math.min(2800, samples(s.p).length*9));
-    const tick = () => {
-      const f = (performance.now() - t0)/dur;
-      if(f >= 1){ drawGuide(); return; }
-      drawGuide(f); araf = requestAnimationFrame(tick);
-    };
-    tick();
+    const s = lesson.steps[step], bar = $('vidBar');
+    if(!s || !s.p){ bar.hidden = true; vid.playing = false; drawGuide(); return; }
+    bar.hidden = false;
+    vid.dur = Math.max(1200, Math.min(4200, samples(s.p).length*11));
+    vid.p = 0;
+    vid.playing = !matchMedia('(prefers-reduced-motion:reduce)').matches;
+    vid.last = performance.now();
+    vidSync(); vidFrame();
   }
+  $('vPlay').onclick = () => { if(vid.p >= 1) vid.p = 0; vid.playing = !vid.playing; vid.last = performance.now(); vidSync(); drawGuide(vid.p); };
+  $('vScrub').oninput = () => { vid.p = +$('vScrub').value/1000; vid.playing = false; vidSync(); drawGuide(vid.p); };
+  $('vSpeed').onclick = () => { vid.speed = vid.speed === 1 ? .5 : 1; vidSync(); };
+  $('vLoop').onclick = () => { vid.loop = !vid.loop; if(vid.loop && !vid.playing){ vid.p = 0; vid.playing = true; vid.last = performance.now(); } vidSync(); };
   function drawRef(){
     let s = '';
     lesson.steps.forEach((st,i) => {
@@ -2782,6 +2820,7 @@
   }
   function finishLesson(){
     cancelAnimationFrame(araf);
+    vid.playing = false; $('vidBar').hidden = true;
     const nextL = LESSONS[LESSONS.indexOf(raw) + 1];
     if(dmode === 'screen'){
       const avg = scores.length ? scores.reduce((a,b) => a+b, 0)/scores.length : 1;
@@ -2821,6 +2860,7 @@
       $('dTitle').innerHTML = `<small>DRAW</small>${raw ? raw.name : 'Playground'}`;
       $('dSave').hidden = !!raw; $('dGuide').hidden = true; $('dGuide').setAttribute('aria-pressed', true);
       $('steptip').hidden = $('dRef').hidden = !raw;
+      $('vidBar').hidden = true; vid.playing = false;
       $('modeAsk').hidden = true;
       $('drawbar').hidden = false; paint.style.pointerEvents = ''; toastEl.hidden = true;
       brush = 'marker'; color = COLORS[1]; erasing = false; syncDrawTools();
