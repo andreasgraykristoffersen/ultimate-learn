@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ultimate Learn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,7 +76,7 @@
   .oct span{font:500 12px var(--mono);color:var(--brass-lit);min-width:58px;text-align:center}
 
   /* ---- home ---- */
-  .home{display:block;overflow-y:auto;background:radial-gradient(120% 60% at 20% 0,#241f2b 0,var(--lacquer) 60%)}
+  .home{display:block;overflow-y:auto;background:radial-gradient(120% 60% at 20% 0,var(--home-glow,#241f2b) 0,var(--lacquer) 60%)}
   .home-in{max-width:980px;margin:0 auto;padding:clamp(22px,5vw,56px) 18px 32px;display:flex;flex-direction:column;gap:22px}
   .hero h1{margin:0;font-weight:400;font-size:clamp(34px,7.4vw,70px);line-height:1.02;text-wrap:balance}
   .hero p{margin:10px 0 0;font-weight:700;font-size:17px;color:var(--muted)}
@@ -585,10 +589,56 @@
   .stickbtn:hover{border-color:var(--ink)}
   .signin{min-height:42px;padding:8px 12px;border-radius:12px;border:1px solid #cdbfa3;background:#fffaf0;color:var(--ink);font:italic 700 18px "Segoe Script","Bradley Hand","Comic Sans MS",cursive}
   .movebox input[type=range]:disabled{opacity:.4}
+  @media (max-width:520px){
+    .modeask{padding:8px}
+    .modeask .card{padding:14px}
+    .askhead{margin:0 -14px;padding:8px 14px 6px;top:-14px}
+    .askpreview{width:min(150px,42vw)}
+    .asktabs{flex-wrap:nowrap;justify-content:flex-start;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+    .asktabs::-webkit-scrollbar{display:none}
+    .asktab{flex:none;padding:6px 10px;font-size:13px}
+  }
+  @media (max-height:640px){ .askpreview{width:min(130px,34vh)} }
   .movebox{display:grid;gap:8px}
   .movebox label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px}
   .movebox input[type=range]{flex:1;accent-color:var(--ink)}
   .modeask .chips-pick .taste{font-size:14px;padding:8px 12px}
+
+  /* ---- customize page + home hello ---- */
+  .hello{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .avatar{flex:none;width:46px;height:46px;border-radius:50%;border:2px solid var(--brass);background:var(--panel);font-size:26px;line-height:1;display:grid;place-items:center}
+  .avatar:hover{border-color:var(--brass-lit)}
+  .custbtn{margin-left:auto}
+  .custsec{display:grid;gap:10px;padding:14px;border-radius:14px;background:var(--panel);border:1px solid var(--edge)}
+  .custsec h2{margin:0;font-size:17px}
+  .custsub{margin:-4px 0 0;color:var(--muted);font-weight:700;font-size:14px}
+  .custchips{display:flex;flex-wrap:wrap;gap:8px}
+  .custchip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:7px 14px;border-radius:999px;border:1px solid var(--edge);background:var(--lacquer-2);font-weight:800;font-size:14px}
+  .custchip:hover{border-color:var(--brass-deep)}
+  .custchip[aria-pressed="true"]{border-color:var(--brass);background:var(--brass);color:#1b150c}
+  .custchip .dots{display:inline-flex;gap:2px}
+  .custchip .dots i{width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 1px #0006}
+  .custname{min-height:44px;max-width:320px;padding:8px 14px;border-radius:12px;border:1px solid var(--edge);background:var(--lacquer);color:var(--ivory);font:800 17px var(--ui)}
+  .custname:focus{outline:2px solid var(--brass-lit)}
+  .custavatars{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px}
+  .custav{height:48px;border-radius:12px;border:1px solid var(--edge);background:var(--lacquer-2);font-size:26px;line-height:1}
+  .custav[aria-pressed="true"]{border:2px solid var(--brass-lit);background:var(--panel-2)}
+  .custtoggle{display:flex;align-items:center;justify-content:space-between;max-width:320px;min-height:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--edge);background:var(--lacquer-2);font-weight:800;font-size:15px}
+  .custtoggle b{padding:3px 12px;border-radius:999px;background:#ffffff14;color:var(--muted)}
+  .custtoggle[aria-pressed="true"] b{background:var(--brass);color:#1b150c}
+  .custsec .btn{justify-self:start}
+  .custsec .btn.sure{border-color:#d7263d;color:#ff8a95}
+  /* drum pad styles */
+  [data-pads="neon"] .pad{background:#0b0a0d;border-color:var(--pc);box-shadow:inset 0 0 14px var(--pc),0 3px 0 #000}
+  [data-pads="neon"] .pad.lit{background:#0b0a0d;box-shadow:0 0 26px var(--pc),inset 0 0 22px var(--pc)}
+  [data-pads="rainbow"] .pad:nth-child(8n+1){--pc:#e0404f!important} [data-pads="rainbow"] .pad:nth-child(8n+2){--pc:#f28c28!important}
+  [data-pads="rainbow"] .pad:nth-child(8n+3){--pc:#f6c945!important} [data-pads="rainbow"] .pad:nth-child(8n+4){--pc:#3bb273!important}
+  [data-pads="rainbow"] .pad:nth-child(8n+5){--pc:#17c3b2!important} [data-pads="rainbow"] .pad:nth-child(8n+6){--pc:#2f7fd8!important}
+  [data-pads="rainbow"] .pad:nth-child(8n+7){--pc:#7b4fc9!important} [data-pads="rainbow"] .pad:nth-child(8n){--pc:#f28bb5!important}
+  [data-pads="rainbow"] .pad{background:linear-gradient(180deg,var(--pc),#1b1822 85%)}
+  [data-pads="candy"] .pad{background:linear-gradient(180deg,#fde6f0,#f4c6da);color:#3a2030;border-color:#f28bb5}
+  [data-pads="candy"] .pad .padkey{color:#8a5070}
+  [data-pads="candy"] .pad.lit{background:linear-gradient(180deg,var(--pc),#f4c6da)}
 
   /* ---- guitar ---- */
   .guitar-view{grid-template-rows:auto auto auto minmax(0,1fr)}
@@ -654,7 +704,7 @@
     <div class="home-in">
       <div class="hero">
         <h1 class="brand">ULTIMATE LEARN</h1>
-        <p>What do you want to learn today?</p>
+        <p class="hello"><button class="avatar" id="homeAvatar" data-go="custom" aria-label="Customize">🙂</button><span id="homeHello">What do you want to learn today?</span><button class="btn custbtn" data-go="custom">🎨 Customize</button></p>
         <div class="xpbar" id="homeProg"></div>
       </div>
 
@@ -1102,6 +1152,12 @@
     <div class="fbstrip" id="fbStrip"></div>
   </section>
 
+  <!-- ============ CUSTOMIZE ============ -->
+  <section class="view listview custview" data-view="custom" hidden>
+    <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>MAKE IT YOURS</small>Customize</h1></header>
+    <div class="scroll"><div class="scroll-in" id="custList"></div></div>
+  </section>
+
   <!-- ============ TUNER ============ -->
   <section class="view tuner-view" data-view="tuner" hidden>
     <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>GUITAR</small>Tune my guitar</h1></header>
@@ -1131,6 +1187,7 @@
     get(k,d){ try{ const v = localStorage.getItem('ultimateLearn.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
     set(k,v){ try{ localStorage.setItem('ultimateLearn.'+k, JSON.stringify(v)); }catch(e){} }
   };
+  let CUST = store.get('custom', null) || {}; // your customize settings (the CUSTOMIZE block keeps this up to date)
   function saveStars(key, n){ const s = store.get('stars',{}); if(!(s[key] >= n)){ s[key] = n; store.set('stars', s); } challengeCheck(key); }
 
   // ================= SONGS (note:beats) =================
@@ -1562,7 +1619,7 @@
 
   // ---- confetti for a good result ----
   function confetti(){
-    if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches || CUST.confetti === false) return;
     const cv = document.createElement('canvas'); cv.className = 'confetti'; document.body.appendChild(cv);
     const dpr = Math.min(2, devicePixelRatio||1), W = innerWidth, H = innerHeight;
     cv.width = W*dpr; cv.height = H*dpr;
@@ -1570,14 +1627,18 @@
     const cols = ['#e8c679','#d7263d','#7fc7e8','#3bb273','#f28bb5','#fbf7ec'];
     const ps = Array.from({ length:110 }, () => ({ x:W/2 + (Math.random()-.5)*90, y:H*.34, vx:(Math.random()-.5)*10, vy:-Math.random()*10 - 3,
       r:Math.random()*6.28, vr:(Math.random()-.5)*.3, s:5 + Math.random()*6, c:cols[Math.floor(Math.random()*cols.length)] }));
-    const t0 = performance.now();
+    const t0 = performance.now(), shape = CUST.confettiShape || 'classic';
+    const glyph = { stars:'★', hearts:'♥', notes:'♪', avatar:CUST.avatar || '🙂' }[shape] || '';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
     const f = now => {
       const t = now - t0;
       x.clearRect(0,0,W,H);
       ps.forEach(p => {
         p.vy += .22; p.x += p.vx; p.y += p.vy; p.r += p.vr;
         x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.globalAlpha = Math.max(0, 1 - t/2400);
-        x.fillStyle = p.c; x.fillRect(-p.s/2, -p.s/4, p.s, p.s/2); x.restore();
+        x.fillStyle = p.c;
+        if(glyph){ x.font = `${p.s*2.3}px "Segoe UI Emoji","Apple Color Emoji",sans-serif`; x.fillText(glyph, 0, 0); } else x.fillRect(-p.s/2, -p.s/4, p.s, p.s/2);
+        x.restore();
       });
       if(t < 2400) requestAnimationFrame(f); else cv.remove();
     };
@@ -1590,7 +1651,7 @@
   // ================= PIANO =================
   const starsFor = miss => miss <= 1 ? 3 : miss <= 5 ? 2 : 1;
   const starText = n => '<span class="stars">' + '★'.repeat(n) + '☆'.repeat(3-n) + '</span>';
-  function tada(){ setTimeout(() => playNotes([72,76,79,84].map((m,i) => ({ m, t:i*110, d:i===3?600:160 }))), 250); }
+  function tada(){ if(CUST.tada === false) return; setTimeout(() => playNotes([72,76,79,84].map((m,i) => ({ m, t:i*110, d:i===3?600:160 }))), 250); }
 
   const keysEl = $('keys'), pianoView = $('pianoView');
   const isBlack = m => [1,3,6,8,10].includes(((m%12)+12)%12);
@@ -4569,6 +4630,7 @@
     opt('On paper', 'Watch each step, then draw it with a real pencil. Take a photo at the end.', () => afterMode('paper'));
     opt('Coloring page', 'The lines are drawn for you. Pick colors, tap 🪣 Fill, add glitter and stamps!', () => afterMode('color'));
     $('modeAsk').hidden = false;
+    $('drawbar').hidden = true; // the tools come back when you start drawing
   }
   // ---- scenes you can put around ANY drawing (kept to the edges so they don't cover it) ----
   const circ = (x, y, r) => `M${x - r} ${y} a${r} ${r} 0 1 0 ${2*r} 0 a${r} ${r} 0 1 0 ${-2*r} 0`;
@@ -6689,6 +6751,135 @@
       },
       leave(){ fbStop(); }
     };
+  })();
+
+  // ================= CUSTOMIZE =================
+  (() => {
+    const mkEl = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
+    const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const DEF = { name:'', avatar:'🙂', theme:'gold', font:'round', homeBg:'plain', confetti:true, confettiShape:'classic', tada:true, keyGlow:'gold', pads:'classic' };
+    const AVATARS = ['🙂','😎','🤩','🥳','🤠','🦸','🧙','🧑‍🚀','🐱','🐶','🦊','🐼','🐸','🦁','🐯','🐵','🦄','🐲','🦖','🐙','🦈','🐧','🦉','🐝','🤖','👾','👻','🎃','⚽','🎸','🎹','🎨'];
+    // [id, name, lacquer, lacquer-2, panel, panel-2, edge, brass, brass-lit, brass-deep, muted, home glow]
+    const THEMES = [
+      ['gold','✨ Gold night','#121016','#1d1a22','#26222c','#2e2935','#3a3442','#c8a15a','#e8c679','#9a7426','#b9afc0','#241f2b'],
+      ['ocean','🌊 Ocean','#0b1420','#102033','#16293d','#1c3249','#2a4560','#4fb3d9','#8fd8f2','#2a7fa3','#a9c3d6','#14304a'],
+      ['forest','🌲 Forest','#0f1610','#172118','#1f2c20','#263628','#34473a','#7cc36a','#aee39a','#4f8f40','#b3c7b0','#1d3320'],
+      ['candy','🍭 Candy','#1c1020','#28162c','#341c39','#3d2243','#533059','#f28bb5','#ffc0d9','#c2557f','#d9b8cc','#3a1a3e'],
+      ['sunset','🌅 Sunset','#1a0f0c','#261713','#321e18','#3b241d','#553328','#f28c28','#ffbb6b','#b85d10','#d8bfae','#3a1d12'],
+      ['galaxy','🪐 Galaxy','#0d0b1e','#16132e','#1e1a3d','#252048','#352e63','#9d7bff','#c7b3ff','#6a4fd0','#b9b3d9','#231d4d'],
+      ['lava','🌋 Lava','#140a0a','#211010','#2c1515','#351a1a','#4d2525','#ff5a4e','#ff9a8f','#c0302a','#d6b0ac','#3a1414'],
+      ['mint','🍃 Mint','#0c1716','#122220','#182d2a','#1e3632','#2c4a45','#3ddbb2','#8ff0d6','#1f9e7e','#a9ccc4','#14332e'],
+      ['silver','🪙 Silver','#111113','#1a1a1d','#232327','#2b2b30','#3a3a40','#c0c4cc','#e6e8ec','#8a8f98','#b5b7bd','#26262c']
+    ];
+    const VARS = ['--lacquer','--lacquer-2','--panel','--panel-2','--edge','--brass','--brass-lit','--brass-deep','--muted','--home-glow'];
+    const FONTS = [['round','Round','"Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif'], ['hand','Handwritten','"Comic Sans MS","Chalkboard SE","Comic Neue",cursive'],
+      ['chunky','Chunky','"Arial Black","Segoe UI Black",Impact,sans-serif'], ['classic','Storybook','Georgia,"Times New Roman",serif'], ['type','Typewriter','"DM Mono",ui-monospace,Consolas,monospace']];
+    const svgUrl = inner => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'>${inner}</svg>`)}")`;
+    const glyphs = (a, b) => svgUrl(`<text x='8' y='26' font-size='18' fill='white' fill-opacity='.09'>${a}</text><text x='38' y='56' font-size='14' fill='white' fill-opacity='.07'>${b}</text>`);
+    const HOMEBG = [
+      ['plain','Plain',''],
+      ['stars','⭐ Stars','radial-gradient(circle,rgba(255,255,255,.35) 1px,transparent 1.7px) 0 0/38px 38px, radial-gradient(circle,rgba(255,255,255,.18) 1px,transparent 1.7px) 19px 23px/38px 38px'],
+      ['notes','🎵 Music notes', glyphs('♪', '♫') + ' 0 0/64px 64px'],
+      ['hearts','💗 Hearts', glyphs('♥', '♥') + ' 0 0/64px 64px'],
+      ['dots','⚪ Dots','radial-gradient(circle,rgba(255,255,255,.07) 3px,transparent 3.5px) 0 0/26px 26px'],
+      ['waves','〰️ Waves','repeating-radial-gradient(circle at 50% 120%,transparent 0 22px,rgba(255,255,255,.04) 22px 26px)']
+    ];
+    const SHAPES = [['classic','🎊 Paper bits'], ['stars','⭐ Stars'], ['hearts','❤️ Hearts'], ['notes','🎵 Notes'], ['avatar','🙂 My avatar']];
+    const GLOWS = [['gold','Gold','#e8c679','#f6dc98','#c8a15a'], ['sky','Sky blue','#7fc7e8','#b9e3f5','#3a8fb8'], ['mint','Green','#6fdcaa','#b5f0d4','#2f9e6e'],
+      ['pink','Pink','#f28bb5','#fbc2da','#c2557f'], ['purple','Purple','#b18cf0','#d8c5fa','#7a55c9'], ['orange','Orange','#f5a54a','#fbd09a','#c06d12']];
+    const PADS = [['classic','🥁 Classic'], ['neon','💡 Neon'], ['rainbow','🌈 Rainbow'], ['candy','🍬 Candy']];
+
+    let C = { ...DEF, ...(store.get('custom', null) || {}) };
+    const styleEl = document.createElement('style'); styleEl.id = 'custStyle'; document.head.appendChild(styleEl);
+    function apply(){
+      CUST = C;
+      const root = document.documentElement, th = THEMES.find(t => t[0] === C.theme) || THEMES[0];
+      VARS.forEach((v, i) => root.style.setProperty(v, th[i + 2]));
+      root.style.setProperty('--ui', (FONTS.find(f => f[0] === C.font) || FONTS[0])[2]);
+      const meta = document.querySelector('meta[name="theme-color"]'); if(meta) meta.content = th[2];
+      const bg = (HOMEBG.find(b => b[0] === C.homeBg) || HOMEBG[0])[2], home = document.querySelector('[data-view="home"]');
+      home.style.background = (bg ? bg + ', ' : '') + 'radial-gradient(120% 60% at 20% 0,var(--home-glow,#241f2b) 0,var(--lacquer) 60%)';
+      root.dataset.pads = C.pads;
+      const g = GLOWS.find(x => x[0] === C.keyGlow) || GLOWS[0];
+      styleEl.textContent = C.keyGlow === 'gold' ? '' :
+        `.white.target{background:linear-gradient(180deg,${g[2]} 0,${g[3]} 20%,${g[2]} 100%)!important;box-shadow:inset 0 0 0 3px ${g[4]},inset 0 -10px 0 ${g[4]}!important}` +
+        `.black.target{background:linear-gradient(180deg,#000,${g[2]} 18%,${g[4]})!important}.target .lab{color:#1b150c!important}`;
+      // the hello on the home page
+      const hi = $('homeHello'), av = $('homeAvatar');
+      if(hi) hi.textContent = C.name ? `Hi ${C.name}! What do you want to learn today?` : 'What do you want to learn today?';
+      if(av) av.textContent = C.avatar;
+    }
+    function save(){ store.set('custom', C); apply(); render(); }
+    function section(title, sub){
+      const s = mkEl('section', 'custsec');
+      s.appendChild(mkEl('h2', null, title));
+      if(sub) s.appendChild(mkEl('p', 'custsub', sub));
+      $('custList').appendChild(s);
+      return s;
+    }
+    function chips(parent, list, key, labelOf){
+      const row = mkEl('div', 'custchips');
+      list.forEach(item => {
+        const id = item[0], b = mkEl('button', 'custchip', labelOf ? labelOf(item) : esc(item[1]));
+        b.setAttribute('aria-pressed', C[key] === id);
+        b.onclick = () => { C[key] = id; save(); };
+        row.appendChild(b);
+      });
+      parent.appendChild(row);
+      return row;
+    }
+    function toggle(parent, label, key){
+      const b = mkEl('button', 'custtoggle', `<span>${label}</span><b>${C[key] ? 'On' : 'Off'}</b>`);
+      b.setAttribute('aria-pressed', !!C[key]);
+      b.onclick = () => { C[key] = !C[key]; save(); };
+      parent.appendChild(b);
+    }
+    function render(){
+      const el = $('custList'); if(!el) return;
+      const keepScroll = el.parentElement.scrollTop;
+      el.innerHTML = '';
+      // you
+      const you = section('🙂 You', 'Your name and your avatar show on the home page.');
+      const nameIn = mkEl('input', 'custname'); nameIn.maxLength = 16; nameIn.placeholder = 'Your name'; nameIn.value = C.name; nameIn.setAttribute('aria-label', 'Your name');
+      nameIn.onchange = () => { C.name = nameIn.value.trim(); save(); };
+      nameIn.oninput = () => { C.name = nameIn.value.trim(); store.set('custom', C); apply(); };
+      you.appendChild(nameIn);
+      const avs = mkEl('div', 'custavatars');
+      AVATARS.forEach(a => { const b = mkEl('button', 'custav', a); b.setAttribute('aria-pressed', C.avatar === a); b.setAttribute('aria-label', 'Avatar ' + a); b.onclick = () => { C.avatar = a; save(); }; avs.appendChild(b); });
+      you.appendChild(avs);
+      // look
+      const look = section('🎨 App colors', 'Changes the colors of every page.');
+      chips(look, THEMES, 'theme', t => `<span class="dots"><i style="background:${t[2]}"></i><i style="background:${t[4]}"></i><i style="background:${t[7]}"></i></span>${esc(t[1])}`).classList.add('themes');
+      const font = section('🔤 Letters');
+      chips(font, FONTS, 'font', f => `<span style="font-family:${f[2].replace(/"/g, "'")}">${esc(f[1])}</span>`);
+      const hb = section('🏠 Home background');
+      chips(hb, HOMEBG, 'homeBg');
+      // celebrations
+      const party = section('🎉 Celebrations', 'What happens when you finish a lesson.');
+      toggle(party, '🎊 Confetti', 'confetti');
+      if(C.confetti) chips(party, SHAPES, 'confettiShape', s => esc(s[0] === 'avatar' ? `${C.avatar} My avatar` : s[1]));
+      toggle(party, '🔔 Ta-da sound', 'tada');
+      const tryIt = mkEl('button', 'btn go', '▶ Try it'); tryIt.onclick = () => { unlock(); confetti(); tada(); };
+      party.appendChild(tryIt);
+      // instruments
+      const pk = section('🎹 Piano key light', 'The color of the key you should play next.');
+      chips(pk, GLOWS, 'keyGlow', g => `<span class="dots"><i style="background:${g[2]}"></i></span>${esc(g[1])}`);
+      const dp = section('🥁 Drum pads');
+      chips(dp, PADS, 'pads');
+      // reset
+      const rs = section('↺ Start over');
+      const reset = mkEl('button', 'btn', 'Reset all my customizing');
+      reset.onclick = () => {
+        if(!reset.classList.contains('sure')){ reset.classList.add('sure'); reset.textContent = 'Tap again to reset'; setTimeout(() => { if(reset.isConnected){ reset.classList.remove('sure'); reset.textContent = 'Reset all my customizing'; } }, 2500); return; }
+        C = { ...DEF }; save();
+      };
+      rs.appendChild(reset);
+      el.parentElement.scrollTop = keepScroll;
+    }
+    hooks.custom = { enter(){ render(); } };
+    const prevHome = hooks.home && hooks.home.enter;
+    if(hooks.home) hooks.home.enter = arg => { if(prevHome) prevHome(arg); apply(); };
+    apply();
   })();
 
   // ================= START =================
