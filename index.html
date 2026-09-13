@@ -5621,6 +5621,21 @@
       for(let i = 0; i < len; i++) for(let c = 0; c < ch; c++){ const v = Math.max(-1, Math.min(1, chans[c][i])); data.setInt16(o, v < 0 ? v*0x8000 : v*0x7fff, true); o += 2; }
       return new Blob([data], { type:'audio/wav' });
     }
+    // play the finished sound silently into a recorder → webm (or mp4 on Apple devices)
+    function recordBlob(buf){
+      return new Promise(res => {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        const pick = [['audio/webm;codecs=opus','.webm'], ['audio/webm','.webm'], ['audio/mp4','.mp4']].find(([t]) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
+        if(!AC || !pick) return res(null);
+        const ac = new AC(), dest = ac.createMediaStreamDestination(), src = ac.createBufferSource(), parts = [];
+        src.buffer = buf; src.connect(dest);
+        const rec = new MediaRecorder(dest.stream, { mimeType:pick[0] });
+        rec.ondataavailable = e => { if(e.data.size) parts.push(e.data); };
+        rec.onstop = () => { ac.close(); res(parts.length ? { blob:new Blob(parts, { type:pick[0].split(';')[0] }), ext:pick[1] } : null); };
+        src.onended = () => setTimeout(() => rec.stop(), 200);
+        ac.resume().then(() => { rec.start(); src.start(); }, () => res(null));
+      });
+    }
     let rendering = false;
     async function downloadBeat(x, btn){
       const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
@@ -5650,12 +5665,23 @@
         ctx = liveCtx; master = liveMaster; voice = liveVoice;
         const buf = await oc.startRendering();
         Object.keys(voices).forEach(m => delete voices[m]);
-        const url = URL.createObjectURL(wavBlob(buf)), a = document.createElement('a');
-        a.href = url; a.download = (x.name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'my-beat') + '.wav';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
-        btn.textContent = '✅ Downloaded';
-        sayB(window.top !== window.self ? 'If nothing downloaded, open the app on its website — this preview blocks downloads.' : `Downloaded <b>${x.name.replace(/</g,'&lt;')}</b> as a sound file 🎧`);
+        const base = x.name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'my-beat', nice = x.name.replace(/</g,'&lt;');
+        const saver = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+        if(saver){
+          // inside the Claude page: files go through its save button, which takes webm/mp4 sound
+          btn.textContent = '⏳ Recording…';
+          const rec = await recordBlob(buf);
+          if(!rec){ btn.textContent = '⬇ Download'; sayB('Sorry — this device can’t make the sound file here.'); rendering = false; return; }
+          try{ await saver.save({ filename:base + rec.ext, data:rec.blob }); btn.textContent = '✅ Downloaded'; sayB(`Downloaded <b>${nice}</b> as a sound file 🎧`); }
+          catch(err){ btn.textContent = '⬇ Download'; sayB(err && err.code === 'declined' ? 'Okay — not downloaded.' : 'Sorry — downloading isn’t available here.'); }
+        } else {
+          const url = URL.createObjectURL(wavBlob(buf)), a = document.createElement('a');
+          a.href = url; a.download = base + '.wav';
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+          btn.textContent = '✅ Downloaded';
+          sayB(`Downloaded <b>${nice}</b> as a sound file 🎧`);
+        }
       }catch(e){
         ctx = liveCtx; master = liveMaster; voice = liveVoice;
         btn.textContent = '⬇ Download'; sayB('Sorry — couldn’t make the sound file on this device.');
