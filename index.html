@@ -564,7 +564,13 @@
   .modeask{display:flex}
   .modeask .card{margin:auto}
   .askpreview{align-self:center;width:min(190px,52vw);aspect-ratio:1;border-radius:12px;overflow:hidden;background:#fbf8f0;box-shadow:inset 0 0 0 1px #d6cab1}
-  .askpreview svg{display:block;width:100%;height:100%}
+  .askpreview{position:relative}
+  .askpreview svg{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+  .askpreview.dragging svg{cursor:grabbing}
+  .askpreview .dragme{position:absolute;left:6px;bottom:6px;padding:2px 8px;border-radius:999px;background:#2a2330cc;color:#fbf7ec;font:800 11px var(--ui);pointer-events:none}
+  .movebox{display:grid;gap:8px}
+  .movebox label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px}
+  .movebox input[type=range]{flex:1;accent-color:var(--ink)}
   .modeask .chips-pick .taste{font-size:14px;padding:8px 12px}
 
   /* ---- guitar ---- */
@@ -3701,11 +3707,19 @@
   // a tone's darkness curve: [offset, darkness] pairs (core shadow, reflected light…)
   const toneStops = T => T.stops || (T.invert ? [[0,1],[1,0]] : [[0,0],[.55,.45],[1,1]]);
   const toneDark = T => T.dark != null ? T.dark : T.stops ? 1 : .5;
-  function svgArt(L, cur, uid, flip){
-    const pre = `${uid}-${L.id}`, ink = inkRGB(), pap = rPaper();
+  // SVG transform matching lessonMatrix(): move, turn, size, then flip
+  function svgMove(L){
+    const mv = L.move || {};
+    let t = mv.x || mv.y || mv.r || (mv.s && mv.s !== 1) ? `translate(${50 + (mv.x || 0)} ${50 + (mv.y || 0)}) rotate(${mv.r || 0}) scale(${mv.s || 1}) translate(-50 -50)` : '';
+    if(L.flip) t += ' translate(100 0) scale(-1 1)';
+    return t.trim();
+  }
+  const wrapMove = (L, main, scene) => { const t = svgMove(L); return (t ? `<g transform="${t}">${main}</g>` : main) + scene; };
+  function svgArt(L, cur, uid){
+    const pre = `${uid}-${L.id}`, ink = inkRGB(), pap = rPaper(), dk = L.darkness || 1, lwk = L.lineW || 1;
     // paper grain: noise punches tiny holes in the graphite, like pencil on real paper
     let defs = `<filter id="${pre}-grain" filterUnits="userSpaceOnUse" x="-6" y="-6" width="112" height="112"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="3"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.9 1.3"/><feComposite in="SourceGraphic" operator="in"/></filter>`;
-    let body = '';
+    let main = '', scene = '';
     const blurs = {};
     const blurAttr = st => {
       if(!st.blur) return '';
@@ -3716,31 +3730,37 @@
     L.steps.forEach((st, i) => {
       if(!st.p || st.helper) return;
       const on = i === cur, ring = on ? ' stroke="#2f7fd8" stroke-width="2"' : ' stroke="none"';
+      let s = '';
       if(st.tone){
-        const T = st.tone, id = `${pre}-${i}`, d = toneDark(T);
-        if(T.type === 'solid'){ body += `<path d="${st.p}" fill="rgb(${ink})" fill-opacity="${Math.min(1, d)}"${ring}${blurAttr(st)}/>`; return; }
-        const stops = toneStops(T).map(([o, a]) => `<stop offset="${o}" stop-color="rgb(${ink})" stop-opacity="${Math.min(1, a*d)}"/>`).join('');
-        defs += T.type === 'linear'
-          ? `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${T.a[0]}" y1="${T.a[1]}" x2="${T.b[0]}" y2="${T.b[1]}">${stops}</linearGradient>`
-          : `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${T.a[0]}" cy="${T.a[1]}" r="${T.r}">${stops}</radialGradient>`;
-        body += `<path d="${st.p}" fill="url(#${id})"${ring}${blurAttr(st)}/>`;
-      } else if(st.erase) body += `<path d="${st.p}" fill="rgb(${pap[3]})"${ring}${blurAttr(st)}/>`;
-      else if(st.shade) body += `<path d="${st.p}" fill="${on ? '#2f7fd855' : `rgba(${ink},.25)`}" stroke="none"/>`;
-      else body += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : st.faint ? `rgba(${ink},.33)` : `rgb(${ink})`}" stroke-width="${on ? 4 : st.faint ? 1.1 : st.thin ? 1.6 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+        const T = st.tone, id = `${pre}-${i}`, d = toneDark(T)*dk;
+        if(T.type === 'solid') s = `<path d="${st.p}" fill="rgb(${ink})" fill-opacity="${Math.min(1, d)}"${ring}${blurAttr(st)}/>`;
+        else {
+          const stops = toneStops(T).map(([o, a]) => `<stop offset="${o}" stop-color="rgb(${ink})" stop-opacity="${Math.min(1, a*d)}"/>`).join('');
+          defs += T.type === 'linear'
+            ? `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${T.a[0]}" y1="${T.a[1]}" x2="${T.b[0]}" y2="${T.b[1]}">${stops}</linearGradient>`
+            : `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${T.a[0]}" cy="${T.a[1]}" r="${T.r}">${stops}</radialGradient>`;
+          s = `<path d="${st.p}" fill="url(#${id})"${ring}${blurAttr(st)}/>`;
+        }
+      } else if(st.erase) s = `<path d="${st.p}" fill="rgb(${pap[3]})"${ring}${blurAttr(st)}/>`;
+      else if(st.shade) s = `<path d="${st.p}" fill="${on ? '#2f7fd855' : `rgba(${ink},.25)`}" stroke="none"/>`;
+      else s = `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : st.faint ? `rgba(${ink},.33)` : `rgb(${ink})`}" stroke-width="${on ? 4 : (st.faint ? 1.1 : st.thin ? 1.6 : 3)*lwk}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      if(st.scene) scene += s; else main += s;
     });
     const bg = pap[0] === 'cream' ? '' : `<rect x="-6" y="-6" width="112" height="112" fill="${pap[2]}"/>`;
-    return `<defs>${defs}</defs>${bg}<g filter="url(#${pre}-grain)">${flip ? `<g transform="matrix(-1 0 0 1 100 0)">${body}</g>` : body}</g>`;
+    return `<defs>${defs}</defs>${bg}<g filter="url(#${pre}-grain)">${wrapMove(L, main, scene)}</g>`;
   }
   // plain line drawings (all the other lessons)
-  function plainArt(L, cur, flip){
-    let s = '';
+  function plainArt(L, cur){
+    let main = '', scene = '';
+    const lwk = L.lineW || 1;
     L.steps.forEach((st, i) => {
       if(!st.p || st.helper) return;
       const on = i === cur;
-      if(st.shade) s += `<path d="${st.p}" fill="${on ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
-      else s += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : '#2a2330'}" stroke-width="${on ? 4 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const s = st.shade ? `<path d="${st.p}" fill="${on ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`
+        : `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : '#2a2330'}" stroke-width="${on ? 4 : 3*lwk}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      if(st.scene) scene += s; else main += s;
     });
-    return flip ? `<g transform="matrix(-1 0 0 1 100 0)">${s}</g>` : s;
+    return wrapMove(L, main, scene);
   }
   const thumb = L => L.real
     ? `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true">${svgArt(L, -1, 't')}</svg>`
@@ -4243,11 +4263,19 @@
   function box(){
     const tip = $('steptip'), topPad = lesson && !tip.hidden ? tip.offsetHeight + 18 : 12;
     const avail = dH - topPad - 10, S = Math.max(40, Math.min(dW*.9, avail*.94));
-    return { S, ox:(dW - S)/2, oy:topPad + (avail - S)/2, flip:!!(lesson && lesson.flip) };
+    const ox = (dW - S)/2, oy = topPad + (avail - S)/2, k = S/100, M0 = new DOMMatrix([k,0,0,k,ox,oy]);
+    return { S, ox, oy, M0, M:lessonMatrix(M0, lesson), sc:k*((lesson && lesson.move && lesson.move.s) || 1) };
   }
-  // "flip it" mirrors every lesson point left ↔ right
-  const mapP = (b,p) => ({ x:b.ox + (b.flip ? 100 - p.x : p.x)*b.S/100, y:b.oy + p.y*b.S/100 });
-  function pathPx(d, b){ const P = new Path2D(), k = b.S/100; P.addPath(new Path2D(d), b.flip ? new DOMMatrix([-k,0,0,k,b.ox + b.S,b.oy]) : new DOMMatrix([k,0,0,k,b.ox,b.oy])); return P; }
+  // your drawing can be flipped, moved, made bigger/smaller and turned (scenes and frames stay put)
+  function lessonMatrix(M0, L){
+    const mv = (L && L.move) || {};
+    let M = M0.translate(50 + (mv.x || 0), 50 + (mv.y || 0)).rotate(mv.r || 0).scale(mv.s || 1).translate(-50, -50);
+    if(L && L.flip) M = M.translate(100, 0).scale(-1, 1);
+    return M;
+  }
+  const sb = (s, b) => s && s.scene ? { ...b, M:b.M0, sc:b.S/100 } : b;
+  const mapP = (b,p) => { const m = b.M; return { x:m.a*p.x + m.c*p.y + m.e, y:m.b*p.x + m.d*p.y + m.f }; };
+  function pathPx(d, b){ const P = new Path2D(); P.addPath(new Path2D(d), b.M); return P; }
   function strokePts(pts, b, upto){
     gctx.beginPath();
     for(let i = 0; i < upto; i++){ const q = mapP(b, pts[i]); if(pts[i].brk) gctx.moveTo(q.x, q.y); else gctx.lineTo(q.x, q.y); }
@@ -4273,16 +4301,16 @@
   }
   // soft tonal shading for realistic lessons (k = how strong, 0–1)
   function toneFill(s, b, k){
-    const P = pathPx(s.p, b), blur = (s.blur || 0)*b.S/100;
+    const P = pathPx(s.p, b), blur = (s.blur || 0)*b.sc;
     gctx.save(); gctx.setLineDash([]);
     // soft edges: blur the fill instead of clipping it
     if(blur) gctx.filter = `blur(${blur.toFixed(2)}px)`; else gctx.clip(P);
     if(s.erase){ gctx.fillStyle = `rgba(${lesson.real ? rPaper()[3] : '251,248,240'},${k})`; gctx.fill(P); gctx.restore(); return; }
-    const T = s.tone, dark = toneDark(T)*k, rgb = LI(), ink = a => `rgba(${rgb},${Math.max(0, Math.min(1, a))})`;
+    const T = s.tone, dark = toneDark(T)*k*(lesson.darkness || 1), rgb = LI(), ink = a => `rgba(${rgb},${Math.max(0, Math.min(1, a))})`;
     if(T.type === 'solid'){ gctx.fillStyle = ink(dark); gctx.fill(P); gctx.restore(); return; }
     let g;
     if(T.type === 'linear'){ const A = mapP(b, { x:T.a[0], y:T.a[1] }), B = mapP(b, { x:T.b[0], y:T.b[1] }); g = gctx.createLinearGradient(A.x, A.y, B.x, B.y); }
-    else { const A = mapP(b, { x:T.a[0], y:T.a[1] }); g = gctx.createRadialGradient(A.x, A.y, 0, A.x, A.y, T.r*b.S/100); }
+    else { const A = mapP(b, { x:T.a[0], y:T.a[1] }); g = gctx.createRadialGradient(A.x, A.y, 0, A.x, A.y, T.r*b.sc); }
     toneStops(T).forEach(([o, a]) => g.addColorStop(o, ink(a*dark)));
     gctx.fillStyle = g;
     if(blur) gctx.fill(P); else gctx.fillRect(0, 0, dW, dH);
@@ -4292,11 +4320,12 @@
   function drawGuide(frac){
     gctx.clearRect(0,0,dW,dH);
     if(!lesson || !dmode || dmode === 'color') return;
-    const b = box(), paper = dmode === 'paper', lw = Math.max(2, b.S*.012);
+    const B = box(), paper = dmode === 'paper', lw = Math.max(2, B.S*.012)*(lesson.lineW || 1);
     gctx.lineCap = 'round'; gctx.lineJoin = 'round';
     let tip = null;
     lesson.steps.forEach((s,i) => {
       if(!s.p || i > step) return;
+      const b = sb(s, B);
       const pts = samples(s.p), cur = i === step, anim = cur && frac != null;
       if(s.helper && i < step){ gctx.setLineDash([lw, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.22)'; gctx.lineWidth = lw*.6; strokePts(pts, b, pts.length); gctx.setLineDash([]); return; }
       if(s.tone || s.erase){
@@ -4384,7 +4413,7 @@
   $('vLoop').onclick = () => { vid.loop = !vid.loop; if(vid.loop && !vid.playing){ vid.p = 0; vid.playing = true; vid.last = performance.now(); } vidSync(); };
   function drawRef(){
     const cur = dmode ? step : -1;
-    $('dRefSvg').innerHTML = lesson.real ? svgArt(lesson, cur, 'ref', lesson.flip) : plainArt(lesson, cur, lesson.flip);
+    $('dRefSvg').innerHTML = lesson.real ? svgArt(lesson, cur, 'ref') : plainArt(lesson, cur);
   }
   function setBtns(list){
     const box = $('stepBtns'); box.innerHTML = '';
@@ -4432,31 +4461,86 @@
       { t:'Add falling snowflakes', p:['M4 4 L10 10 M10 4 L4 10 M7 3 L7 11', 'M90 8 L96 14 M96 8 L90 14 M93 7 L93 15', 'M-2 40 L3 45 M3 40 L-2 45', 'M98 50 L103 55 M103 50 L98 55', 'M14 -3 L18 1 M18 -3 L14 1'].join(' ') },
       { t:'Draw a snowy ground', p:'M-5 101 Q20 96 45 100 Q75 104 105 98' } ] }
   ];
+  // ---- frames around the page ----
+  function edgePath(kind){
+    const n = 10, a = -1.5, z = 101.5, w = (z - a)/n, o = kind === 'wavy' ? 3.2 : 2.8;
+    let d = `M${a} ${a}`;
+    const seg = (x1, y1, cx, cy) => kind === 'wavy' ? ` Q${cx} ${cy} ${x1} ${y1}` : ` L${cx} ${cy} L${x1} ${y1}`;
+    for(let i = 0; i < n; i++){ const x = a + w*(i + 1); d += seg(x, a, x - w/2, a - o); }
+    for(let i = 0; i < n; i++){ const y = a + w*(i + 1); d += seg(z, y, z + o, y - w/2); }
+    for(let i = 0; i < n; i++){ const x = z - w*(i + 1); d += seg(x, z, x + w/2, z + o); }
+    for(let i = 0; i < n; i++){ const y = z - w*(i + 1); d += seg(a, y, a - o, y + w/2); }
+    return d + ' Z';
+  }
+  const frame = (label, t, p) => ({ label, steps:[{ t, thin:true, p }] });
+  const FRAMES = [
+    { label:'No frame', p:null },
+    frame('⬜ Simple', 'Draw a frame around your picture', 'M-3 -3 L103 -3 L103 103 L-3 103 Z'),
+    frame('▢ Rounded', 'Draw a rounded frame', 'M8 -3 L92 -3 Q103 -3 103 8 L103 92 Q103 103 92 103 L8 103 Q-3 103 -3 92 L-3 8 Q-3 -3 8 -3 Z'),
+    frame('〰️ Wavy', 'Draw a wavy frame', edgePath('wavy')),
+    frame('⚡ Zigzag', 'Draw a zigzag frame', edgePath('zig')),
+    frame('🖼️ Fancy corners', 'Draw fancy curly corners', 'M-3 16 Q-3 -3 16 -3 M4 10 Q4 4 10 4 M84 -3 Q103 -3 103 16 M96 10 Q96 4 90 4 M103 84 Q103 103 84 103 M96 90 Q96 96 90 96 M16 103 Q-3 103 -3 84 M4 90 Q4 96 10 96'),
+    frame('⭐ Star border', 'Draw stars around the edge', [[-1,-1],[50,-2],[101,-1],[-2,50],[102,50],[-1,101],[50,102],[101,101]].map(([x, y]) => starP(x, y, 3.5)).join(' '))
+  ];
   // the questions for this lesson: its own "make it yours" ones plus the ones every drawing gets
   function lessonQuestions(){
     const own = (raw.variants || []).map(v => ({ ...v }));
     if(raw.real) return own.concat([
       { q:'Where is the light?', kind:'flip', choices:[{ label:'☀️ Top left' }, { label:'Top right ☀️', flip:true }] },
       { q:'Pencil color', kind:'pencil', def:Math.max(0, PENCILS.findIndex(p => p[0] === RS.pencil)), choices:PENCILS.map(p => ({ label:p[1], pencil:p[0] })) },
-      { q:'Paper', kind:'paper', def:Math.max(0, RPAPERS.findIndex(p => p[0] === RS.paper)), choices:RPAPERS.map(p => ({ label:p[1], paper:p[0] })) }
+      { q:'Paper', kind:'paper', def:Math.max(0, RPAPERS.findIndex(p => p[0] === RS.paper)), choices:RPAPERS.map(p => ({ label:p[1], paper:p[0] })) },
+      { q:'How dark is the shading?', def:1, choices:[{ label:'🌫️ Soft', darkness:.7 }, { label:'Normal', darkness:1 }, { label:'🖤 Bold', darkness:1.35 }] },
+      { q:'Add a frame?', kind:'scene', choices:FRAMES }
     ]);
     return own.concat([
       { q:'Which way should it face?', kind:'flip', choices:[{ label:'→ Normal' }, { label:'← Flipped', flip:true }] },
-      { q:'Add a scene around it?', choices:SCENES }
+      { q:'Add a scene around it?', kind:'scene', choices:SCENES },
+      { q:'Add a frame?', kind:'scene', choices:FRAMES },
+      { q:'Line thickness', def:1, choices:[{ label:'Thin', lineW:.6 }, { label:'Normal', lineW:1 }, { label:'Thick', lineW:1.5 }, { label:'Extra thick', lineW:2.1 }] }
     ]);
   }
+  const optOf = (qs, picks, key) => { let v; qs.forEach((q, i) => { const c = q.choices[picks[i] || 0]; if(c[key] != null) v = c[key]; }); return v; };
   function afterMode(mode){
-    const qs = lessonQuestions(), picks = qs.map(q => q.def || 0), card = $('askCard');
+    const qs = lessonQuestions(), picks = qs.map(q => q.def || 0), card = $('askCard'), move = { x:0, y:0, s:1, r:0 };
     card.innerHTML = `<h2>Make it yours!</h2><p class="asksub">Pick what your ${raw.name.toLowerCase().replace(/^(a|an) /,'')} looks like — the picture changes as you choose.</p>`;
-    const pv = mk('div', 'askpreview', '<svg viewBox="-6 -6 112 112" aria-label="Preview of your drawing"></svg>');
+    const pv = mk('div', 'askpreview', '<svg viewBox="-6 -6 112 112" aria-label="Preview of your drawing — drag it to move your drawing"></svg><span class="dragme">✋ Drag to move</span>');
     card.appendChild(pv);
     const preview = () => {
       const keep = RS; RS = { ...RS, ...styleOf(qs, picks) };
-      const L = { ...raw, steps:buildSteps(qs, picks) }, flip = flipOf(qs, picks);
-      pv.firstChild.innerHTML = raw.real ? svgArt(L, -1, 'pv', flip) : plainArt(L, -1, flip);
-      pv.classList.toggle('plainbg', !raw.real || RS.paper === 'cream');
+      const L = { ...raw, steps:buildSteps(qs, picks), flip:flipOf(qs, picks), move, lineW:optOf(qs, picks, 'lineW'), darkness:optOf(qs, picks, 'darkness') };
+      pv.firstChild.innerHTML = raw.real ? svgArt(L, -1, 'pv') : plainArt(L, -1);
       RS = keep;
     };
+    // move it: drag the picture, then size + turn sliders
+    let drag = null;
+    const svgEl = pv.firstChild;
+    svgEl.onpointerdown = e => { e.preventDefault(); try{ svgEl.setPointerCapture(e.pointerId); }catch(_){} drag = { id:e.pointerId, x:e.clientX, y:e.clientY, mx:move.x, my:move.y }; pv.classList.add('dragging'); };
+    svgEl.onpointermove = e => {
+      if(!drag || e.pointerId !== drag.id) return;
+      const k = 112/svgEl.getBoundingClientRect().width;
+      move.x = Math.max(-45, Math.min(45, drag.mx + (e.clientX - drag.x)*k));
+      move.y = Math.max(-45, Math.min(45, drag.my + (e.clientY - drag.y)*k));
+      preview();
+    };
+    svgEl.onpointerup = svgEl.onpointercancel = () => { drag = null; pv.classList.remove('dragging'); };
+    const mv = mk('div', 'movebox', `<label>↔️ Size <input type="range" min="40" max="140" value="100" aria-label="Size"></label>
+      <label>🔄 Turn <input type="range" min="-45" max="45" value="0" aria-label="Turn"></label>
+      <div class="chips-pick"><button class="taste" data-m="c">🎯 Center</button><button class="taste" data-m="l">⬅️ Left</button><button class="taste" data-m="r">➡️ Right</button><button class="taste" data-m="up">⬆️ Up</button><button class="taste" data-m="dn">⬇️ Down</button><button class="taste" data-m="0">↺ Reset</button></div>`);
+    const [sizeIn, turnIn] = mv.querySelectorAll('input');
+    sizeIn.oninput = () => { move.s = +sizeIn.value/100; preview(); };
+    turnIn.oninput = () => { move.r = +turnIn.value; preview(); };
+    mv.querySelectorAll('button').forEach(b => b.onclick = () => {
+      const m = b.dataset.m, step = 10;
+      if(m === 'c'){ move.x = 0; move.y = 0; }
+      else if(m === 'l') move.x = Math.max(-45, move.x - step);
+      else if(m === 'r') move.x = Math.min(45, move.x + step);
+      else if(m === 'up') move.y = Math.max(-45, move.y - step);
+      else if(m === 'dn') move.y = Math.min(45, move.y + step);
+      else { Object.assign(move, { x:0, y:0, s:1, r:0 }); sizeIn.value = 100; turnIn.value = 0; }
+      preview();
+    });
+    card.appendChild(mk('p', 'askq', 'Move it'));
+    card.appendChild(mv);
     qs.forEach((v,vi) => {
       card.appendChild(mk('p','askq', v.q));
       const row = mk('div','chips-pick');
@@ -4469,7 +4553,7 @@
       card.appendChild(row);
     });
     const go = mk('button','choice go-choice','<b>Start drawing ▶</b>');
-    go.onclick = () => { $('modeAsk').hidden = true; startLesson(mode, qs, picks); };
+    go.onclick = () => { $('modeAsk').hidden = true; startLesson(mode, qs, picks, move); };
     card.appendChild(go);
     preview();
   }
@@ -4484,16 +4568,18 @@
     (qs || []).forEach((v,i) => {
       const c = v.choices[picks[i] || 0];
       if(!c) return;
-      if(c.steps) extra.push(...c.steps.map(s => ({ ...s })));
-      else if(c.p){ const { label, ...rest } = c; extra.push({ ...rest, t:c.t || ('Add ' + label.toLowerCase()) }); }
+      const scene = v.kind === 'scene' ? { scene:true } : {};
+      if(c.steps) extra.push(...c.steps.map(s => ({ ...s, ...scene })));
+      else if(c.p){ const { label, ...rest } = c; extra.push({ ...rest, ...scene, t:c.t || ('Add ' + label.toLowerCase()) }); }
     });
     if(!extra.length) return base;
     return base.length && !base[base.length-1].p ? [...base.slice(0,-1), ...extra, base[base.length-1]] : [...base, ...extra];
   }
-  function startLesson(mode, qs, picks){
+  function startLesson(mode, qs, picks, move){
     dmode = mode;
     qs = qs || []; picks = picks || [];
-    lesson = { ...raw, steps:buildSteps(qs, picks), flip:flipOf(qs, picks) };
+    lesson = { ...raw, steps:buildSteps(qs, picks), flip:flipOf(qs, picks), move:move ? { ...move } : null,
+      lineW:optOf(qs, picks, 'lineW'), darkness:optOf(qs, picks, 'darkness') };
     if(raw.real){ RS = { ...RS, ...styleOf(qs, picks) }; store.set('realStyle', RS); }
     dwrap.style.background = raw.real && RS.paper !== 'cream' ? rPaper()[2] : '';
     paint.style.pointerEvents = mode === 'paper' ? 'none' : '';
@@ -4506,10 +4592,10 @@
   }
   // ---- coloring page: the lines are already there, you color them in ----
   function drawColoringLines(){
-    const b = box(), lw = Math.max(3, b.S*.013);
+    const b = box(), lw = Math.max(3, b.S*.013)*(lesson.lineW || 1);
     pctx.save(); resetPen();
     pctx.strokeStyle = INK; pctx.lineWidth = lw; pctx.lineCap = 'round'; pctx.lineJoin = 'round';
-    lesson.steps.forEach(s => { if(s.p && !s.helper && !s.tone && !s.erase) pctx.stroke(pathPx(s.p, b)); });
+    lesson.steps.forEach(s => { if(s.p && !s.helper && !s.tone && !s.erase) pctx.stroke(pathPx(s.p, sb(s, b))); });
     pctx.restore();
   }
   const shortName = () => raw.name.toLowerCase().replace(/^(a|an) /,'');
@@ -4558,7 +4644,7 @@
   }
   function scoreStep(s){
     if(!stepPts.length) return 0;
-    const b = box();
+    const b = sb(s, box());
     if(s.shade || s.tone || s.erase){ const P = pathPx(s.p, b); let inside = 0; stepPts.forEach(p => { if(hitCtx.isPointInPath(P, p.x, p.y)) inside++; }); return Math.min(1, inside/(s.erase ? 15 : 60)); }
     const pts = samples(s.p).filter((_,i) => i % 3 === 0), thr = b.S*.055, t2 = thr*thr;
     let cov = 0;
