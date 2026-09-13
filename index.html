@@ -283,6 +283,14 @@
   .vbtn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--brass-lit)}
   .vscrub{flex:1;min-width:60px;height:22px;accent-color:#2f7fd8}
 
+  /* ---- home shelves: music, art ---- */
+  .shelf{display:flex;align-items:center;gap:9px;margin:4px 0 -4px;font:800 14px var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+  .shelf span{font-size:19px;line-height:1}
+  .shelf::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--brass-deep),transparent)}
+  .tiles.art{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (min-width:860px){ .tiles.art{grid-template-columns:repeat(2,minmax(0,1fr));max-width:calc(50% - 7px)} }
+  .art.gallery{background:linear-gradient(160deg,#2a2530,#17141c)}
+
   /* ---- draw ---- */
   .draw-view{grid-template-rows:auto minmax(0,1fr) auto}
   .dwrap{position:relative;min-height:0;margin:0 12px;border-radius:6px;overflow:hidden;background:#fbf8f0;
@@ -410,33 +418,19 @@
         <p>What do you want to learn today?</p>
         <div class="xpbar" id="homeProg"></div>
       </div>
+
+      <h2 class="shelf"><span>🎵</span> Music</h2>
       <div class="tiles">
         <button class="tile" data-go="pianoSongs">
           <span class="art piano"></span>
-          <span class="txt"><b>Piano</b><span>28 songs · hears your real piano</span></span>
-        </button>
-        <button class="tile" data-go="singSongs">
-          <span class="art sing"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
-            <g fill="#e8c679"><rect x="18" y="58" width="34" height="9" rx="4"/><rect x="58" y="44" width="26" height="9" rx="4"/><rect x="90" y="30" width="40" height="9" rx="4"/><rect x="136" y="50" width="26" height="9" rx="4"/><rect x="168" y="62" width="30" height="9" rx="4"/></g>
-            <path d="M0 70 C20 66 30 60 44 62 S70 50 80 48 S100 32 120 35 S140 55 150 54 S175 68 200 66" fill="none" stroke="#fbf7ec" stroke-width="3" stroke-linecap="round"/>
-          </svg></span>
-          <span class="txt"><b>Sing</b><span>Sing along · see your voice</span></span>
-        </button>
-        <button class="tile" data-go="drawMenu">
-          <span class="art draw"><svg viewBox="0 0 200 100" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M100 36 C92 22 70 26 72 44 C74 60 94 70 100 80 C106 70 126 60 128 44 C130 26 108 22 100 36" stroke="#d7263d" stroke-width="5"/>
-            <path d="M20 80 C40 60 50 88 70 70" stroke="#2f7fd8" stroke-width="5"/>
-            <path d="M150 24 l8 8 M166 20 l-2 12 M176 34 l-12 2" stroke="#f6c945" stroke-width="5"/>
-            <path d="M140 84 C155 74 170 90 188 78" stroke="#3bb273" stroke-width="5"/>
-          </svg></span>
-          <span class="txt"><b>Draw</b><span>65 lessons · monsters · make it yours</span></span>
+          <span class="txt"><b>Piano</b><span>Courses · 28 songs · hears your piano</span></span>
         </button>
         <button class="tile" data-go="guitarMenu">
           <span class="art guitar"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
             <circle cx="130" cy="50" r="30" fill="#1b100a"/><circle cx="130" cy="50" r="34" fill="none" stroke="#e8c679" stroke-width="3"/>
             <g stroke="#efe8da" stroke-width="1.6"><line x1="0" y1="30" x2="200" y2="30"/><line x1="0" y1="38" x2="200" y2="38"/><line x1="0" y1="46" x2="200" y2="46"/><line x1="0" y1="54" x2="200" y2="54"/><line x1="0" y1="62" x2="200" y2="62"/><line x1="0" y1="70" x2="200" y2="70"/></g>
           </svg></span>
-          <span class="txt"><b>Guitar</b><span>Chords · strum · tuner</span></span>
+          <span class="txt"><b>Guitar</b><span>Chords · strumming · tuner</span></span>
         </button>
         <button class="tile" data-go="drumsMenu">
           <span class="art drums"><svg viewBox="0 0 200 100" aria-hidden="true">
@@ -448,10 +442,41 @@
             <line x1="60" y1="16" x2="86" y2="52" stroke="#e9dcc0" stroke-width="4" stroke-linecap="round"/>
             <line x1="140" y1="16" x2="114" y2="52" stroke="#e9dcc0" stroke-width="4" stroke-linecap="round"/>
           </svg></span>
-          <span class="txt"><b>Drums</b><span>Grooves, fills and rudiments</span></span>
+          <span class="txt"><b>Drums</b><span>Grooves · fills · rudiments</span></span>
+        </button>
+        <button class="tile" data-go="singSongs">
+          <span class="art sing"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
+            <g fill="#e8c679"><rect x="18" y="58" width="34" height="9" rx="4"/><rect x="58" y="44" width="26" height="9" rx="4"/><rect x="90" y="30" width="40" height="9" rx="4"/><rect x="136" y="50" width="26" height="9" rx="4"/><rect x="168" y="62" width="30" height="9" rx="4"/></g>
+            <path d="M0 70 C20 66 30 60 44 62 S70 50 80 48 S100 32 120 35 S140 55 150 54 S175 68 200 66" fill="none" stroke="#fbf7ec" stroke-width="3" stroke-linecap="round"/>
+          </svg></span>
+          <span class="txt"><b>Sing</b><span>Your voice range · sing along</span></span>
         </button>
       </div>
-      <p class="tip">Tip: on a phone, turn it sideways for the piano and guitar.</p>
+
+      <h2 class="shelf"><span>🎨</span> Art</h2>
+      <div class="tiles art">
+        <button class="tile" data-go="drawMenu">
+          <span class="art draw"><svg viewBox="0 0 200 100" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M100 36 C92 22 70 26 72 44 C74 60 94 70 100 80 C106 70 126 60 128 44 C130 26 108 22 100 36" stroke="#d7263d" stroke-width="5"/>
+            <path d="M20 80 C40 60 50 88 70 70" stroke="#2f7fd8" stroke-width="5"/>
+            <path d="M150 24 l8 8 M166 20 l-2 12 M176 34 l-12 2" stroke="#f6c945" stroke-width="5"/>
+            <path d="M140 84 C155 74 170 90 188 78" stroke="#3bb273" stroke-width="5"/>
+          </svg></span>
+          <span class="txt"><b>Draw</b><span>Step-by-step lessons · make it yours</span></span>
+        </button>
+        <button class="tile" data-go="journal">
+          <span class="art gallery"><svg viewBox="0 0 200 100" aria-hidden="true">
+            <rect x="16" y="18" width="76" height="64" rx="6" fill="#f3ecdc" stroke="#c8a15a" stroke-width="3"/>
+            <rect x="108" y="18" width="76" height="64" rx="6" fill="#f3ecdc" stroke="#c8a15a" stroke-width="3"/>
+            <path d="M24 70 L44 44 L60 62 L70 52 L84 70 Z" fill="#7fc7e8"/>
+            <circle cx="70" cy="34" r="7" fill="#f6c945"/>
+            <path d="M146 30 C138 22 124 28 128 40 C132 52 146 60 146 66 C146 60 160 52 164 40 C168 28 154 22 146 30" fill="#d7263d"/>
+          </svg></span>
+          <span class="txt"><b>My drawings</b><span>Everything you finished</span></span>
+        </button>
+      </div>
+
+      <p class="tip">Tip: on a phone, turn it sideways for the piano, guitar and drums.</p>
     </div>
   </section>
 
@@ -1978,11 +2003,11 @@
           { label:'Yes, with a bell', t:'Draw a collar with a bell', p:'M34 66 Q50 76 66 66 M46 74 A5 5 0 1 0 56 74 A5 5 0 1 0 46 74 M51 74 L51 78' },
           { label:'No', p:null } ] } ] },
     { id:'bird', name:'Little bird', cat:'Animals', hard:2, steps:[
-      { t:'Draw a round body', tip:'Like an egg lying on its side.', p:'M26 56 Q28 40 50 42 Q68 44 66 60 Q62 74 44 72 Q28 70 26 56' },
-      { t:'Add a round head', p:'M56 34 A10 10 0 1 0 76 34 A10 10 0 1 0 56 34' },
-      { t:'A pointy beak and an eye', p:'M76 31 L87 35 L76 38 M68 31 L68 33' },
-      { t:'Draw a wing and a tail', p:'M38 54 Q48 46 56 56 Q46 62 38 54 M27 58 L13 50 L15 64 Z' },
-      { t:'Two skinny legs', p:'M42 72 L40 86 M52 72 L54 86' },
+      { t:'Draw a round body', tip:'Like an egg lying on its side.', p:'M24 58 Q24 38 46 38 Q66 38 70 54 Q72 68 52 72 Q30 74 24 58' },
+      { t:'Add a round head', tip:'It sits on top of the body and touches it.', p:'M61 36 A11 11 0 1 0 83 36 A11 11 0 1 0 61 36' },
+      { t:'A pointy beak and an eye', p:'M83 33 L95 37 L83 41 M76 33 L76 35' },
+      { t:'Draw a wing and a tail', tip:'The tail starts on the body.', p:'M40 50 Q50 44 58 52 Q49 60 40 50 M27 63 L8 57 L11 71 Z' },
+      { t:'Two skinny legs with feet', p:'M44 73 L42 86 M42 86 L36 90 M42 86 L48 90 M56 71 L58 86 M58 86 L52 90 M58 86 L64 90' },
       { t:'Color your bird!', p:null } ],
       variants:[ { q:'Anything on its head?', choices:[
         { label:'A fancy crest', t:'Add feathers on top of the head', p:'M64 25 L60 10 L68 20 L70 6 L74 20 L80 12 L76 26' },
@@ -2000,7 +2025,7 @@
         { label:'Nothing', p:null } ] } ] },
     { id:'dog', name:'Dog', cat:'Animals', hard:2, steps:[
       { t:'Draw an oval for the head', p:'M30 56 A20 18 0 1 0 70 56 A20 18 0 1 0 30 56' },
-      { t:'Add two floppy ears', tip:'Long ears hanging down the sides.', p:'M33 44 Q19 30 23 58 Q27 68 35 62 M67 44 Q81 30 77 58 Q73 68 65 62' },
+      { t:'Add two floppy ears', tip:'Long and round, hanging down beside the head.', p:'M32 46 Q16 48 18 66 Q20 78 32 72 M68 46 Q84 48 82 66 Q80 78 68 72' },
       { t:'Eyes and a big nose', p:'M42 52 L42 54 M58 52 L58 54 M45 62 Q50 66 55 62 Q50 68 45 62' },
       { t:'Draw the mouth and tongue', p:'M50 66 L50 70 M42 70 Q50 78 58 70 M48 74 Q50 80 52 74' },
       { t:'Color your dog!', p:null } ],
@@ -2026,10 +2051,10 @@
       { t:'Six little legs', p:'M28 44 L16 38 M26 58 L12 58 M30 72 L18 80 M72 44 L84 38 M74 58 L88 58 M70 72 L82 80' },
       { t:'Color it red with black spots!', p:null } ] },
     { id:'turtle', name:'Turtle', cat:'Animals', hard:2, steps:[
-      { t:'Draw a dome for the shell', p:'M22 58 A28 22 0 0 1 78 58' },
+      { t:'Draw a dome for the shell', p:'M22 58 A28 20 0 0 1 78 58' },
       { t:'Close the bottom of the shell', p:'M22 58 L78 58' },
-      { t:'Add the head and tail', p:'M78 52 A7 7 0 1 0 92 52 A7 7 0 1 0 78 52 M22 56 L12 60 L22 62 M86 50 L86 52' },
-      { t:'Draw two legs', p:'M32 58 L28 70 L38 70 Z M60 58 L56 70 L66 70 Z' },
+      { t:'Add the head and tail', tip:'The head pokes out past the shell.', p:'M78 56 L82 56 M80 54 A8 8 0 1 0 96 54 A8 8 0 1 0 80 54 M90 51 L90 53 M22 57 L10 54 L14 62 Z' },
+      { t:'Draw two legs', p:'M32 58 L28 72 L40 72 Z M60 58 L56 72 L68 72 Z' },
       { t:'Draw the shell pattern', p:'M40 46 L48 42 L56 46 L56 54 L48 58 L40 54 Z M30 52 L36 49 L40 54 L36 58 L30 56 Z M60 50 L66 48 L70 53 L66 57 L60 55 Z' },
       { t:'Color your turtle!', p:null } ] },
     { id:'owl', name:'Owl', cat:'Animals', hard:3, steps:[
@@ -2040,11 +2065,11 @@
       { t:'Little feet on a branch', p:'M42 80 L40 87 M47 80 L47 87 M53 80 L53 87 M58 80 L60 87 M16 88 L84 88' },
       { t:'Color your owl!', p:null } ] },
     { id:'penguin', name:'Penguin', cat:'Animals', hard:2, steps:[
-      { t:'Draw the body', p:'M30 44 Q30 18 50 18 Q70 18 70 44 Q70 86 50 86 Q30 86 30 44' },
-      { t:'Draw the white tummy', p:'M40 44 Q40 30 50 30 Q60 30 60 44 Q60 78 50 78 Q40 78 40 44' },
-      { t:'Eyes and a beak', p:'M44 32 L44 34 M56 32 L56 34 M46 40 L54 40 L50 46 Z' },
-      { t:'Two wings', p:'M30 46 Q20 60 28 72 M70 46 Q80 60 72 72' },
-      { t:'Two flappy feet', p:'M38 86 L30 92 L44 92 Z M62 86 L56 92 L70 92 Z' },
+      { t:'Draw the body', tip:'Tall and round, like a big egg.', p:'M30 46 Q30 16 50 16 Q70 16 70 46 Q70 84 50 86 Q30 84 30 46' },
+      { t:'Draw the white tummy', p:'M40 48 Q40 30 50 30 Q60 30 60 48 Q60 74 50 76 Q40 74 40 48' },
+      { t:'Eyes and a beak', p:'M44 32 A2.2 2.2 0 1 0 48.4 32 A2.2 2.2 0 1 0 44 32 M52 32 A2.2 2.2 0 1 0 56.4 32 A2.2 2.2 0 1 0 52 32 M46 39 L54 39 L50 46 Z' },
+      { t:'Two wings', tip:'They start on the edge of the body.', p:'M30 44 Q16 58 26 74 Q30 66 32 60 M70 44 Q84 58 74 74 Q70 66 68 60' },
+      { t:'Two flappy feet', p:'M40 86 L32 93 L46 93 Z M60 86 L54 93 L68 93 Z' },
       { t:'Color your penguin!', p:null } ],
       variants:[ { q:'Winter clothes?', choices:[
         { label:'A scarf', t:'Draw a scarf', p:'M34 50 Q50 58 66 50 M64 50 L70 68 L62 66 L64 50' },
@@ -2074,7 +2099,7 @@
     { id:'donut', name:'Donut', cat:'Food', hard:1, steps:[
       { t:'Draw a big circle', p:'M20 52 A30 30 0 1 0 80 52 A30 30 0 1 0 20 52' },
       { t:'Draw a small circle in the middle', p:'M40 52 A10 10 0 1 0 60 52 A10 10 0 1 0 40 52' },
-      { t:'Add wavy icing', tip:'Wiggle your pencil around.', p:'M21 46 Q28 60 36 48 Q44 62 52 48 Q60 62 68 48 Q75 56 79 48' },
+      { t:'Add icing with drips', tip:'Over the top, then wobble back with drips.', p:'M20 50 A30 30 0 0 1 80 50 Q74 61 68 52 Q62 63 56 54 Q50 65 44 54 Q38 63 32 52 Q26 61 20 50 Z' },
       { t:'Add sprinkles', p:'M32 40 L35 36 M44 38 L47 34 M58 40 L61 36 M66 48 L70 45 M30 58 L34 56 M50 66 L53 63' },
       { t:'Color your donut!', p:null } ] },
     { id:'pizza', name:'Pizza slice', cat:'Food', hard:1, steps:[
@@ -2206,19 +2231,19 @@
       { t:'Add legs', p:'M42 76 L40 90 M58 76 L60 90 M40 90 L32 95 M60 90 L68 95' },
       { t:'Color your alien!', p:null } ] },
     { id:'bat', name:'Bat', cat:'Monsters', hard:2, steps:[
-      { t:'Draw a small body', p:'M42 44 Q50 36 58 44 Q60 58 50 64 Q40 58 42 44' },
-      { t:'Add two pointy ears', p:'M44 40 L42 28 L50 36 M56 40 L58 28 L50 36' },
-      { t:'Draw the left wing', tip:'Bumpy at the bottom, like an umbrella.', p:'M42 46 Q24 34 10 44 Q22 46 16 56 Q28 52 34 60 Q38 54 44 56' },
-      { t:'Draw the right wing', p:'M58 46 Q76 34 90 44 Q78 46 84 56 Q72 52 66 60 Q62 54 56 56' },
-      { t:'Eyes and fangs', p:'M46 46 L46 48 M54 46 L54 48 M47 56 L47 61 M53 56 L53 61' },
+      { t:'Draw a small body', p:'M42 46 Q50 38 58 46 Q60 60 50 66 Q40 60 42 46' },
+      { t:'Add two pointy ears', p:'M45 41 L42 28 L52 37 M55 41 L58 28 L48 37' },
+      { t:'Draw the left wing', tip:'Start on the body, bump along, come back to the body.', p:'M43 48 Q28 36 10 42 Q20 48 14 58 Q26 54 30 62 Q36 56 44 58' },
+      { t:'Draw the right wing', p:'M57 48 Q72 36 90 42 Q80 48 86 58 Q74 54 70 62 Q64 56 56 58' },
+      { t:'Eyes and fangs', p:'M46 48 L46 50 M54 48 L54 50 M47 58 L47 62 M53 58 L53 62' },
       { t:'Color your bat!', p:null } ] },
     { id:'dragon', name:'Dragon', cat:'Monsters', hard:3, steps:[
-      { t:'Draw the body', p:'M24 78 Q18 54 34 48 Q48 42 58 52 Q66 60 62 78 Z' },
-      { t:'Add the head', p:'M58 40 Q74 30 83 43 Q87 52 76 54 Q64 56 58 50 Z' },
-      { t:'Draw two wings', p:'M40 48 Q34 22 53 29 Q47 38 49 48 M49 46 Q59 20 73 29 Q59 34 57 48' },
-      { t:'Add a long tail', p:'M24 74 Q8 76 5 60 Q5 51 14 53' },
-      { t:'Legs, eye and spikes', p:'M34 78 L32 90 M56 78 L58 90 M72 43 L72 45 M36 48 L34 42 M46 44 L44 38' },
-      { t:'Breathe some fire!', p:'M84 46 Q96 40 91 50 Q99 53 86 55' },
+      { t:'Draw the body', tip:'Like a fat comma sitting down.', p:'M20 78 Q16 56 34 50 Q52 44 62 54 Q70 62 68 78 Z' },
+      { t:'Add the head on the neck', p:'M62 52 Q76 40 86 50 Q90 56 82 60 Q70 62 62 56 Z' },
+      { t:'Draw a big wing', tip:'Up from the back, out wide, then back down to it.', p:'M38 52 Q34 24 60 30 Q50 40 52 52 Z' },
+      { t:'Add a long curly tail', p:'M20 74 Q6 74 4 60 Q4 52 12 54' },
+      { t:'Legs, eye and spikes', p:'M32 78 L30 90 M58 78 L60 90 M78 50 L78 52 M34 52 L32 44 M44 48 L42 40 M54 47 L53 39' },
+      { t:'Breathe some fire!', p:'M86 52 Q98 46 93 56 Q100 59 88 60' },
       { t:'Color your dragon!', p:null } ] },
 
     { id:'eye', name:'A real eye', cat:'Real things', hard:3, steps:[
@@ -2228,11 +2253,11 @@
       { t:'Add eyelashes', p:'M16 44 L10 36 M30 32 L26 22 M50 26 L50 14 M70 32 L74 22 M84 44 L90 36' },
       { t:'Shade under the top eyelid', tip:'This is the trick that makes an eye look real.', p:'M14 48 Q50 24 86 48 Q50 34 14 48 Z', shade:true } ] },
     { id:'hand', name:'Your own hand', cat:'Real things', hard:2, steps:[
-      { t:'Draw the palm', tip:'You can put your real hand on the paper and trace it!', p:'M30 88 Q26 66 30 54 L64 54 Q70 70 66 88 Z' },
-      { t:'Add four fingers', p:'M32 54 L30 26 Q34 20 38 26 L40 54 M42 54 L40 18 Q45 12 49 18 L50 54 M52 54 L52 20 Q57 14 60 20 L60 54 M62 54 L64 30 Q69 26 71 32 L68 54' },
-      { t:'Add the thumb', p:'M30 62 Q18 54 12 60 Q10 66 20 70 Q26 72 30 70' },
-      { t:'Add the wrist', p:'M30 88 L32 96 M66 88 L64 96' },
-      { t:'Shade the middle of the palm', tip:'Press lightly — just a soft shadow.', p:'M34 68 Q48 76 62 68 Q48 86 34 68 Z', shade:true } ] },
+      { t:'Draw the palm', tip:'You can put your real hand on the paper and trace it!', p:'M30 90 Q26 70 30 58 L76 58 Q80 72 76 90 Z' },
+      { t:'Add four fingers', tip:'Leave a gap between each one.', p:'M31 58 L31 32 Q31 26 36 26 Q41 26 41 32 L41 58 M43 58 L43 24 Q43 18 48 18 Q53 18 53 24 L53 58 M55 58 L55 22 Q55 16 60 16 Q65 16 65 22 L65 58 M67 58 L67 30 Q67 24 71 24 Q75 24 75 30 L75 58' },
+      { t:'Add the thumb', p:'M30 66 Q16 58 10 64 Q8 70 18 74 Q26 76 30 74' },
+      { t:'Add the wrist', p:'M32 90 L34 98 M74 90 L72 98' },
+      { t:'Shade the middle of the palm', tip:'Press lightly — just a soft shadow.', p:'M36 72 Q52 80 70 72 Q52 90 36 72 Z', shade:true } ] },
     { id:'rose', name:'Rose', cat:'Real things', hard:3, steps:[
       { t:'Draw the outside petals', p:'M30 46 Q22 26 44 20 Q64 14 70 34 Q76 52 58 60 Q38 68 30 46' },
       { t:'Draw a swirl in the middle', tip:'Start in the middle and spiral out.', p:'M50 44 A6 6 0 1 1 57 38 A12 12 0 1 1 40 34 A18 18 0 1 1 67 44' },
@@ -2246,11 +2271,11 @@
       { t:'Add the stem', p:'M50 88 L50 96' },
       { t:'Shade one half of the leaf', tip:'Shade only the right side — it makes it look round.', p:'M50 20 Q78 42 50 86 Q50 50 50 20 Z', shade:true } ] },
     { id:'mushroom', name:'Mushroom', cat:'Real things', hard:2, steps:[
-      { t:'Draw the cap', p:'M18 54 Q18 24 50 24 Q82 24 82 54 Z' },
-      { t:'Draw the stem', p:'M40 54 Q38 76 34 86 Q50 92 66 86 Q62 76 60 54' },
+      { t:'Draw the cap', p:'M16 54 Q16 24 50 24 Q84 24 84 54 Z' },
+      { t:'Draw the stem', tip:'Straight down from under the cap.', p:'M40 54 L40 78 Q40 88 50 88 Q60 88 60 78 L60 54' },
       { t:'Add spots on the cap', p:'M32 40 A5 5 0 1 0 42 40 A5 5 0 1 0 32 40 M56 36 A4 4 0 1 0 64 36 A4 4 0 1 0 56 36 M66 46 A3 3 0 1 0 72 46 A3 3 0 1 0 66 46' },
-      { t:'Draw the ground', p:'M14 88 Q50 96 86 88' },
-      { t:'Shade the right side of the stem', p:'M52 56 Q56 74 60 87 Q52 90 50 88 Q52 70 52 56 Z', shade:true } ] },
+      { t:'Draw the ground', p:'M12 90 Q50 98 88 90' },
+      { t:'Shade the right side of the stem', p:'M52 56 L52 79 Q52 86 58 87 Q60 82 60 78 L60 56 Z', shade:true } ] },
     { id:'cup', name:'Cup of tea', cat:'Real things', hard:2, steps:[
       { t:'Draw the cup', tip:'Narrower at the bottom than the top.', p:'M24 40 L30 78 Q50 86 70 78 L76 40 Z' },
       { t:'Add the handle', p:'M76 48 Q92 48 90 60 Q88 70 74 68' },
@@ -2302,7 +2327,7 @@
     { id:'dino', name:'T-Rex', cat:'Animals', hard:3, steps:[
       { t:'Draw the body and head', tip:'One long wobbly line.', p:'M24 78 Q20 52 44 48 Q64 44 70 30 Q76 20 88 24 Q96 30 90 40 Q84 48 72 50 Q66 64 64 78 Z' },
       { t:'Add a long tail', p:'M24 74 Q8 72 4 58 Q4 50 12 52' },
-      { t:'Draw two strong legs', p:'M34 78 L32 92 L44 92 M56 78 L54 92 L66 92' },
+      { t:'Draw two strong legs', p:'M34 78 L30 92 L44 92 Z M56 78 L52 92 L66 92 Z' },
       { t:'Add tiny arms', p:'M62 54 L54 60 L60 62' },
       { t:'Eye, mouth and spikes', p:'M84 32 L84 34 M76 42 L92 40 M80 42 L80 46 M86 41 L86 45 M34 50 L32 44 M44 48 L42 42 M54 47 L52 41' },
       { t:'Color your dinosaur!', p:null } ] },
@@ -2337,14 +2362,14 @@
       { t:'Add seeds on top', p:'M34 32 L38 30 M48 28 L52 27 M62 32 L66 30' },
       { t:'Color your burger!', p:null } ] },
     { id:'banana', name:'Banana', cat:'Food', hard:1, steps:[
-      { t:'Draw the banana', tip:'Like a smile with a fat middle.', p:'M22 34 Q26 66 54 78 Q80 88 84 66 Q70 76 50 66 Q32 56 32 32 Q28 28 22 34' },
-      { t:'Add the tips', p:'M22 34 L16 26 M84 66 L90 71' },
-      { t:'Draw a line along the middle', p:'M36 44 Q42 62 60 70' },
-      { t:'Shade the bottom curve', p:'M34 58 Q52 72 78 70 Q80 76 74 78 Q50 74 32 62 Z', shade:true },
+      { t:'Draw the banana', tip:'A big curve down, then a fatter curve back — like a smile with a belly.', p:'M18 28 Q20 66 52 80 Q80 90 88 68 Q76 78 48 68 Q26 56 28 30 Q24 24 18 28' },
+      { t:'Add the little tips', p:'M18 28 L13 19 M88 68 L95 73' },
+      { t:'Draw a line along the middle', p:'M32 44 Q40 64 62 72' },
+      { t:'Shade the bottom curve', p:'M30 60 Q52 74 80 72 Q84 78 78 81 Q48 77 28 62 Z', shade:true },
       { t:'Color it yellow!', p:null } ] },
     { id:'melon', name:'Watermelon slice', cat:'Food', hard:1, steps:[
-      { t:'Draw a half circle', p:'M12 40 L88 40 Q50 96 12 40' },
-      { t:'Add the rind line', p:'M16 45 Q50 90 84 45' },
+      { t:'Draw a half circle', tip:'A straight line on top, a big curve underneath.', p:'M12 38 L88 38 Q50 96 12 38' },
+      { t:'Add the rind line', tip:'The same curve again, just a bit inside.', p:'M19 45 Q50 88 81 45' },
       { t:'Add the seeds', p:'M40 56 L42 60 M56 54 L58 58 M48 68 L50 72 M32 48 L34 52 M66 48 L68 52' },
       { t:'Color it pink and green!', p:null } ] },
 
@@ -2363,7 +2388,7 @@
 
     { id:'cactus', name:'Cactus', cat:'Nature', hard:1, steps:[
       { t:'Draw the tall body', p:'M42 88 L42 34 Q42 22 50 22 Q58 22 58 34 L58 88 Z' },
-      { t:'Add two arms', p:'M42 50 L28 50 Q22 50 22 42 L22 34 M58 58 L72 58 Q78 58 78 50 L78 40' },
+      { t:'Add two fat arms', tip:'Draw them like tubes, not single lines.', p:'M42 44 L32 44 Q24 44 24 36 L24 28 Q24 21 30 21 Q36 21 36 28 L36 32 Q36 36 42 36 M58 56 L68 56 Q76 56 76 48 L76 40 Q76 33 70 33 Q64 33 64 40 L64 44 Q64 48 58 48' },
       { t:'Draw a pot', p:'M30 88 L34 98 L66 98 L70 88 Z' },
       { t:'Add the spikes', p:'M46 30 L46 26 M54 40 L54 36 M26 44 L22 44 M74 48 L78 48 M46 62 L46 58 M54 74 L54 70' },
       { t:'Put a flower on top', p:'M45 18 A5 5 0 1 0 55 18 A5 5 0 1 0 45 18' },
@@ -2399,6 +2424,186 @@
   ];
   const CATS = ['Basics','Animals','Monsters','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
   const CATICON = { Basics:'✏️', Animals:'🐟', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
+
+  // ---- more drawings ----
+  const MORE_LESSONS = [
+    { id:'elephant', name:'Elephant', cat:'Animals', hard:3, steps:[
+      { t:'Draw a big round head', tip:'Wide at the top, narrower at the chin.', p:'M28 38 Q28 18 50 18 Q72 18 72 38 Q72 56 58 60 Q50 62 42 60 Q28 56 28 38' },
+      { t:'Add two huge ears', tip:'Start on the head, swing right out, come back.', p:'M28 30 Q4 24 4 46 Q4 66 28 58 M72 30 Q96 24 96 46 Q96 66 72 58' },
+      { t:'Draw the long trunk', tip:'Long and bendy, curling up at the end.', p:'M50 61 Q56 76 50 86 Q44 96 34 92 Q30 90 31 86' },
+      { t:'Add eyes and two tusks', p:'M40 36 L40 39 M60 36 L60 39 M42 62 Q37 76 30 80 M58 62 Q63 76 70 80' },
+      { t:'Color your elephant!', p:null } ],
+      variants:[ { q:'What is it doing?', choices:[
+        { label:'Squirting water', t:'Draw water coming out of the trunk', p:'M34 88 Q24 84 20 74 M34 90 Q22 90 14 84 M31 92 Q20 96 12 94' },
+        { label:'Holding a flower', t:'Put a flower in the trunk', p:'M35 88 L24 82 M20 78 A4 4 0 1 0 28 78 A4 4 0 1 0 20 78 M16 74 Q20 78 24 74 M24 86 Q20 82 16 82' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'lion', name:'Lion', cat:'Animals', hard:3, steps:[
+      { t:'Draw a spiky mane all the way round', tip:'Zigzag in a big circle.', p:'M50 12 L58 21 L69 17 L69 29 L81 31 L74 41 L85 50 L74 59 L81 69 L69 71 L69 83 L58 79 L50 88 L42 79 L31 83 L31 71 L19 69 L26 59 L15 50 L26 41 L19 31 L31 29 L31 17 L42 21 Z' },
+      { t:'Draw the face circle inside', p:'M32 50 A18 18 0 1 0 68 50 A18 18 0 1 0 32 50' },
+      { t:'Add eyes, nose and mouth', p:'M43 46 L43 48 M57 46 L57 48 M46 55 L50 58 L54 55 M50 58 Q46 63 42 60 M50 58 Q54 63 58 60' },
+      { t:'Add whiskers', p:'M40 56 L28 53 M40 59 L28 61 M60 56 L72 53 M60 59 L72 61' },
+      { t:'Color your lion!', p:null } ] },
+    { id:'panda', name:'Panda', cat:'Animals', hard:2, steps:[
+      { t:'Draw a round head', p:'M28 52 A22 22 0 1 0 72 52 A22 22 0 1 0 28 52' },
+      { t:'Add two round ears on top', p:'M30 32 A8 8 0 1 0 46 32 A8 8 0 1 0 30 32 M54 32 A8 8 0 1 0 70 32 A8 8 0 1 0 54 32' },
+      { t:'Draw the two eye patches', tip:'Like two little leaves lying on their side.', p:'M34 46 Q42 40 47 48 Q43 57 35 53 Q31 50 34 46 M66 46 Q58 40 53 48 Q57 57 65 53 Q69 50 66 46' },
+      { t:'Add the eyes, nose and mouth', p:'M41 48 L41 50 M59 48 L59 50 M46 58 Q50 62 54 58 M50 62 L50 66 M44 68 Q50 72 56 68' },
+      { t:'Color it — the patches and ears are black!', p:null } ] },
+    { id:'dolphin', name:'Dolphin', cat:'Animals', hard:2, steps:[
+      { t:'Draw the body', tip:'Pointy nose on the right, thin at the tail.', p:'M92 48 Q76 34 52 36 Q28 38 16 56 Q26 66 48 64 Q74 60 92 48' },
+      { t:'Add the tail', p:'M16 56 L4 44 Q10 58 4 70 Z' },
+      { t:'Add the fin on the back', p:'M52 36 Q57 22 68 33' },
+      { t:'Add the flipper', p:'M44 60 Q40 72 53 69' },
+      { t:'Draw the eye and the smile', p:'M84 45 L84 47 M88 52 Q84 55 79 54' },
+      { t:'Color your dolphin!', p:null } ] },
+    { id:'octopus', name:'Octopus', cat:'Animals', hard:2, steps:[
+      { t:'Draw a big round head', p:'M28 42 Q28 18 50 18 Q72 18 72 42 Q72 52 66 56 L34 56 Q28 52 28 42' },
+      { t:'Add two big eyes', p:'M39 35 A4.5 4.5 0 1 0 48 35 A4.5 4.5 0 1 0 39 35 M52 35 A4.5 4.5 0 1 0 61 35 A4.5 4.5 0 1 0 52 35 M43.5 36 L43.5 38 M56.5 36 L56.5 38' },
+      { t:'Add a smile', p:'M44 47 Q50 51 56 47' },
+      { t:'Draw five wiggly legs', tip:'They all start on the bottom of the head.', p:'M34 56 Q28 72 16 74 M42 56 Q38 76 28 86 M50 56 Q50 78 46 88 M58 56 Q62 76 72 86 M66 56 Q72 72 84 74' },
+      { t:'Color your octopus!', p:null } ] },
+    { id:'sheep', name:'Sheep', cat:'Animals', hard:2, steps:[
+      { t:'Draw a fluffy cloud body', tip:'Bumps all the way round, like a cloud.', p:'M18 64 Q8 52 22 48 Q24 36 38 40 Q48 32 58 40 Q72 38 72 52 Q84 62 66 68 Q42 74 18 64' },
+      { t:'Add a big head on the right', tip:'Make it bigger than the wool bumps so it shows.', p:'M72 62 A11 12 0 1 0 94 62 A11 12 0 1 0 72 62' },
+      { t:'Add floppy ears and a face', p:'M72 57 Q60 51 68 63 M94 57 Q106 51 98 63 M79 60 L79 62 M87 60 L87 62 M79 69 Q83 72 87 69' },
+      { t:'Draw three legs', tip:'Straight down from under the wool.', p:'M28 70 L26 88 M42 72 L42 90 M56 70 L58 88' },
+      { t:'Color your sheep!', p:null } ] },
+    { id:'hedgehog', name:'Hedgehog', cat:'Animals', hard:2, steps:[
+      { t:'Draw the body', p:'M18 70 Q20 46 46 43 Q70 41 80 60 Q84 72 70 74 L26 74 Q18 74 18 70' },
+      { t:'Add spikes on its back', tip:'Short lines poking out of the curve.', p:'M22 62 L13 55 M28 52 L21 40 M38 46 L35 32 M50 43 L52 30 M62 45 L69 33 M73 52 L83 44' },
+      { t:'Draw the pointy nose and eye', p:'M80 62 L89 66 L80 70 M77 61 L77 63' },
+      { t:'Add little feet', p:'M34 74 L34 81 M62 74 L62 81' },
+      { t:'Color your hedgehog!', p:null } ] },
+
+    { id:'strawberry', name:'Strawberry', cat:'Food', hard:1, steps:[
+      { t:'Draw the berry', tip:'Wide at the top, pointy at the bottom.', p:'M50 34 Q78 34 76 58 Q74 82 50 91 Q26 82 24 58 Q22 34 50 34' },
+      { t:'Add the leaves on top', p:'M50 34 L36 25 L50 29 L50 14 L52 29 L66 25 L52 34' },
+      { t:'Dot the seeds on', p:'M40 48 L41 51 M57 47 L58 50 M48 60 L49 63 M34 62 L35 65 M64 60 L65 63 M50 76 L51 79' },
+      { t:'Color it red with green leaves!', p:null } ] },
+    { id:'cookie', name:'Cookie', cat:'Food', hard:1, steps:[
+      { t:'Draw a big circle', p:'M20 50 A30 30 0 1 0 80 50 A30 30 0 1 0 20 50' },
+      { t:'Add the chocolate chips', p:'M34 40 A4 4 0 1 0 42 40 A4 4 0 1 0 34 40 M58 36 A4 4 0 1 0 66 36 A4 4 0 1 0 58 36 M44 60 A4 4 0 1 0 52 60 A4 4 0 1 0 44 60 M62 58 A3.5 3.5 0 1 0 69 58 A3.5 3.5 0 1 0 62 58 M30 56 A3 3 0 1 0 36 56 A3 3 0 1 0 30 56' },
+      { t:'Add some crumbs', p:'M12 76 A2 2 0 1 0 16 76 A2 2 0 1 0 12 76 M86 28 A2 2 0 1 0 90 28 A2 2 0 1 0 86 28 M90 68 A1.6 1.6 0 1 0 93.2 68 A1.6 1.6 0 1 0 90 68' },
+      { t:'Color your cookie!', p:null } ] },
+
+    { id:'heli', name:'Helicopter', cat:'Vehicles', hard:3, steps:[
+      { t:'Draw the body', p:'M24 62 Q24 46 44 46 L64 46 Q80 48 84 60 Q84 68 70 68 L34 68 Q24 68 24 62' },
+      { t:'Add the tail', p:'M24 58 L4 54 L4 63 L24 63' },
+      { t:'Draw the big rotor and the tail rotor', p:'M54 46 L54 36 M20 34 L88 34 M6 58 L6 44 M6 58 L6 71' },
+      { t:'Add the window', p:'M34 53 Q45 50 52 53 L52 63 L34 63 Z' },
+      { t:'Draw the landing skids', p:'M36 68 L34 79 M66 68 L68 79 M26 79 L78 79' },
+      { t:'Color your helicopter!', p:null } ] },
+    { id:'balloon', name:'Hot air balloon', cat:'Vehicles', hard:2, steps:[
+      { t:'Draw the balloon', tip:'Like a big upside-down egg.', p:'M50 12 Q78 12 78 40 Q78 58 50 70 Q22 58 22 40 Q22 12 50 12' },
+      { t:'Add stripes down the balloon', p:'M50 12 L50 70 M34 16 Q30 44 42 68 M66 16 Q70 44 58 68' },
+      { t:'Add the ropes and the basket', p:'M40 68 L42 80 M60 68 L58 80 M40 80 L60 80 L58 92 L42 92 Z' },
+      { t:'Color your balloon!', p:null } ],
+      variants:[ { q:'What is in the sky?', choices:[
+        { label:'Clouds', t:'Add clouds', p:'M6 60 Q2 52 10 52 Q14 45 22 50 Q29 52 26 60 Z M76 74 Q72 66 80 66 Q84 59 92 64 Q99 66 96 74 Z' },
+        { label:'Birds', t:'Add little birds', p:'M8 24 Q13 19 18 24 Q23 19 28 24 M74 18 Q79 13 84 18 Q89 13 94 18' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'sub', name:'Submarine', cat:'Vehicles', hard:2, steps:[
+      { t:'Draw the body', p:'M14 56 Q14 40 40 40 L66 40 Q86 42 88 56 Q86 70 66 72 L40 72 Q14 72 14 56' },
+      { t:'Add the tower and periscope', p:'M46 40 L46 28 L62 28 L62 40 M54 28 L54 18 L62 18' },
+      { t:'Draw the round windows', p:'M30 52 A5 5 0 1 0 40 52 A5 5 0 1 0 30 52 M50 52 A5 5 0 1 0 60 52 A5 5 0 1 0 50 52 M68 52 A4 4 0 1 0 76 52 A4 4 0 1 0 68 52' },
+      { t:'Add the propeller and bubbles', p:'M14 56 L4 46 M14 56 L4 66 M6 28 A3 3 0 1 0 12 28 A3 3 0 1 0 6 28 M16 18 A2 2 0 1 0 20 18 A2 2 0 1 0 16 18' },
+      { t:'Color your submarine!', p:null } ] },
+
+    { id:'mermaid', name:'Mermaid', cat:'Fantasy', hard:3, steps:[
+      { t:'Draw the head', p:'M42 26 A9 9 0 1 0 60 26 A9 9 0 1 0 42 26' },
+      { t:'Add long wavy hair', p:'M41 23 Q38 6 54 7 Q68 8 63 24 Q61 15 51 15 Q44 15 41 23 M41 28 Q34 46 43 56 M62 28 Q69 46 60 56' },
+      { t:'Draw the body and arms', p:'M47 35 Q56 37 55 48 L46 48 Q46 38 47 35 M47 40 L35 50 M55 40 L67 50' },
+      { t:'Draw the fish tail', p:'M46 48 Q40 66 46 78 Q52 88 58 78 Q64 66 55 48' },
+      { t:'Add the tail fin at the bottom', p:'M46 78 L34 88 Q46 86 52 91 Q58 86 70 88 L58 78' },
+      { t:'Color your mermaid!', p:null } ],
+      variants:[ { q:'What is around her?', choices:[
+        { label:'Bubbles', t:'Add bubbles', p:'M16 30 A4 4 0 1 0 24 30 A4 4 0 1 0 16 30 M10 44 A2.6 2.6 0 1 0 15.2 44 A2.6 2.6 0 1 0 10 44 M82 36 A3.4 3.4 0 1 0 88.8 36 A3.4 3.4 0 1 0 82 36' },
+        { label:'A starfish', t:'Draw a starfish', p:'M84 74 L88 84 L98 84 L90 90 L93 99 L84 93 L75 99 L78 90 L70 84 L80 84 Z' },
+        { label:'Nothing', p:null } ] } ] },
+    { id:'chest', name:'Treasure chest', cat:'Fantasy', hard:2, steps:[
+      { t:'Draw a box', p:'M18 52 L82 52 L82 84 L18 84 Z' },
+      { t:'Add a curved lid on top', p:'M18 52 Q50 26 82 52' },
+      { t:'Draw the metal bands', p:'M44 52 L44 84 M56 52 L56 84 M18 66 L82 66' },
+      { t:'Add the lock', p:'M44 62 L56 62 L56 74 L44 74 Z M50 66 L50 70' },
+      { t:'Spill some coins out', p:'M24 88 A5 5 0 1 0 34 88 A5 5 0 1 0 24 88 M38 90 A4 4 0 1 0 46 90 A4 4 0 1 0 38 90 M68 89 A4.5 4.5 0 1 0 77 89 A4.5 4.5 0 1 0 68 89' },
+      { t:'Color your treasure!', p:null } ] },
+
+    { id:'key', name:'Key', cat:'Real things', hard:1, steps:[
+      { t:'Draw a circle for the handle', p:'M24 50 A16 16 0 1 0 56 50 A16 16 0 1 0 24 50' },
+      { t:'Draw a small circle inside it', p:'M34 50 A6 6 0 1 0 46 50 A6 6 0 1 0 34 50' },
+      { t:'Draw the long part', p:'M56 50 L92 50' },
+      { t:'Add the teeth at the end', p:'M80 50 L80 62 M88 50 L88 60' },
+      { t:'Color your key!', p:null } ] },
+    { id:'umbrella', name:'Umbrella', cat:'Real things', hard:2, steps:[
+      { t:'Draw the top curve', p:'M10 54 Q14 20 50 18 Q86 20 90 54' },
+      { t:'Add the bumpy edge', tip:'Four little curves along the bottom.', p:'M10 54 Q20 44 30 54 Q40 44 50 54 Q60 44 70 54 Q80 44 90 54' },
+      { t:'Draw the lines on top', p:'M30 54 Q34 32 50 19 M70 54 Q66 32 50 19' },
+      { t:'Add the handle', p:'M50 18 L50 78 Q50 90 38 88 Q32 86 33 80' },
+      { t:'Color your umbrella!', p:null } ],
+      variants:[ { q:'Is it raining?', choices:[
+        { label:'Yes, lots!', t:'Add rain drops', p:'M14 66 L11 74 M26 74 L23 82 M74 66 L77 74 M86 72 L89 80 M62 80 L59 88' },
+        { label:'No', p:null } ] } ] },
+    { id:'clock', name:'Alarm clock', cat:'Real things', hard:1, steps:[
+      { t:'Draw a big circle', p:'M16 50 A34 34 0 1 0 84 50 A34 34 0 1 0 16 50' },
+      { t:'Add the marks around the edge', p:'M50 20 L50 26 M50 74 L50 80 M20 50 L26 50 M74 50 L80 50 M71 29 L67 33 M29 71 L33 67 M71 71 L67 67 M29 29 L33 33' },
+      { t:'Draw the two hands', p:'M50 50 L50 30 M50 50 L66 58' },
+      { t:'Add the bells and the middle dot', p:'M28 21 L21 12 M72 21 L79 12 M48 50 A2.5 2.5 0 1 0 53 50 A2.5 2.5 0 1 0 48 50' },
+      { t:'Color your clock!', p:null } ] },
+  ];
+  LESSONS.push(...MORE_LESSONS);
+
+  // ---- extra "make it yours" choices for the older lessons ----
+  const VARIANT_EXTRA = {
+    sun:[ { q:'Anything else?', choices:[
+      { label:'Sunglasses', t:'Give the sun sunglasses', p:'M32 44 L46 44 L44 52 L34 52 Z M54 44 L68 44 L66 52 L56 52 Z M46 47 L54 47' },
+      { label:'Clouds', t:'Add clouds', p:'M4 72 Q0 62 10 62 Q14 54 24 60 Q32 62 28 72 Z M70 78 Q66 68 76 68 Q80 60 90 66 Q98 68 94 78 Z' },
+      { label:'Nothing', p:null } ] } ],
+    house:[ { q:'What else is there?', choices:[
+      { label:'A chimney', t:'Add a chimney with smoke', p:'M62 30 L62 17 L72 17 L72 25 M67 13 Q61 7 67 1' },
+      { label:'A garden', t:'Add a path and two flowers', p:'M44 88 L38 98 M56 88 L62 98 M22 92 A3 3 0 1 0 28 92 A3 3 0 1 0 22 92 M78 92 A3 3 0 1 0 84 92 A3 3 0 1 0 78 92' },
+      { label:'Nothing', p:null } ] } ],
+    ladybug:[ { q:'Where is it sitting?', choices:[
+      { label:'On a leaf', t:'Draw a leaf underneath', p:'M8 88 Q30 72 52 86 Q30 98 8 88 M8 88 L52 86' },
+      { label:'More spots!', t:'Add three more spots', p:'M32 66 A4 4 0 1 0 40 66 A4 4 0 1 0 32 66 M60 66 A4 4 0 1 0 68 66 A4 4 0 1 0 60 66 M44 44 A3.5 3.5 0 1 0 51 44 A3.5 3.5 0 1 0 44 44' },
+      { label:'Nothing', p:null } ] } ],
+    owl:[ { q:'What is behind it?', choices:[
+      { label:'The moon', t:'Draw a moon behind', p:'M86 16 A12 12 0 1 0 86 40 A9 9 0 1 1 86 16 Z' },
+      { label:'A branch', t:'Draw a branch with twigs', p:'M4 92 Q30 86 50 90 Q70 94 96 88 M30 88 L24 80 M68 91 L74 83' },
+      { label:'Nothing', p:null } ] } ],
+    turtle:[ { q:'Where is it?', choices:[
+      { label:'In the water', t:'Add water lines', p:'M4 88 Q16 82 28 88 T52 88 T76 88 T98 88 M4 96 Q16 90 28 96 T52 96 T76 96 T98 96' },
+      { label:'Wearing a hat', t:'Put a hat on the shell', p:'M36 36 Q50 22 64 36 M30 36 L70 36' },
+      { label:'Nothing', p:null } ] } ],
+    snail:[ { q:'Add something?', choices:[
+      { label:'A flower on the shell', t:'Draw a flower on the shell', p:'M46 52 A4 4 0 1 0 54 52 A4 4 0 1 0 46 52 M50 44 Q46 48 50 52 M58 48 Q54 52 50 52 M54 58 Q52 54 50 52 M44 56 Q48 54 50 52' },
+      { label:'A slime trail', t:'Add a shiny trail behind', p:'M2 84 Q10 78 18 84 T34 84 M2 92 Q10 86 18 92 T34 92' },
+      { label:'Nothing', p:null } ] } ],
+    ghost:[ { q:'Add something?', choices:[
+      { label:'Arms', t:'Add two spooky arms', p:'M26 56 Q12 50 17 63 M74 56 Q88 50 83 63' },
+      { label:'Sparkles', t:'Add sparkles around it', p:'M10 26 L10 36 M5 31 L15 31 M88 40 L88 48 M84 44 L92 44 M16 72 L16 78 M13 75 L19 75' },
+      { label:'Nothing', p:null } ] } ],
+    rainbow:[ { q:'What is the weather?', choices:[
+      { label:'Rainy', t:'Add rain drops', p:'M24 86 L20 96 M40 88 L36 98 M56 88 L52 98 M72 86 L68 96' },
+      { label:'Sunny', t:'Add a sun in the corner', p:'M79 26 A9 9 0 1 0 97 26 A9 9 0 1 0 79 26 M88 12 L88 17 M88 35 L88 40 M70 26 L75 26 M101 26 L106 26' },
+      { label:'Nothing', p:null } ] } ],
+    pizza:[ { q:'What toppings?', choices:[
+      { label:'Mushrooms', t:'Add mushrooms', p:'M36 46 Q42 40 48 46 Q42 48 36 46 M42 46 L42 52 M58 66 Q64 60 70 66 Q64 68 58 66 M64 66 L64 72' },
+      { label:'Olives', t:'Add olives', p:'M42 40 A3 3 0 1 0 48 40 A3 3 0 1 0 42 40 M56 52 A3 3 0 1 0 62 52 A3 3 0 1 0 56 52 M38 68 A3 3 0 1 0 44 68 A3 3 0 1 0 38 68' },
+      { label:'Just cheese', p:null } ] } ],
+    boat:[ { q:'Add something?', choices:[
+      { label:'A flag', t:'Put a flag on the mast', p:'M50 16 L70 22 L50 28' },
+      { label:'A seagull', t:'Draw a seagull in the sky', p:'M12 26 Q18 20 24 26 Q30 20 36 26' },
+      { label:'Nothing', p:null } ] } ],
+    snowman:[ { q:'Dress him up?', choices:[
+      { label:'A scarf', t:'Wrap a scarf round his neck', p:'M36 36 Q48 42 60 36 M58 38 L64 54 L54 52 L58 38' },
+      { label:'Snowflakes', t:'Add falling snowflakes', p:'M12 20 L12 30 M7 25 L17 25 M9 22 L15 28 M15 22 L9 28 M86 34 L86 42 M82 38 L90 38 M83 35 L89 41 M89 35 L83 41' },
+      { label:'Nothing', p:null } ] } ],
+    crab:[ { q:'Where is it?', choices:[
+      { label:'Under water', t:'Add bubbles', p:'M14 22 A4 4 0 1 0 22 22 A4 4 0 1 0 14 22 M26 10 A2.5 2.5 0 1 0 31 10 A2.5 2.5 0 1 0 26 10' },
+      { label:'On the sand', t:'Draw sand and a shell', p:'M4 92 Q50 84 96 92 M70 88 Q74 82 78 88 Q74 90 70 88' },
+      { label:'Nothing', p:null } ] } ]
+  };
+  LESSONS.forEach(L => { if(VARIANT_EXTRA[L.id]) L.variants = (L.variants || []).concat(VARIANT_EXTRA[L.id]); });
 
   const lessonD = L => L.steps.filter(s => s.p).map(s => s.p).join(' ');
   const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
