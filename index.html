@@ -481,6 +481,68 @@
   .dwrap canvas#replayC{z-index:7;width:100%;height:100%;cursor:pointer}
   #replayC[hidden]{display:none}
 
+  /* ---- play & create: beat maker, note games, flipbook ---- */
+  .beats-view{grid-template-rows:auto auto minmax(0,1fr);background:linear-gradient(180deg,var(--lacquer),#15121c)}
+  .bmbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:4px 14px 10px}
+  .bmtempo{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13px;color:var(--muted)}
+  .bmtempo input{width:120px;accent-color:var(--brass)}
+  .bmtempo b{min-width:28px;color:var(--brass-lit);font:500 13px var(--mono)}
+  .bmpresets{display:flex;flex-wrap:wrap;gap:6px}
+  .bmpresets button{min-height:34px;padding:6px 12px;border-radius:999px;border:1px solid var(--edge);background:var(--panel);font-weight:800;font-size:13px}
+  .bmpresets button:hover{border-color:var(--brass-deep)}
+  .bmbar .status{margin-left:0;font-size:14px;color:var(--brass-lit)}
+  .bmgridwrap{min-height:0;overflow:auto;margin:0 12px 12px;padding:10px;border-radius:12px;background:#0e0c12;box-shadow:inset 0 0 0 1px #ffffff12}
+  .bmgrid{display:flex;flex-direction:column;gap:4px;min-width:660px}
+  .bmrow{display:grid;grid-template-columns:70px repeat(16,minmax(30px,1fr));gap:4px;align-items:center}
+  .bmrow.first{margin-top:10px}
+  .bmlab{padding-right:6px;text-align:right;white-space:nowrap;font-weight:800;font-size:12px;color:var(--muted)}
+  .bmcell{height:30px;border-radius:7px;border:1px solid #2e2935;background:#1b1820}
+  .bmcell.beat{background:#25212b}
+  .bmcell:hover{border-color:#57505f}
+  .bmcell.on{background:var(--c);border-color:var(--c);box-shadow:0 0 12px var(--c)}
+  .bmcell.now{outline:2px solid #fbf7ecaa;outline-offset:-2px}
+  .quiz-view{grid-template-rows:auto auto minmax(0,1fr) auto auto;background:linear-gradient(180deg,var(--lacquer),#161220)}
+  .qzdots{display:flex;justify-content:center;gap:6px;padding:6px 12px}
+  .qzdots i{width:12px;height:12px;border-radius:50%;background:#ffffff1c}
+  .qzdots i.good{background:#3bb273}
+  .qzdots i.bad{background:#e0404f}
+  .qzdots i.now{box-shadow:0 0 0 2px var(--brass-lit)}
+  .qzstage{min-height:0;display:grid;place-items:center;padding:10px}
+  .qzcard{width:min(92vw,520px);display:grid;place-items:center;padding:18px;border-radius:18px;background:var(--paper);color:var(--ink);box-shadow:0 10px 30px #0008}
+  .qzcard svg{width:100%;height:auto;max-height:34vh}
+  .qzbig{font:400 clamp(54px,13vw,104px)/1 var(--plate);color:var(--ink)}
+  .qzprompt{min-height:1.4em;padding:0 12px;text-align:center;font-weight:800;font-size:18px;text-wrap:balance}
+  .qzanswers{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:12px 12px 20px}
+  .qzbtn{min-width:58px;height:58px;border-radius:14px;border:1px solid var(--edge);background:var(--panel);font-weight:800;font-size:22px}
+  .qzbtn:hover{border-color:var(--brass-deep)}
+  .qzbtn.wide{min-width:124px;font-size:18px}
+  .qzbtn.good{background:#3bb273;border-color:#3bb273}
+  .qzbtn.bad{background:var(--felt-lit);border-color:var(--felt-lit);animation:nope .32s}
+  .minikeys{position:relative;display:flex;width:min(94vw,520px);height:160px}
+  .minikeys .mw{flex:1 1 0;margin-right:3px;border:0;border-radius:0 0 8px 8px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;
+    background:linear-gradient(180deg,#e9e0cc,var(--ivory));color:#8a7f6c;font-weight:800;font-size:15px}
+  .minikeys .mb{position:absolute;top:0;z-index:2;width:9%;height:60%;border:0;border-radius:0 0 6px 6px;background:linear-gradient(180deg,#000,#2b2731)}
+  .minikeys .good{background:#3bb273}
+  .minikeys .bad{background:var(--felt-lit)}
+  .flip-view{grid-template-rows:auto minmax(0,1fr) auto auto;background:linear-gradient(180deg,var(--lacquer),#1a1420)}
+  .fbstage{position:relative;min-height:120px;margin:0 12px}
+  .fbstage canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:10px}
+  #fbOnion{background:#fbf8f0;pointer-events:none;box-shadow:0 8px 24px #0007}
+  #fbCanvas{touch-action:none;cursor:crosshair}
+  .fbtools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px 4px}
+  .fbhint{font-weight:800;font-size:14px;color:var(--brass-lit)}
+  .fbstrip{display:flex;gap:8px;overflow-x:auto;padding:8px 14px 14px}
+  .fbframe{position:relative;flex:none;width:84px;height:63px;padding:0;overflow:hidden;border-radius:8px;border:2px solid var(--edge);background:#fbf8f0}
+  .fbframe canvas{display:block;width:100%;height:100%}
+  .fbframe b{position:absolute;left:4px;top:2px;font-size:10px;color:#6d6272}
+  .fbframe.cur{border-color:var(--brass-lit);box-shadow:0 0 0 2px var(--brass-lit)}
+  .fbadd{flex:none;min-width:84px;height:63px;border-radius:8px;border:1px dashed var(--edge);background:transparent;font-weight:800;font-size:13px;color:var(--muted)}
+  .fbadd:hover{border-color:var(--brass-deep);color:var(--ivory)}
+  .tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .art.beats{background:linear-gradient(135deg,#1d1a22,#2d2638)}
+  .art.games{background:linear-gradient(135deg,#f3ecdc,#e7dcc4)}
+  .art.flip{background:linear-gradient(135deg,#3a2c14,#2a2530)}
+
   /* ---- guitar ---- */
   .guitar-view{grid-template-rows:auto auto auto minmax(0,1fr)}
   .chordbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:2px 16px 10px}
@@ -609,6 +671,33 @@
             <path d="M146 30 C138 22 124 28 128 40 C132 52 146 60 146 66 C146 60 160 52 164 40 C168 28 154 22 146 30" fill="#d7263d"/>
           </svg></span>
           <span class="txt"><b>My drawings</b><span>Everything you finished</span></span>
+        </button>
+      </div>
+
+      <h2 class="shelf"><span>🎮</span> Play &amp; Create</h2>
+      <div class="tiles three">
+        <button class="tile" data-go="beats">
+          <span class="art beats"><svg viewBox="0 0 200 100" aria-hidden="true"><g>
+            <rect x="20" y="16" width="24" height="14" rx="4" fill="#e0404f"/><rect x="52" y="16" width="24" height="14" rx="4" fill="#3a3442"/><rect x="84" y="16" width="24" height="14" rx="4" fill="#3a3442"/><rect x="116" y="16" width="24" height="14" rx="4" fill="#f6c945"/><rect x="148" y="16" width="24" height="14" rx="4" fill="#3a3442"/>
+            <rect x="20" y="38" width="24" height="14" rx="4" fill="#3a3442"/><rect x="52" y="38" width="24" height="14" rx="4" fill="#2f7fd8"/><rect x="84" y="38" width="24" height="14" rx="4" fill="#3a3442"/><rect x="116" y="38" width="24" height="14" rx="4" fill="#3a3442"/><rect x="148" y="38" width="24" height="14" rx="4" fill="#3bb273"/>
+            <rect x="20" y="60" width="24" height="14" rx="4" fill="#e8c679"/><rect x="52" y="60" width="24" height="14" rx="4" fill="#3a3442"/><rect x="84" y="60" width="24" height="14" rx="4" fill="#e8c679"/><rect x="116" y="60" width="24" height="14" rx="4" fill="#3a3442"/><rect x="148" y="60" width="24" height="14" rx="4" fill="#e8c679"/>
+          </g></svg></span>
+          <span class="txt"><b>Beat maker</b><span>Make your own music</span></span>
+        </button>
+        <button class="tile" data-go="gamesMenu">
+          <span class="art games"><svg viewBox="0 0 200 100" aria-hidden="true">
+            <g stroke="#8d8190" stroke-width="2"><line x1="20" x2="180" y1="30" y2="30"/><line x1="20" x2="180" y1="42" y2="42"/><line x1="20" x2="180" y1="54" y2="54"/><line x1="20" x2="180" y1="66" y2="66"/><line x1="20" x2="180" y1="78" y2="78"/></g>
+            <ellipse cx="86" cy="60" rx="9" ry="6.5" transform="rotate(-20 86 60)" fill="#2a2330"/><line x1="94" x2="94" y1="58" y2="20" stroke="#2a2330" stroke-width="2.5"/>
+            <text x="140" y="66" font-family="Nunito, sans-serif" font-weight="800" font-size="34" fill="#9a7426">?</text>
+          </svg></span>
+          <span class="txt"><b>Note games</b><span>Name notes · train your ears</span></span>
+        </button>
+        <button class="tile" data-go="flip">
+          <span class="art flip"><svg viewBox="0 0 200 100" aria-hidden="true">
+            <rect x="40" y="20" width="80" height="62" rx="6" fill="#fbf8f0" opacity=".35"/><rect x="60" y="14" width="80" height="62" rx="6" fill="#fbf8f0" opacity=".6"/><rect x="80" y="8" width="80" height="62" rx="6" fill="#fbf8f0"/>
+            <g stroke="#2a2330" stroke-width="3" stroke-linecap="round" fill="none"><circle cx="120" cy="24" r="6"/><line x1="120" y1="30" x2="120" y2="48"/><line x1="120" y1="36" x2="108" y2="30"/><line x1="120" y1="36" x2="132" y2="44"/><line x1="120" y1="48" x2="112" y2="60"/><line x1="120" y1="48" x2="130" y2="60"/></g>
+          </svg></span>
+          <span class="txt"><b>Flipbook</b><span>Draw a cartoon that moves</span></span>
         </button>
       </div>
 
@@ -892,6 +981,72 @@
     </div>
     <div class="chords" id="uChordBtns"></div>
     <div class="neck" id="uNeck"><span class="strumhint">Swipe across the strings ↕</span></div>
+  </section>
+
+  <!-- ============ PLAY & CREATE ============ -->
+  <section class="view beats-view" data-view="beats" hidden>
+    <header class="top">
+      <button class="back">◀ Back</button>
+      <h1 class="ttl"><small>PLAY &amp; CREATE</small>Beat maker</h1>
+      <div class="tools">
+        <button class="btn go" id="bmPlay">▶ Play</button>
+        <div class="seg" id="bmSound" role="group" aria-label="Melody sound">
+          <button data-v="box" aria-pressed="true">Music box</button>
+          <button data-v="piano" aria-pressed="false">Piano</button>
+          <button data-v="organ" aria-pressed="false">Organ</button>
+        </div>
+      </div>
+    </header>
+    <div class="bmbar">
+      <label class="bmtempo">Speed <input type="range" id="bmTempo" min="60" max="160" value="110"> <b id="bmBpm">110</b></label>
+      <div class="bmpresets" id="bmPresets" role="group" aria-label="Starter beats"></div>
+      <button class="btn" id="bmClear">Clear</button>
+      <button class="btn go" id="bmSave">Save my beat</button>
+      <span class="status" id="bmStatus"></span>
+    </div>
+    <div class="bmgridwrap"><div class="bmgrid" id="bmGrid"></div></div>
+  </section>
+
+  <section class="view listview" data-view="gamesMenu" hidden>
+    <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>PLAY &amp; CREATE</small>Note games</h1></header>
+    <div class="scroll"><div class="scroll-in" id="gamesList"></div></div>
+  </section>
+
+  <section class="view quiz-view" data-view="quiz" hidden>
+    <header class="top">
+      <button class="back">◀ Back</button>
+      <h1 class="ttl" id="qzTitle"><small>NOTE GAMES</small>Game</h1>
+      <div class="tools"><button class="btn" id="qzAgain">🔊 Hear it again</button></div>
+    </header>
+    <div class="qzdots" id="qzDots"></div>
+    <div class="qzstage" id="qzStage"></div>
+    <div class="qzprompt" id="qzPrompt"></div>
+    <div class="qzanswers" id="qzAnswers"></div>
+  </section>
+
+  <section class="view flip-view" data-view="flip" hidden>
+    <header class="top">
+      <button class="back">◀ Back</button>
+      <h1 class="ttl"><small>PLAY &amp; CREATE</small>Flipbook</h1>
+      <div class="tools">
+        <button class="btn go" id="fbPlay">▶ Play</button>
+        <label class="bmtempo">Speed <input type="range" id="fbFps" min="2" max="14" value="8"></label>
+      </div>
+    </header>
+    <div class="fbstage" id="fbStage"><canvas id="fbOnion"></canvas><canvas id="fbCanvas"></canvas></div>
+    <div class="fbtools">
+      <div class="swatches" id="fbColors" role="group" aria-label="Colors"></div>
+      <div class="seg" id="fbSizes" role="group" aria-label="Pen size">
+        <button data-s="3" aria-pressed="false">Thin</button>
+        <button data-s="6" aria-pressed="true">Medium</button>
+        <button data-s="14" aria-pressed="false">Thick</button>
+      </div>
+      <button class="btn" id="fbErase" aria-pressed="false">🧽 Eraser</button>
+      <button class="btn" id="fbClearFrame">Clear frame</button>
+      <button class="btn" id="fbSaveFrame">Save frame</button>
+      <span class="fbhint" id="fbHint"></span>
+    </div>
+    <div class="fbstrip" id="fbStrip"></div>
   </section>
 
   <!-- ============ TUNER ============ -->
@@ -1243,7 +1398,7 @@
   }
   function renderHome(){
     const p = store.get('prog', blankProg());
-    const keys = { pianoSongs:'piano.', singSongs:'sing.', drawMenu:'draw.', guitarMenu:'guitar.', drumsMenu:'drums.', instHub:'inst.' };
+    const keys = { pianoSongs:'piano.', singSongs:'sing.', drawMenu:'draw.', guitarMenu:'guitar.', drumsMenu:'drums.', instHub:'inst.', beats:'game.beats', gamesMenu:'game.q.', flip:'game.flip' };
     document.querySelectorAll('.tile').forEach(t => {
       const key = keys[t.dataset.go]; if(!key) return;
       let el = t.querySelector('.prog');
@@ -5158,6 +5313,318 @@
         sayU(sSong ? 'Tap “Hear it”, then “Start lesson”.' : 'Tap a chord, then swipe across the strings.');
       },
       leave(){ if(um) uMicOff(); }
+    };
+  })();
+
+  // ================= PLAY & CREATE =================
+  (() => {
+    const mkEl = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
+    const rand = n => Math.floor(Math.random()*n);
+    const RAIN = ['#e0404f','#f28c28','#f6c945','#3bb273','#17c3b2','#2f7fd8','#7b4fc9','#f28bb5'];
+    const isVisible = v => !document.querySelector(`[data-view="${v}"]`).hidden;
+
+    // ---------------- beat maker ----------------
+    const BM_DRUMS = [['CR','Crash'], ['OH','Open hat'], ['HH','Hi-hat'], ['SN','Snare'], ['KK','Kick']];
+    const BM_NOTES = [76,74,72,69,67,64,62,60];
+    const STEPS = 16;
+    const blank = n => Array.from({ length:n }, () => Array(STEPS).fill(false));
+    const loadBeat = () => { const b = store.get('beat', null); return b && b.drums && b.mel ? b : { drums:blank(5), mel:blank(8), bpm:110, sound:'box' }; };
+    let bm = loadBeat(), bmStep = 0, bmTimer = 0, bmOn = false, bmPrevVoice = null;
+    const PRESETS = {
+      Rock:    { bpm:112, drums:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x.....x.x.......', CR:'x...............' }, mel:[[7,0],[5,2],[4,4],[2,6],[3,8],[4,10],[5,12],[6,14]] },
+      'Hip-hop':{ bpm:90, drums:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x..x...x..x.....' }, mel:[[3,0],[3,3],[4,6],[5,8],[4,11],[2,14]] },
+      Dance:   { bpm:124, drums:{ KK:'x...x...x...x...', OH:'..x...x...x...x.', SN:'....x.......x...', HH:'x...x...x...x...' }, mel:[[2,0],[4,3],[5,6],[4,9],[2,12],[3,14],[1,15]] },
+      Lullaby: { bpm:80, drums:{ KK:'x.......x.......', HH:'....x.......x...' }, mel:[[7,0],[7,2],[4,4],[4,6],[3,8],[3,10],[4,12]] }
+    };
+    const sayB = h => { $('bmStatus').innerHTML = h; };
+    function applyPreset(nm){
+      const p = PRESETS[nm];
+      bm.drums = blank(5); bm.mel = blank(8); bm.bpm = p.bpm;
+      Object.entries(p.drums).forEach(([k, str]) => { const i = BM_DRUMS.findIndex(d => d[0] === k); [...str].forEach((ch, s) => bm.drums[i][s] = ch === 'x'); });
+      p.mel.forEach(([r, s]) => bm.mel[r][s] = true);
+      syncTempo(); renderGrid();
+      sayB(`Loaded the <b>${nm}</b> beat — press Play, then change it!`);
+    }
+    Object.keys(PRESETS).forEach(nm => { const b = mkEl('button', null, nm); b.onclick = () => { unlock(); applyPreset(nm); }; $('bmPresets').appendChild(b); });
+    function renderGrid(){
+      const g = $('bmGrid'); g.innerHTML = '';
+      const row = (label, cls, arr, color, preview) => {
+        const r = mkEl('div', 'bmrow ' + cls); r.style.setProperty('--c', color);
+        r.appendChild(mkEl('span', 'bmlab', label));
+        for(let s = 0; s < STEPS; s++){
+          const c = mkEl('button', 'bmcell' + (arr[s] ? ' on' : '') + (s % 4 === 0 ? ' beat' : ''));
+          c.dataset.s = s; c.setAttribute('aria-label', `${label}, step ${s + 1}`);
+          c.onclick = () => { unlock(); arr[s] = !arr[s]; c.classList.toggle('on', arr[s]); if(arr[s] && !bmOn) preview(); };
+          r.appendChild(c);
+        }
+        g.appendChild(r);
+      };
+      BM_NOTES.forEach((m, i) => row(name(spell(m)) + (Math.floor(m/12) - 1), 'mel', bm.mel[i], RAIN[i], () => { noteOn(m); setTimeout(() => noteOff(m), 220); }));
+      BM_DRUMS.forEach(([p, n], i) => row(n, 'drum' + (i === 0 ? ' first' : ''), bm.drums[i], '#e8c679', () => hit(p)));
+    }
+    function markStep(s){
+      $('bmGrid').querySelectorAll('.bmcell.now').forEach(c => c.classList.remove('now'));
+      if(s >= 0) $('bmGrid').querySelectorAll(`.bmcell[data-s="${s}"]`).forEach(c => c.classList.add('now'));
+    }
+    const stepMs = () => 60000/bm.bpm/4;
+    function tick(){
+      const s = bmStep;
+      bm.drums.forEach((r, i) => { if(r[s]) hit(BM_DRUMS[i][0]); });
+      bm.mel.forEach((r, i) => { if(r[s]){ const m = BM_NOTES[i]; noteOn(m); setTimeout(() => noteOff(m), stepMs()*1.8); } });
+      markStep(s);
+      bmStep = (s + 1) % STEPS;
+      bmTimer = setTimeout(tick, stepMs());
+    }
+    function bmStop(){ bmOn = false; clearTimeout(bmTimer); $('bmPlay').textContent = '▶ Play'; markStep(-1); }
+    $('bmPlay').onclick = () => { unlock(); if(bmOn) return bmStop(); bmOn = true; bmStep = 0; $('bmPlay').textContent = '■ Stop'; tick(); };
+    function syncTempo(){ $('bmTempo').value = bm.bpm; $('bmBpm').textContent = bm.bpm; }
+    $('bmTempo').oninput = e => { bm.bpm = +e.target.value; $('bmBpm').textContent = bm.bpm; };
+    function syncSound(){ $('bmSound').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === bm.sound)); voice = bm.sound; }
+    $('bmSound').querySelectorAll('button').forEach(b => b.onclick = () => { bm.sound = b.dataset.v; syncSound(); unlock(); noteOn(72); setTimeout(() => noteOff(72), 250); });
+    $('bmClear').onclick = () => { bm.drums = blank(5); bm.mel = blank(8); renderGrid(); sayB('Cleared — tap the squares to make a new beat.'); };
+    $('bmSave').onclick = () => {
+      store.set('beat', bm);
+      saveStars('game.beats', 3); gainXP(10);
+      const on = bm.drums.flat().filter(Boolean).length + bm.mel.flat().filter(Boolean).length;
+      sayB(on ? `Saved your beat! +10 XP 🎉 (${on} sounds)` : 'Saved — but it’s empty! Tap some squares first.');
+    };
+    hooks.beats = {
+      enter(){ bmPrevVoice = voice; bm = loadBeat(); if(!bm.sound) bm.sound = 'box'; syncSound(); syncTempo(); renderGrid(); sayB('Tap squares to turn sounds on, or try a starter beat.'); },
+      leave(){ bmStop(); if(bmPrevVoice) voice = bmPrevVoice; }
+    };
+
+    // ---------------- note games ----------------
+    const GAMES = [
+      { id:'names', name:'Name that note', e:'🎼', desc:'See a note on the music lines — which letter is it?' },
+      { id:'keys', name:'Find the key', e:'🎹', desc:'Find the note on the piano keys' },
+      { id:'ears', name:'Higher or lower?', e:'👂', desc:'Listen to two notes — did it go up or down?' }
+    ];
+    function gamesMenu(){
+      const el = $('gamesList'), stars = store.get('stars', {}); el.innerHTML = '';
+      const g = mkEl('div', 'songgrid'); el.appendChild(g);
+      GAMES.forEach(gm => {
+        const st = stars[`game.q.${gm.id}`] || 0;
+        const b = mkEl('button', 'songcard', `<span class="sn">${gm.e} ${gm.name}</span><span class="sm">${gm.desc} · <span class="stars2">${'★'.repeat(st)}${'☆'.repeat(3-st)}</span></span>`);
+        b.onclick = () => { unlock(); go('quiz', gm.id); };
+        g.appendChild(b);
+      });
+    }
+    hooks.gamesMenu = { enter: gamesMenu };
+
+    const LETTERS = 'CDEFGAB', SEMIS = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 };
+    let qz = null, qzT = 0;
+    const blip = (m, len = 450) => { noteOn(m); setTimeout(() => noteOff(m), len); };
+    function renderDots(){
+      $('qzDots').innerHTML = Array.from({ length:qz.total }, (_, i) => `<i class="${qz.marks[i] || ''}${i === qz.round - 1 && !qz.marks[i] ? ' now' : ''}"></i>`).join('');
+    }
+    function staffSVG(d){
+      const Y = k => 84 - (k - 30)*5, x = 100;
+      let s = `<svg viewBox="0 0 200 132" aria-label="A note on the staff">`;
+      for(let k = 30; k <= 38; k += 2) s += `<line x1="12" x2="188" y1="${Y(k)}" y2="${Y(k)}" stroke="#8d8190" stroke-width="1.3"/>`;
+      s += `<line x1="12" x2="12" y1="${Y(38)}" y2="${Y(30)}" stroke="#2a2330" stroke-width="3"/>`;
+      for(let l = 28; l >= d; l -= 2) s += `<line x1="${x-14}" x2="${x+14}" y1="${Y(l)}" y2="${Y(l)}" stroke="#2a2330" stroke-width="1.6"/>`;
+      for(let l = 40; l <= d; l += 2) s += `<line x1="${x-14}" x2="${x+14}" y1="${Y(l)}" y2="${Y(l)}" stroke="#2a2330" stroke-width="1.6"/>`;
+      const y = Y(d);
+      s += d < 34 ? `<line x1="${x+7.4}" x2="${x+7.4}" y1="${y-1}" y2="${y-34}" stroke="#2a2330" stroke-width="1.8"/>` : `<line x1="${x-7.4}" x2="${x-7.4}" y1="${y+1}" y2="${y+34}" stroke="#2a2330" stroke-width="1.8"/>`;
+      s += `<ellipse cx="${x}" cy="${y}" rx="8.2" ry="5.8" transform="rotate(-20 ${x} ${y})" fill="#2a2330"/></svg>`;
+      return s;
+    }
+    function startQuiz(id){
+      clearTimeout(qzT);
+      qz = { id, round:0, score:0, total:10, marks:[], locked:false, a:null, b:null, want:null };
+      $('qzTitle').innerHTML = `<small>NOTE GAMES</small>${GAMES.find(g => g.id === id).name}`;
+      $('qzAgain').hidden = id === 'keys';
+      nextRound();
+    }
+    function answered(ok, correctText){
+      qz.locked = true;
+      qz.marks[qz.round - 1] = ok ? 'good' : 'bad';
+      if(ok){ qz.score++; $('qzPrompt').innerHTML = ['Yes! 🎉','Great!','Correct! ⭐','Awesome!'][rand(4)]; }
+      else $('qzPrompt').innerHTML = `Not quite — it was <b>${correctText}</b>`;
+      renderDots();
+      qzT = setTimeout(nextRound, ok ? 750 : 1400);
+    }
+    function nextRound(){
+      if(qz.round >= qz.total) return finishQuiz();
+      qz.round++; qz.locked = false; renderDots();
+      const stage = $('qzStage'), ans = $('qzAnswers'); stage.innerHTML = ''; ans.innerHTML = '';
+      if(qz.id === 'names'){
+        const d = 28 + rand(13), letter = LETTERS[d % 7], m = (Math.floor(d/7) + 1)*12 + SEMIS[letter];
+        qz.want = letter; qz.a = m;
+        stage.appendChild(mkEl('div', 'qzcard', staffSVG(d)));
+        $('qzPrompt').textContent = 'Which note is this?';
+        [...LETTERS].forEach(L => {
+          const b = mkEl('button', 'qzbtn', L);
+          b.onclick = () => {
+            if(qz.locked) return;
+            const ok = L === qz.want;
+            b.classList.add(ok ? 'good' : 'bad');
+            if(!ok) [...ans.children].find(x => x.textContent === qz.want).classList.add('good');
+            blip(qz.a); answered(ok, qz.want);
+          };
+          ans.appendChild(b);
+        });
+      } else if(qz.id === 'keys'){
+        const names = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+        const pool = qz.round <= 5 ? [0,2,4,5,7,9,11] : [0,1,2,3,4,5,6,7,8,9,10,11];
+        const pc = pool[rand(pool.length)];
+        qz.want = pc;
+        stage.appendChild(mkEl('div', 'qzcard', `<div class="qzbig">${names[pc]}</div>`));
+        $('qzPrompt').textContent = 'Tap this note on the keys';
+        const kb = mkEl('div', 'minikeys'); ans.appendChild(kb);
+        const whites = [0,2,4,5,7,9,11], blacks = [[1,0],[3,1],[6,3],[8,4],[10,5]];
+        const keyBtn = (p, cls, label, style) => {
+          const k = mkEl('button', cls, label); k.dataset.pc = p; if(style) k.setAttribute('style', style);
+          k.onclick = () => {
+            if(qz.locked) return;
+            blip(60 + p, 350);
+            const ok = p === qz.want;
+            k.classList.add(ok ? 'good' : 'bad');
+            if(!ok) kb.querySelector(`[data-pc="${qz.want}"]`).classList.add('good');
+            answered(ok, names[qz.want]);
+          };
+          kb.appendChild(k);
+        };
+        whites.forEach(p => keyBtn(p, 'mw', names[p]));
+        blacks.forEach(([p, afterWhite]) => keyBtn(p, 'mb', '', `left:calc(${(afterWhite + 1)*100/7}% - 4.5%)`));
+      } else {
+        const a = 60 + rand(17), step = Math.max(1, 7 - Math.floor(qz.round/2)), r = Math.random();
+        const b = r < .15 ? a : Math.max(55, Math.min(84, a + (Math.random() < .5 ? -step : step)));
+        qz.a = a; qz.b = b; qz.want = b > a ? 'Higher' : b < a ? 'Lower' : 'Same';
+        stage.appendChild(mkEl('div', 'qzcard', `<div class="qzbig">♪ ? ♪</div>`));
+        $('qzPrompt').textContent = 'Listen… did the second note go higher or lower?';
+        [['⬆ Higher','Higher'], ['＝ Same','Same'], ['⬇ Lower','Lower']].forEach(([lab, v]) => {
+          const btn = mkEl('button', 'qzbtn wide', lab);
+          btn.onclick = () => {
+            if(qz.locked) return;
+            const ok = v === qz.want;
+            btn.classList.add(ok ? 'good' : 'bad');
+            if(!ok) [...ans.children].find(x => x.textContent.endsWith(qz.want)).classList.add('good');
+            stage.firstChild.innerHTML = `<div class="qzbig">${qz.want === 'Higher' ? '♪ ⬆ ♪' : qz.want === 'Lower' ? '♪ ⬇ ♪' : '♪ ＝ ♪'}</div>`;
+            answered(ok, qz.want.toLowerCase());
+          };
+          ans.appendChild(btn);
+        });
+        playPair();
+      }
+    }
+    function playPair(){ unlock(); blip(qz.a, 500); setTimeout(() => blip(qz.b, 500), 700); }
+    $('qzAgain').onclick = () => { if(!qz) return; if(qz.id === 'ears') playPair(); else if(qz.a) blip(qz.a); };
+    function finishQuiz(){
+      const st = qz.score >= 9 ? 3 : qz.score >= 6 ? 2 : 1, xp = 10 + st*10, id = qz.id;
+      saveStars(`game.q.${id}`, st); gainXP(xp);
+      $('qzPrompt').innerHTML = `You got <b>${qz.score} of ${qz.total}</b>! ${starText(st)}`;
+      showResult({ title: qz.score === 10 ? 'Perfect score!' : qz.score >= 6 ? 'Nice work!' : 'Keep practising!', stars:st, xp,
+        lines:[`${qz.score} of ${qz.total} right`, GAMES.find(g => g.id === id).name], retry:() => startQuiz(id) });
+      tada();
+    }
+    hooks.quiz = { enter:startQuiz, leave(){ clearTimeout(qzT); } };
+
+    // ---------------- flipbook ----------------
+    const FB_COLORS = ['#2a2330','#d7263d','#f28c28','#f6c945','#3bb273','#2f7fd8','#7b4fc9','#f28bb5'];
+    const fbC = $('fbCanvas'), fbX = fbC.getContext('2d'), fbOn = $('fbOnion'), fbOX = fbOn.getContext('2d');
+    let fbFrames = [], fbCur = 0, fbW = 0, fbH = 0, fbDpr = 1, fbColor = FB_COLORS[0], fbPen = 6, fbErasing = false;
+    let fbPlayT = 0, fbPlaying = false, fbFps = 8, fbStroke = null, fbRewarded = false;
+    FB_COLORS.forEach(c => { const b = mkEl('button', 'sw'); b.style.background = c; b.dataset.c = c; b.setAttribute('aria-label', 'Color ' + c); b.onclick = () => { fbColor = c; fbErasing = false; syncFb(); }; $('fbColors').appendChild(b); });
+    $('fbSizes').querySelectorAll('button').forEach(b => b.onclick = () => { fbPen = +b.dataset.s; syncFb(); });
+    $('fbErase').onclick = () => { fbErasing = !fbErasing; syncFb(); };
+    function syncFb(){
+      $('fbColors').querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', !fbErasing && b.dataset.c === fbColor));
+      $('fbSizes').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.s === fbPen));
+      $('fbErase').setAttribute('aria-pressed', fbErasing);
+    }
+    function fbLayout(){
+      const r = $('fbStage').getBoundingClientRect();
+      let w = r.width, h = w*.75; if(h > r.height){ h = r.height; w = h/.75; }
+      fbW = Math.max(40, Math.floor(w)); fbH = Math.max(30, Math.floor(h)); fbDpr = Math.min(2, devicePixelRatio || 1);
+      [fbC, fbOn].forEach(c => { c.width = fbW*fbDpr; c.height = fbH*fbDpr; c.style.width = fbW + 'px'; c.style.height = fbH + 'px'; });
+    }
+    function newFrame(from){
+      const c = document.createElement('canvas'); c.width = 960; c.height = 720;
+      if(from) c.getContext('2d').drawImage(from, 0, 0);
+      return c;
+    }
+    function showFrame(i, onion = true){
+      fbCur = Math.max(0, Math.min(fbFrames.length - 1, i));
+      fbX.setTransform(1,0,0,1,0,0); fbX.clearRect(0, 0, fbC.width, fbC.height);
+      fbX.drawImage(fbFrames[fbCur], 0, 0, fbC.width, fbC.height);
+      fbOX.setTransform(1,0,0,1,0,0); fbOX.clearRect(0, 0, fbOn.width, fbOn.height);
+      if(onion && fbCur > 0){ fbOX.globalAlpha = .22; fbOX.drawImage(fbFrames[fbCur - 1], 0, 0, fbOn.width, fbOn.height); fbOX.globalAlpha = 1; }
+      renderStrip();
+    }
+    function commitFrame(){
+      const f = fbFrames[fbCur], fx = f.getContext('2d');
+      fx.clearRect(0, 0, f.width, f.height); fx.drawImage(fbC, 0, 0, f.width, f.height);
+      const t = $('fbStrip').querySelector(`.fbframe[data-i="${fbCur}"] canvas`);
+      if(t){ const tx = t.getContext('2d'); tx.clearRect(0, 0, t.width, t.height); tx.drawImage(f, 0, 0, t.width, t.height); }
+    }
+    function renderStrip(){
+      const el = $('fbStrip'); el.innerHTML = '';
+      fbFrames.forEach((f, i) => {
+        const b = mkEl('button', 'fbframe' + (i === fbCur ? ' cur' : ''), `<canvas width="120" height="90"></canvas><b>${i + 1}</b>`);
+        b.dataset.i = i;
+        b.querySelector('canvas').getContext('2d').drawImage(f, 0, 0, 120, 90);
+        b.onclick = () => { fbStop(); showFrame(i); };
+        el.appendChild(b);
+      });
+      const add = (label, fn, title) => { const b = mkEl('button', 'fbadd', label); b.title = title; b.onclick = fn; el.appendChild(b); };
+      add('＋ New', () => { if(fbFrames.length >= 24) return; fbStop(); fbFrames.splice(fbCur + 1, 0, newFrame()); showFrame(fbCur + 1); }, 'Add an empty frame');
+      add('⧉ Copy', () => { if(fbFrames.length >= 24) return; fbStop(); fbFrames.splice(fbCur + 1, 0, newFrame(fbFrames[fbCur])); showFrame(fbCur + 1); }, 'Copy this frame and change it a little');
+      add('🗑 Delete', () => { fbStop(); if(fbFrames.length === 1){ fbFrames[0] = newFrame(); showFrame(0); return; } fbFrames.splice(fbCur, 1); showFrame(fbCur - (fbCur >= fbFrames.length ? 1 : 0)); }, 'Delete this frame');
+    }
+    const fbPt = e => { const r = fbC.getBoundingClientRect(); return { x:(e.clientX - r.left)*fbC.width/r.width, y:(e.clientY - r.top)*fbC.height/r.height }; };
+    function fbPenStyle(){
+      fbX.setTransform(1,0,0,1,0,0); fbX.lineCap = 'round'; fbX.lineJoin = 'round';
+      fbX.lineWidth = (fbErasing ? fbPen*3 : fbPen)*fbDpr; fbX.strokeStyle = fbColor; fbX.fillStyle = fbColor;
+      fbX.globalCompositeOperation = fbErasing ? 'destination-out' : 'source-over';
+    }
+    fbC.addEventListener('pointerdown', e => {
+      if(fbPlaying || fbStroke) return;
+      e.preventDefault(); try{ fbC.setPointerCapture(e.pointerId); }catch(_){}
+      const p = fbPt(e); fbStroke = { id:e.pointerId, last:p };
+      fbPenStyle(); fbX.beginPath(); fbX.arc(p.x, p.y, fbX.lineWidth/2, 0, 7); fbX.fill();
+    });
+    fbC.addEventListener('pointermove', e => {
+      if(!fbStroke || e.pointerId !== fbStroke.id) return;
+      const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+      fbPenStyle();
+      (evs.length ? evs : [e]).forEach(ev => { const p = fbPt(ev); fbX.beginPath(); fbX.moveTo(fbStroke.last.x, fbStroke.last.y); fbX.lineTo(p.x, p.y); fbX.stroke(); fbStroke.last = p; });
+    });
+    const fbUp = e => { if(fbStroke && e.pointerId === fbStroke.id){ fbStroke = null; fbX.globalCompositeOperation = 'source-over'; commitFrame(); } };
+    ['pointerup','pointercancel','lostpointercapture'].forEach(t => fbC.addEventListener(t, fbUp));
+    function fbStop(){ if(!fbPlaying) return; fbPlaying = false; clearTimeout(fbPlayT); $('fbPlay').textContent = '▶ Play'; showFrame(fbCur); }
+    $('fbPlay').onclick = () => {
+      if(fbPlaying) return fbStop();
+      if(fbFrames.length < 2){ $('fbHint').textContent = 'Add a second frame with ＋ New or ⧉ Copy first!'; return; }
+      fbPlaying = true; $('fbPlay').textContent = '■ Stop';
+      fbOX.clearRect(0, 0, fbOn.width, fbOn.height);
+      let i = 0;
+      const step = () => {
+        fbX.setTransform(1,0,0,1,0,0); fbX.clearRect(0, 0, fbC.width, fbC.height); fbX.drawImage(fbFrames[i], 0, 0, fbC.width, fbC.height);
+        $('fbStrip').querySelectorAll('.fbframe').forEach((b, k) => b.classList.toggle('cur', k === i));
+        i = (i + 1) % fbFrames.length;
+        fbPlayT = setTimeout(step, 1000/fbFps);
+      };
+      step();
+      if(!fbRewarded && fbFrames.length >= 3){ fbRewarded = true; saveStars('game.flip', 3); gainXP(15); $('fbHint').textContent = 'Your cartoon is moving! +15 XP 🎬'; }
+    };
+    $('fbFps').oninput = e => { fbFps = +e.target.value; };
+    $('fbClearFrame').onclick = () => { fbStop(); fbX.setTransform(1,0,0,1,0,0); fbX.clearRect(0, 0, fbC.width, fbC.height); commitFrame(); };
+    $('fbSaveFrame').onclick = () => {
+      const c = document.createElement('canvas'); c.width = 480; c.height = 360;
+      const x = c.getContext('2d'); x.fillStyle = '#fbf8f0'; x.fillRect(0, 0, 480, 360); x.drawImage(fbFrames[fbCur], 0, 0, 480, 360);
+      const ok = J.add({ name:`Flipbook frame ${fbCur + 1}`, img:c.toDataURL('image/jpeg', .8) });
+      $('fbHint').textContent = saveMsg(ok) + (ok ? ' ✨' : '');
+    };
+    addEventListener('resize', () => { if(isVisible('flip')){ fbLayout(); showFrame(fbCur); } });
+    hooks.flip = {
+      enter(){
+        fbPlaying = false; clearTimeout(fbPlayT); $('fbPlay').textContent = '▶ Play';
+        if(!fbFrames.length) fbFrames = [newFrame()];
+        fbLayout(); syncFb(); showFrame(fbCur);
+        $('fbHint').textContent = 'Draw frame 1, tap ⧉ Copy, move it a little, then press Play!';
+      },
+      leave(){ fbStop(); }
     };
   })();
 
