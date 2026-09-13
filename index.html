@@ -238,6 +238,43 @@
   .piano-view .keys{height:clamp(140px,38dvh,340px)}
   @media (max-height:540px){ .piano-view .keys{height:42dvh} .hwwrap{min-height:90px} }
 
+  /* ---- drums ---- */
+  .drums-view{grid-template-rows:auto minmax(0,1fr) auto;background:linear-gradient(180deg,var(--lacquer),#17121a)}
+  .dhwwrap{position:relative;margin:0 12px;min-height:120px;border-radius:12px;overflow:hidden;
+    background:linear-gradient(180deg,#0b0a0f,#191320);box-shadow:inset 0 0 0 1px #ffffff12}
+  .dhwwrap canvas{position:absolute;inset:0;width:100%;height:100%}
+  .dstatus{position:absolute;left:12px;top:10px;right:12px;font-weight:800;font-size:15px;color:var(--ivory);text-shadow:0 1px 4px #000a}
+  .dfeed{position:absolute;left:0;right:0;top:44%;text-align:center;font:800 26px var(--ui);text-shadow:0 2px 10px #000b;pointer-events:none}
+  .pads{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:10px 12px 14px}
+  @media (min-width:720px){ .pads{grid-template-columns:repeat(8,minmax(0,1fr))} }
+  .pad{position:relative;min-height:74px;border-radius:14px;border:1px solid var(--edge);
+    background:linear-gradient(180deg,#2a2530,#1b1822);color:var(--ivory);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    box-shadow:inset 0 0 0 2px #00000044,0 3px 0 #000000aa;touch-action:none}
+  .pad b{font-size:14px;font-weight:800}
+  .pad .padkey{font:500 11px var(--mono);color:var(--muted);text-transform:uppercase}
+  .pad::before{content:"";position:absolute;inset:6px;border-radius:10px;border:2px solid var(--pc);opacity:.55}
+  .pad.lit{background:linear-gradient(180deg,var(--pc),#1b1822);transform:translateY(2px);box-shadow:inset 0 0 0 2px #00000044}
+  .pad.lit::before{opacity:1}
+  .art.drums{background:radial-gradient(circle at 50% 40%,#3a3040,var(--lacquer) 70%)}
+
+  /* ---- results screen ---- */
+  .resultwrap{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:18px;background:#0a0810cc}
+  .resultwrap[hidden]{display:none}
+  .resultcard{width:100%;max-width:420px;background:linear-gradient(180deg,#2a2431,#1d1a22);border:1px solid var(--brass-deep);
+    border-radius:20px;padding:22px;text-align:center;box-shadow:0 20px 60px #000a}
+  .resultcard h2{margin:8px 0 4px;font-size:24px;font-weight:800;text-wrap:balance}
+  .rstars{font-size:40px;letter-spacing:.08em;color:var(--brass-lit);line-height:1}
+  .resultcard ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:15px;color:var(--muted)}
+  .resultcard .rxp{margin-top:12px;font-weight:800;font-size:18px;color:var(--brass-lit)}
+  .rbtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+
+  /* ---- daily goal ring ---- */
+  .goalring{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;flex:none;
+    background:conic-gradient(var(--brass-lit) calc(var(--pct)*1%), #ffffff14 0)}
+  .goalring i{width:42px;height:42px;border-radius:50%;background:var(--lacquer);display:grid;place-items:center;
+    font:800 13px var(--ui);color:var(--brass-lit);font-style:normal}
+
   /* ---- draw ---- */
   .draw-view{grid-template-rows:auto minmax(0,1fr) auto}
   .dwrap{position:relative;min-height:0;margin:0 12px;border-radius:6px;overflow:hidden;background:#fbf8f0;
@@ -392,6 +429,18 @@
             <g stroke="#efe8da" stroke-width="1.6"><line x1="0" y1="30" x2="200" y2="30"/><line x1="0" y1="38" x2="200" y2="38"/><line x1="0" y1="46" x2="200" y2="46"/><line x1="0" y1="54" x2="200" y2="54"/><line x1="0" y1="62" x2="200" y2="62"/><line x1="0" y1="70" x2="200" y2="70"/></g>
           </svg></span>
           <span class="txt"><b>Guitar</b><span>Chords · strum · tuner</span></span>
+        </button>
+        <button class="tile" data-go="drumsMenu">
+          <span class="art drums"><svg viewBox="0 0 200 100" aria-hidden="true">
+            <ellipse cx="100" cy="70" rx="46" ry="16" fill="#26222c" stroke="#e8c679" stroke-width="3"/>
+            <ellipse cx="100" cy="62" rx="46" ry="16" fill="#efe6d2"/>
+            <ellipse cx="46" cy="42" rx="26" ry="9" fill="#2a2530" stroke="#c8a15a" stroke-width="2"/>
+            <ellipse cx="154" cy="34" rx="30" ry="7" fill="none" stroke="#f0b06a" stroke-width="3"/>
+            <line x1="154" y1="34" x2="154" y2="74" stroke="#8d8190" stroke-width="3"/>
+            <line x1="60" y1="16" x2="86" y2="52" stroke="#e9dcc0" stroke-width="4" stroke-linecap="round"/>
+            <line x1="140" y1="16" x2="114" y2="52" stroke="#e9dcc0" stroke-width="4" stroke-linecap="round"/>
+          </svg></span>
+          <span class="txt"><b>Drums</b><span>Grooves, fills and rudiments</span></span>
         </button>
       </div>
       <p class="tip">Tip: on a phone, turn it sideways for the piano and guitar.</p>
@@ -580,6 +629,34 @@
     </div>
     <div class="chords" id="chordBtns"></div>
     <div class="neck" id="neck"><span class="strumhint">Swipe across the strings ↕</span></div>
+  </section>
+
+  <!-- ============ DRUMS ============ -->
+  <section class="view listview" data-view="drumsMenu" hidden>
+    <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>DRUMS</small>Pick a beat</h1></header>
+    <div class="scroll"><div class="scroll-in" id="drumsList"></div></div>
+  </section>
+
+  <section class="view drums-view" data-view="drums" hidden>
+    <header class="top">
+      <button class="back">◀ Back</button>
+      <h1 class="ttl" id="dTitle"><small>DRUMS</small>Free play</h1>
+      <div class="tools">
+        <div class="seg" id="dtempo" role="group" aria-label="Speed">
+          <button data-t="0.6" aria-pressed="false">Slow</button>
+          <button data-t="0.8" aria-pressed="false">Medium</button>
+          <button data-t="1" aria-pressed="true">Normal</button>
+        </div>
+        <button class="btn" id="dHear">♪ Hear it</button>
+        <button class="btn go" id="dPlay">▶ Play</button>
+      </div>
+    </header>
+    <div class="dhwwrap" id="dhwWrap">
+      <canvas id="dhw"></canvas>
+      <div class="dfeed" id="dFeed" hidden></div>
+      <span class="dstatus" id="dStatus"></span>
+    </div>
+    <div class="pads" id="pads"></div>
   </section>
 
   <!-- ============ TUNER ============ -->
@@ -893,9 +970,36 @@
     return p.xp;
   }
   function starsIn(prefix){ const s = store.get('stars',{}); return Object.keys(s).filter(k => k.startsWith(prefix)).reduce((a,k) => a + s[k], 0); }
+  // daily practice goal: 5 minutes a day
+  const GOAL = 300;
+  function todaySecs(){ const m = store.get('mins', { d:'', s:0 }); return m.d === today() ? m.s : 0; }
+  function addSecs(n){
+    const m = store.get('mins', { d:'', s:0 });
+    if(m.d !== today()){ m.d = today(); m.s = 0; }
+    m.s += n; store.set('mins', m);
+  }
+  setInterval(() => { if(['piano','sing','draw','guitar','drums'].includes(current)) addSecs(10); }, 10000);
+
+  // the results screen every lesson ends on
+  function showResult(o){
+    let el = $('resultBox');
+    if(!el){ el = document.createElement('div'); el.id = 'resultBox'; el.className = 'resultwrap'; document.body.appendChild(el); }
+    el.innerHTML = `<div class="resultcard">
+      <div class="rstars">${'★'.repeat(o.stars)}${'☆'.repeat(3-o.stars)}</div>
+      <h2>${o.title}</h2>
+      <ul>${(o.lines||[]).map(l => `<li>${l}</li>`).join('')}</ul>
+      <div class="rxp">+${o.xp} XP</div>
+      <div class="rbtns"></div></div>`;
+    const btns = el.querySelector('.rbtns');
+    const add = (label, cls, fn) => { const b = document.createElement('button'); b.className = 'btn ' + (cls||''); b.textContent = label; b.onclick = () => { el.hidden = true; fn && fn(); }; btns.appendChild(b); };
+    add('Close');
+    if(o.retry) add('Try again', '', o.retry);
+    if(o.next) add(o.nextLabel || 'Next ▶', 'go', o.next);
+    el.hidden = false;
+  }
   function renderHome(){
     const p = store.get('prog', blankProg());
-    const keys = { pianoSongs:'piano.', singSongs:'sing.', drawMenu:'draw.', guitarMenu:'guitar.' };
+    const keys = { pianoSongs:'piano.', singSongs:'sing.', drawMenu:'draw.', guitarMenu:'guitar.', drumsMenu:'drums.' };
     document.querySelectorAll('.tile').forEach(t => {
       const key = keys[t.dataset.go]; if(!key) return;
       let el = t.querySelector('.prog');
@@ -906,7 +1010,9 @@
     const hp = $('homeProg');
     if(hp){
       const xp = p.xp||0, lvl = Math.floor(xp/200) + 1, into = Math.round(xp%200/2);
-      hp.innerHTML = `<span class="flame">🔥 ${p.streak||0}-day streak</span>` +
+      const secs = todaySecs(), pct = Math.min(100, Math.round(secs/GOAL*100));
+      hp.innerHTML = `<span class="goalring" style="--pct:${pct}" title="Today’s 5 minute goal"><i>${Math.floor(secs/60)}m</i></span>` +
+        `<span class="flame">🔥 ${p.streak||0}-day streak</span>` +
         `<span class="xptrack"><i style="width:${into}%"></i></span>` +
         `<span class="lvl">Level ${lvl} · ${xp} XP</span>`;
     }
@@ -1223,8 +1329,18 @@
     clearTarget(); openNote = null;
     const pct = alongTotal ? hits/alongTotal : 0, st = pct >= .9 ? 3 : pct >= .6 ? 2 : 1;
     pmode = 'done'; startBtn.textContent = 'Play again';
-    saveStars(unitKey, st); gainXP(15 + st*10);
+    const xp = 15 + st*10;
+    saveStars(unitKey, st); gainXP(xp);
     sayP(`You hit ${hits} of ${alongTotal} notes! ${starText(st)}`);
+    const units = pianoUnits(), i = units.findIndex(u => unitKeyOf(u) === unitKey), nx = i >= 0 ? units[i+1] : null;
+    showResult({
+      title: pct >= .9 ? 'Perfect timing!' : pct >= .6 ? 'Nice playing!' : 'Keep practising!',
+      stars: st, xp,
+      lines: [`<b>${hits}</b> of ${alongTotal} notes in time`, `Speed: ${Math.round(tempo*100)}%`],
+      retry: () => startBtn.click(),
+      next: nx ? () => { stack[stack.length-1].arg = nx; open('piano', nx); } : null,
+      nextLabel: nx ? 'Next lesson ▶' : null
+    });
     tada();
   }
   function clearTarget(){ document.querySelectorAll('.key.target').forEach(el => el.classList.remove('target')); }
@@ -1270,9 +1386,18 @@
   }
   function finishP(){
     pmode = 'done'; clearTarget(); startBtn.textContent = 'Play again';
-    const st = starsFor(mistakes);
-    saveStars(unitKey, st); gainXP(15 + st*10);
+    const st = starsFor(mistakes), xp = 15 + st*10;
+    saveStars(unitKey, st); gainXP(xp);
     sayP(`You played it! ${starText(st)}`);
+    const units = pianoUnits(), i = units.findIndex(u => unitKeyOf(u) === unitKey), nx = i >= 0 ? units[i+1] : null;
+    showResult({
+      title: mistakes === 0 ? 'Perfect — no mistakes!' : mistakes <= 5 ? 'Well played!' : 'You finished it!',
+      stars: st, xp,
+      lines: [`<b>${sect.length}</b> notes played`, mistakes ? `Wrong keys: ${mistakes}` : 'No wrong keys at all!'],
+      retry: () => startBtn.click(),
+      next: nx ? () => { stack[stack.length-1].arg = nx; open('piano', nx); } : null,
+      nextLabel: nx ? 'Next lesson ▶' : null
+    });
     tada();
   }
 
@@ -1601,9 +1726,16 @@
   function finishSing(){
     const hits = sg.notes.filter(n => n.frames && n.good/n.frames >= .3).length, pct = hits/sg.notes.length;
     const st = pct >= .8 ? 3 : pct >= .5 ? 2 : 1;
-    saveStars('sing.'+sg.s.id, st); gainXP(15 + st*10);
+    const xp = 15 + st*10;
+    saveStars('sing.'+sg.s.id, st); gainXP(xp);
     Mic.stop(); stopSeq(); sg.mode = 'done'; sGo.textContent = '🎤 Sing again';
     saySing(`You hit ${hits} of ${sg.notes.length} notes! ${starText(st)}`);
+    showResult({
+      title: pct >= .8 ? 'Beautiful singing!' : pct >= .5 ? 'Nice singing!' : 'Keep singing!',
+      stars: st, xp,
+      lines: [`<b>${hits}</b> of ${sg.notes.length} notes in tune`, sg.shift ? `Moved ${sg.shift > 0 ? 'up' : 'down'} ${Math.abs(sg.shift)} for your voice` : 'Sung in the song’s own key'],
+      retry: () => sGo.click()
+    });
   }
   function drawLane(t){
     const c = lctx, Wd = lW, Hd = lH;
@@ -1802,19 +1934,20 @@
       { t:'Color your mountains!', p:null } ] },
 
     { id:'fish', name:'Fish', cat:'Animals', hard:1, steps:[
-      { t:'Draw the body like a lemon', p:'M18 50 Q44 24 70 50 Q44 76 18 50' },
-      { t:'Add a tail', p:'M70 50 L88 36 L88 64 Z' },
-      { t:'Eye, mouth and a fin', p:'M31 46 L31 48 M22 52 Q26 54 23 57 M44 36 Q52 29 57 41' },
-      { t:'Draw some bubbles', p:'M12 30 A3 3 0 1 0 18 30 A3 3 0 1 0 12 30 M8 20 A2 2 0 1 0 12 20 A2 2 0 1 0 8 20' },
+      { t:'Draw the body', tip:'One long curve over the top, one underneath — they meet in a point at each end.', p:'M16 50 Q34 27 58 31 Q74 34 80 50 Q74 66 58 69 Q34 73 16 50' },
+      { t:'Add the tail', tip:'Join it onto the back of the body, then flare it out.', p:'M80 45 Q86 50 80 55 L96 68 Q90 50 96 32 Z' },
+      { t:'Add the eye and the mouth', p:'M27 45 A3.2 3.2 0 1 0 33.4 45 A3.2 3.2 0 1 0 27 45 M29.8 45 L30.6 45 M17 53 Q21 56 18 58' },
+      { t:'Draw the gill line', tip:'A curve that follows the front of the body.', p:'M38 34 Q34 50 38 66' },
+      { t:'Draw some bubbles', p:'M12 26 A3.4 3.4 0 1 0 18.8 26 A3.4 3.4 0 1 0 12 26 M6 15 A2.2 2.2 0 1 0 10.4 15 A2.2 2.2 0 1 0 6 15' },
       { t:'Color your fish!', p:null } ],
       variants:[
         { q:'What pattern?', choices:[
-          { label:'Stripes', t:'Add stripes on the body', p:'M34 33 Q38 50 34 67 M44 29 Q49 50 44 71 M54 31 Q59 50 54 69' },
-          { label:'Spots', t:'Add spots on the body', p:'M33 46 A3.5 3.5 0 1 0 40 46 A3.5 3.5 0 1 0 33 46 M44 56 A3.5 3.5 0 1 0 51 56 A3.5 3.5 0 1 0 44 56 M52 42 A3.5 3.5 0 1 0 59 42 A3.5 3.5 0 1 0 52 42 M40 62 A3 3 0 1 0 46 62 A3 3 0 1 0 40 62' },
+          { label:'Stripes', t:'Add stripes that curve like the body', p:'M46 32 Q50 50 46 69 M56 32 Q60 50 56 68 M66 36 Q70 50 66 64' },
+          { label:'Spots', t:'Add spots inside the body', p:'M40 44 A3.2 3.2 0 1 0 46.4 44 A3.2 3.2 0 1 0 40 44 M52 56 A3.2 3.2 0 1 0 58.4 56 A3.2 3.2 0 1 0 52 56 M60 43 A3 3 0 1 0 66 43 A3 3 0 1 0 60 43 M46 61 A2.8 2.8 0 1 0 51.6 61 A2.8 2.8 0 1 0 46 61' },
           { label:'Plain', p:null } ] },
         { q:'What fins?', choices:[
-          { label:'Big and fancy', t:'Add a big top fin and a bottom fin', p:'M38 32 Q46 18 58 30 Q50 27 44 31 M40 68 Q48 82 58 70 Q50 72 45 69' },
-          { label:'Small', t:'Add a small bottom fin', p:'M44 68 Q50 76 56 69' },
+          { label:'Big and fancy', t:'Add a tall top fin and a bottom fin', tip:'Both ends of the fin touch the body.', p:'M46 31 Q55 12 64 32 M48 70 Q54 88 64 68' },
+          { label:'Small', t:'Add a small fin on the top and the bottom', tip:'Both ends of the fin touch the body.', p:'M52 31 Q58 21 63 32 M52 70 Q57 80 62 69' },
           { label:'None', p:null } ] } ] },
     { id:'cat', name:'Cat', cat:'Animals', hard:2, steps:[
       { t:'Draw a circle for the head', p:'M30 52 A20 20 0 1 0 70 52 A20 20 0 1 0 30 52' },
@@ -2823,8 +2956,18 @@
       gi++;
       if(gi >= gs.list.length){
         gmode = 'done';
-        const st = starsFor(gmiss); saveStars('guitar.'+gs.id, st); gainXP(15 + st*10);
+        const st = starsFor(gmiss), xp = 15 + st*10;
+        saveStars('guitar.'+gs.id, st); gainXP(xp);
         sayG(`You played the whole song! ${starText(st)}`); $('gStart').textContent = 'Play again';
+        const idx = GSONGS.indexOf(gs), nx = GSONGS[idx+1];
+        showResult({
+          title: gmiss === 0 ? 'Every chord right!' : 'You played the song!',
+          stars: st, xp,
+          lines: [`<b>${gs.list.length}</b> chords strummed`, gmiss ? `Wrong chords: ${gmiss}` : 'No wrong chords at all!'],
+          retry: () => $('gStart').click(),
+          next: nx ? () => { stack[stack.length-1].arg = nx.id; open('guitar', nx.id); } : null,
+          nextLabel: nx ? 'Next song ▶' : null
+        });
       } else sayG(gs.list[gi].c === want ? `Yes! Strum <b>${want}</b> again` : `Great! Now tap <b>${gs.list[gi].c}</b> and strum`);
     } else { gmiss++; sayG(`Tap the gold chord first: <b>${want}</b>`); }
     syncChord();
@@ -2855,10 +2998,17 @@
     sayG(`Nice! <b>${pat.hits}</b> on time`);
   }
   function patDone(){
-    const pct = pat.need ? pat.hits/pat.need : 0, st = pct >= .8 ? 3 : pct >= .5 ? 2 : 1;
-    saveStars('guitar.'+pat.p.id, st); gainXP(10 + st*10);
+    const pct = pat.need ? pat.hits/pat.need : 0, st = pct >= .8 ? 3 : pct >= .5 ? 2 : 1, xp = 10 + st*10;
+    saveStars('guitar.'+pat.p.id, st); gainXP(xp);
     sayG(`${pat.hits} of ${pat.need} strums on time! ${starText(st)}`);
-    pat.slot = -1; syncChord(); tada();
+    pat.slot = -1; syncChord();
+    showResult({
+      title: pct >= .8 ? 'Right on the beat!' : 'Good strumming!',
+      stars: st, xp,
+      lines: [`<b>${pat.hits}</b> of ${pat.need} strums on time`, `Pattern on ${pat.p.chord}`],
+      retry: () => $('gStart').click()
+    });
+    tada();
   }
 
   // ---- chord change challenge ----
@@ -2984,6 +3134,291 @@
       syncChord();
     },
     leave(){ if(chg) clearInterval(chg.timer); if(gm) gmicOff(); }
+  };
+
+  // ================= DRUMS =================
+  const KIT = {
+    CR:{ n:'Crash', key:'j', col:'#f0b06a' },
+    HH:{ n:'Hi-hat', key:'d', col:'#7fc7e8' },
+    OH:{ n:'Open hat', key:'r', col:'#a9e0f5' },
+    RD:{ n:'Ride', key:'k', col:'#8fd9a8' },
+    T1:{ n:'Hi tom', key:'g', col:'#a58ee0' },
+    T2:{ n:'Floor tom', key:'h', col:'#c98ee0' },
+    SN:{ n:'Snare', key:'f', col:'#e8c679' },
+    KK:{ n:'Kick', key:' ', col:'#e0715a' }
+  };
+  const KITORDER = ['CR','HH','OH','RD','T1','T2','SN','KK'];
+  // patterns: one character per sixteenth note, x = hit, o = open/accent, . = rest
+  const DLESSONS = [
+    { id:'d-quarter', name:'Counting: 1, 2, 3, 4', cat:'Rudiments', bpm:70, pat:{ SN:'x...x...x...x...' } },
+    { id:'d-eighth', name:'Eighth notes', cat:'Rudiments', bpm:75, pat:{ SN:'x.x.x.x.x.x.x.x.' } },
+    { id:'d-single', name:'Single stroke roll', cat:'Rudiments', bpm:70, pat:{ SN:'xxxxxxxxxxxxxxxx' } },
+    { id:'d-para', name:'Paradiddle (accent every 4)', cat:'Rudiments', bpm:65, pat:{ SN:'oxxxoxxxoxxxoxxx' } },
+    { id:'d-double', name:'Double stroke roll', cat:'Rudiments', bpm:65, pat:{ SN:'oxoxoxoxoxoxoxox' } },
+    { id:'d-kick', name:'Kick and snare together', cat:'Rudiments', bpm:75, pat:{ SN:'....x.......x...', KK:'x.......x.......' } },
+
+    { id:'d-rock1', name:'Your first rock beat', cat:'Grooves', bpm:70, pat:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x.......x.......' } },
+    { id:'d-rock2', name:'Rock beat 2 (boom-boom-bap)', cat:'Grooves', bpm:75, pat:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x..x....x.......' } },
+    { id:'d-hat16', name:'Sixteenth hi-hats', cat:'Grooves', bpm:70, pat:{ HH:'xxxxxxxxxxxxxxxx', SN:'....x.......x...', KK:'x.......x.......' } },
+    { id:'d-open', name:'Open hat on the “and”', cat:'Grooves', bpm:85, pat:{ HH:'x.x.x.x.x.x.x...', OH:'..............x.', SN:'....x.......x...', KK:'x.......x.......' } },
+    { id:'d-four', name:'Four on the floor', cat:'Grooves', bpm:110, pat:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x...x...x...x...' } },
+    { id:'d-disco', name:'Disco beat', cat:'Grooves', bpm:115, pat:{ HH:'x...x...x...x...', OH:'..x...x...x...x.', SN:'....x.......x...', KK:'x...x...x...x...' } },
+    { id:'d-hiphop', name:'Hip-hop groove', cat:'Grooves', bpm:88, pat:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x..x...x..x.....' } },
+    { id:'d-ride', name:'Ride cymbal groove', cat:'Grooves', bpm:95, pat:{ RD:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x.......x...x...' } },
+    { id:'d-waltz', name:'Waltz (1-2-3, 1-2-3)', cat:'Grooves', bpm:100, pat:{ HH:'x.x.x.x.x.x.', SN:'....x...x...', KK:'x...........' } },
+    { id:'d-shuffle', name:'Shuffle beat', cat:'Grooves', bpm:90, pat:{ HH:'x.xx.xx.xx.x', SN:'...x.....x..', KK:'x.....x.....' } },
+
+    { id:'d-fill8', name:'Tom fill', cat:'Fills', bpm:80, pat:{ SN:'x.x.............', T1:'....x.x.........', T2:'........x.x.....', CR:'............x...', KK:'............x...' } },
+    { id:'d-fill16', name:'Sixteenth fill', cat:'Fills', bpm:75, pat:{ SN:'xxxx............', T1:'....xxxx........', T2:'........xxxx....', CR:'............x...' } },
+    { id:'d-fillgroove', name:'Groove, then fill', cat:'Fills', bpm:80, pat:{ HH:'x.x.x.x.x.x.....', SN:'....x.......x.x.', T1:'..............x.', T2:'...............x', KK:'x.......x.......' } },
+
+    { id:'d-jamrock', name:'Rock jam with the band', cat:'Play along', bpm:92, band:true, pat:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x..x....x.......' } },
+    { id:'d-jamdisco', name:'Disco jam with the band', cat:'Play along', bpm:116, band:true, pat:{ HH:'x...x...x...x...', OH:'..x...x...x...x.', SN:'....x.......x...', KK:'x...x...x...x...' } },
+    { id:'d-jamhiphop', name:'Hip-hop jam with the band', cat:'Play along', bpm:88, band:true, pat:{ HH:'x.x.x.x.x.x.x.x.', SN:'....x.......x...', KK:'x..x...x..x.....' } },
+  ];
+  const DCATS = ['Rudiments','Grooves','Fills','Play along'];
+  const dLessonOf = id => DLESSONS.find(l => l.id === id);
+
+  // ---- drum sounds ----
+  function noiseBuf(sec){
+    const n = Math.floor(ctx.sampleRate*sec), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
+    for(let i = 0; i < n; i++) d[i] = Math.random()*2 - 1;
+    return b;
+  }
+  let nb = null;
+  function noise(dur, type, f, q, vol, decay){
+    if(!nb) nb = noiseBuf(2);
+    const t = ctx.currentTime, s = ctx.createBufferSource(), bp = ctx.createBiquadFilter(), g = ctx.createGain();
+    s.buffer = nb; s.loop = true;
+    bp.type = type; bp.frequency.value = f; if(q) bp.Q.value = q;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + decay);
+    s.connect(bp); bp.connect(g); g.connect(master);
+    s.start(t); s.stop(t + decay + .05);
+  }
+  function tone(f0, f1, dur, vol, type){
+    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur*.9);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
+  }
+  function hit(p, accent){
+    unlock(); if(!ctx) return;
+    const v = accent ? 1.25 : 1;
+    if(p === 'KK'){ tone(130, 45, .28, .9*v); noise(.03, 'lowpass', 250, 1, .25*v, .04); }
+    else if(p === 'SN'){ tone(190, 150, .12, .35*v, 'triangle'); noise(.2, 'bandpass', 1900, .8, .5*v, .18); }
+    else if(p === 'HH') noise(.05, 'highpass', 8000, 1, .28*v, .045);
+    else if(p === 'OH') noise(.4, 'highpass', 7500, 1, .26*v, .34);
+    else if(p === 'T1') tone(230, 130, .32, .7*v);
+    else if(p === 'T2') tone(160, 90, .42, .75*v);
+    else if(p === 'CR') noise(1.3, 'highpass', 5200, 1, .32*v, 1.2);
+    else if(p === 'RD'){ noise(.6, 'bandpass', 6200, .6, .2*v, .5); tone(900, 780, .25, .1*v); }
+    flashPad(p);
+  }
+
+  // ---- menu ----
+  function drumsMenu(){
+    const el = $('drumsList'), stars = store.get('stars',{}); el.innerHTML = '';
+    const mkEl = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
+    const g0 = mkEl('div','songgrid'); el.appendChild(g0);
+    const free = mkEl('button','songcard free','<span class="sn">Free play</span><span class="sm">Bash the whole kit</span><span class="ss">▶</span>');
+    free.onclick = () => go('drums','free'); g0.appendChild(free);
+    const next = DLESSONS.find(l => !stars['drums.'+l.id]);
+    DCATS.forEach(c => {
+      const list = DLESSONS.filter(l => l.cat === c);
+      if(!list.length) return;
+      el.appendChild(mkEl('h2', null, c));
+      const g = mkEl('div','songgrid'); el.appendChild(g);
+      list.forEach(l => {
+        const st = stars['drums.'+l.id] || 0, pieces = Object.keys(l.pat).map(p => KIT[p].n).join(' · ');
+        const b = mkEl('button','songcard',
+          `<span class="sn">${l.name}</span><span class="sm">${l === next ? '<em class="nextup">Next up!</em> · ' : ''}${pieces} · ${l.bpm} bpm · <span class="stars2">${'★'.repeat(st)}${'☆'.repeat(3-st)}</span></span>`);
+        b.onclick = () => go('drums', l.id);
+        g.appendChild(b);
+      });
+    });
+  }
+  hooks.drumsMenu = { enter: drumsMenu };
+
+  // ---- the kit ----
+  const padsEl = $('pads'), dwrapEl = $('dhwWrap'), dhw = $('dhw'), dctx = dhw.getContext('2d');
+  const dStatus = $('dStatus'), sayD = h => dStatus.innerHTML = h;
+  let dles = null, dpieces = [], dstate = null, draf = 0, kW = 0, kH = 0, dtempo = 1, kmode = 'idle';
+  let expected = [], dhits = 0, dperfect = 0, dearly = 0, dlate = 0, dmiss = 0, dbars = 4;
+  function flashPad(p){
+    const el = padsEl.querySelector(`[data-p="${p}"]`);
+    if(!el) return;
+    el.classList.remove('lit'); void el.offsetWidth; el.classList.add('lit');
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('lit'), 160);
+  }
+  function buildPads(){
+    padsEl.innerHTML = '';
+    dpieces.forEach(p => {
+      const k = KIT[p], b = document.createElement('button');
+      b.className = 'pad'; b.dataset.p = p; b.style.setProperty('--pc', k.col);
+      b.innerHTML = `<b>${k.n}</b><span class="padkey">${k.key === ' ' ? 'space' : k.key}</span>`;
+      b.addEventListener('pointerdown', e => { e.preventDefault(); unlock(); playerHit(p); });
+      padsEl.appendChild(b);
+    });
+  }
+  addEventListener('keydown', e => {
+    if(current !== 'drums' || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key === ' ' ? ' ' : e.key.toLowerCase();
+    const p = dpieces.find(p => KIT[p].key === k);
+    if(!p) return;
+    e.preventDefault(); unlock(); playerHit(p);
+  });
+  function playerHit(p){
+    hit(p);
+    if(kmode !== 'play' || !dstate) return;
+    const now = performance.now() - dstate.t0 - dstate.lead;
+    let best = null, bd = 1e9;
+    expected.forEach(ev => {
+      if(ev.p !== p || ev.done) return;
+      const d = Math.abs(ev.t - now);
+      if(d < bd){ bd = d; best = ev; }
+    });
+    if(!best || bd > 220){ dmiss++; feedback('Oops', '#e0404f'); return; }
+    best.done = true; dhits++;
+    const off = now - best.t;
+    if(Math.abs(off) < 60){ dperfect++; feedback('Perfect!', '#3bb273'); }
+    else if(off < 0){ dearly++; feedback('A bit early', '#f28c28'); }
+    else { dlate++; feedback('A bit late', '#a58ee0'); }
+  }
+  let fbT = 0;
+  function feedback(txt, col){
+    const el = $('dFeed');
+    el.textContent = txt; el.style.color = col; el.hidden = false;
+    clearTimeout(fbT); fbT = setTimeout(() => el.hidden = true, 500);
+  }
+
+  // ---- the falling-note highway ----
+  function dhwSize(){
+    const r = dwrapEl.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio||1);
+    kW = r.width; kH = r.height;
+    dhw.width = Math.round(kW*dpr); dhw.height = Math.round(kH*dpr);
+    dctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function dhwDraw(){
+    if(Math.abs(dwrapEl.clientWidth - kW) > 1 || Math.abs(dwrapEl.clientHeight - kH) > 1) dhwSize();
+    if(!kW || !kH) return;
+    const c = dctx, n = dpieces.length || 1, lw = kW/n, hitY = kH - 26, PPS = (kH - 40)/2.2;
+    c.clearRect(0,0,kW,kH);
+    dpieces.forEach((p,i) => {
+      c.fillStyle = i % 2 ? '#ffffff0c' : '#ffffff06';
+      c.fillRect(i*lw, 0, lw, kH);
+      c.fillStyle = KIT[p].col + '55';
+      c.fillRect(i*lw, hitY, lw, kH - hitY);
+      c.fillStyle = '#ffffff66'; c.font = '800 11px Nunito, sans-serif'; c.textAlign = 'center';
+      c.fillText(KIT[p].n, i*lw + lw/2, kH - 9);
+    });
+    c.fillStyle = '#ffffff88'; c.fillRect(0, hitY-2, kW, 3);
+    if(dstate){
+      const now = performance.now() - dstate.t0 - dstate.lead;
+      expected.forEach(ev => {
+        const i = dpieces.indexOf(ev.p); if(i < 0) return;
+        const dt = ev.t - now, y = hitY - dt/1000*PPS;
+        if(y < -30 || y > kH + 10) return;
+        const w = lw*.68, x = i*lw + (lw - w)/2, h = ev.accent ? 20 : 14;
+        c.fillStyle = ev.done ? '#ffffff55' : KIT[ev.p].col;
+        c.beginPath();
+        if(c.roundRect) c.roundRect(x, y - h/2, w, h, 6); else c.rect(x, y - h/2, w, h);
+        c.fill();
+      });
+      if(now < 0){
+        c.fillStyle = '#fbf7ec'; c.font = '400 60px Italiana, Georgia, serif'; c.textAlign = 'center';
+        c.fillText(String(Math.ceil(-now/ (60000/(dles.bpm*dtempo)) )), kW/2, kH/2);
+      }
+    }
+    c.textAlign = 'left';
+  }
+  function dhwLoop(){ draf = requestAnimationFrame(dhwLoop); dhwDraw(); }
+
+  // ---- running a lesson ----
+  const stepMs = () => 60000/(dles.bpm*dtempo)/4; // one sixteenth
+  function buildExpected(){
+    const len = Object.values(dles.pat)[0].length, s = stepMs();
+    expected = [];
+    for(let bar = 0; bar < dbars; bar++){
+      Object.entries(dles.pat).forEach(([p, str]) => {
+        for(let i = 0; i < str.length; i++){
+          if(str[i] === '.') continue;
+          expected.push({ p, t:(bar*len + i)*s, accent:str[i] === 'o', done:false });
+        }
+      });
+    }
+    expected.sort((a,b) => a.t - b.t);
+  }
+  function dStart(play){
+    stopSeq(); unlock();
+    kmode = play ? 'play' : 'hear';
+    dhits = dperfect = dearly = dlate = dmiss = 0;
+    buildExpected();
+    const len = Object.values(dles.pat)[0].length, s = stepMs(), lead = 4*s*4/4*4; // one bar of count-in
+    const items = [];
+    for(let i = 0; i < 4; i++) items.push({ t:i*s*4, fn:() => { click(i === 0); sayD(`Get ready… <b>${4-i}</b>`); } });
+    const off = 4*s*4;
+    for(let bar = 0; bar < dbars; bar++){
+      for(let i = 0; i < len; i += 4) items.push({ t:off + (bar*len + i)*s, fn:() => click(i === 0) });
+      if(dles.band && bar >= 0){
+        const ch = [ { n:'C', root:48, pcs:[0,4,7] }, { n:'F', root:53, pcs:[5,9,0] }, { n:'G', root:55, pcs:[7,11,2] }, { n:'F', root:53, pcs:[5,9,0] } ][bar % 4];
+        items.push({ t:off + bar*len*s, fn:() => pad(ch, len*s/1000) });
+      }
+    }
+    if(!play) expected.forEach(ev => items.push({ t:off + ev.t, fn:() => hit(ev.p, ev.accent) }));
+    dstate = { t0:performance.now(), lead:off };
+    schedule(items, play ? dFinish : () => { kmode = 'idle'; dstate = null; sayD('Your turn! Tap Play.'); });
+    sayD(play ? 'Get ready… <b>4</b>' : 'Listen to the beat…');
+    seqCleanup = () => { dstate = null; kmode = 'idle'; };
+  }
+  function dFinish(){
+    kmode = 'idle'; dstate = null;
+    const total = expected.length, acc = total ? dhits/total : 0;
+    const st = acc >= .85 ? 3 : acc >= .55 ? 2 : 1;
+    saveStars('drums.'+dles.id, st);
+    const xp = 15 + st*10; gainXP(xp);
+    sayD(`${dhits} of ${total} hits! ${starText(st)}`);
+    const idx = DLESSONS.indexOf(dles), nx = DLESSONS[idx+1];
+    showResult({
+      title: acc >= .85 ? 'Great drumming!' : acc >= .55 ? 'Nice work!' : 'Keep practising!',
+      stars: st, xp,
+      lines: [
+        `<b>${dhits}</b> of ${total} hits`,
+        `<span style="color:#3bb273">Perfect: ${dperfect}</span> · <span style="color:#f28c28">early: ${dearly}</span> · <span style="color:#a58ee0">late: ${dlate}</span>`,
+        dmiss ? `Extra hits: ${dmiss}` : 'No extra hits — tidy!'
+      ],
+      retry: () => dStart(true),
+      next: nx ? () => { stack[stack.length-1].arg = nx.id; open('drums', nx.id); } : null,
+      nextLabel: nx ? 'Next lesson ▶' : null
+    });
+    tada();
+  }
+  $('dHear').onclick = () => { if(kmode !== 'idle'){ stopSeq(); sayD('Stopped.'); return; } dStart(false); };
+  $('dPlay').onclick = () => { if(kmode === 'play'){ stopSeq(); sayD('Stopped. Tap Play to try again.'); return; } dStart(true); };
+  document.querySelectorAll('#dtempo button').forEach(b => b.onclick = () => {
+    dtempo = +b.dataset.t; store.set('dtempo', dtempo);
+    document.querySelectorAll('#dtempo button').forEach(x => x.setAttribute('aria-pressed', +x.dataset.t === dtempo));
+  });
+  hooks.drums = {
+    enter(id){
+      dtempo = store.get('dtempo', 1);
+      document.querySelectorAll('#dtempo button').forEach(x => x.setAttribute('aria-pressed', +x.dataset.t === dtempo));
+      dles = dLessonOf(id);
+      kmode = 'idle'; dstate = null; expected = [];
+      if(dles){
+        dpieces = KITORDER.filter(p => dles.pat[p]);
+        $('dTitle').innerHTML = `<small>DRUMS</small>${dles.name}`;
+        $('dHear').hidden = $('dPlay').hidden = false;
+        sayD(`Tap “Hear it” to hear the beat, then Play. ${dles.bpm} bpm.`);
+      } else {
+        dpieces = KITORDER.slice();
+        $('dTitle').innerHTML = `<small>DRUMS</small>Free play`;
+        $('dHear').hidden = $('dPlay').hidden = true;
+        sayD('Bash away! Tap the pads or use the keys.');
+      }
+      buildPads(); dhwSize(); cancelAnimationFrame(draf); dhwLoop();
+    },
+    leave(){ cancelAnimationFrame(draf); dstate = null; kmode = 'idle'; }
   };
 
   // ================= TUNER =================
