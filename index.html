@@ -2743,8 +2743,8 @@
           { label:'Blushing cheeks', t:'Add blushing cheeks', p:'M30 56 A5 4 0 1 0 40 56 A5 4 0 1 0 30 56 M60 56 A5 4 0 1 0 70 56 A5 4 0 1 0 60 56' },
           { label:'Nothing', p:null } ] } ] },
   ];
-  const CATS = ['Basics','Crazy!','People','Animals','Monsters','Ocean','Space','Holidays','Sports','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
-  const CATICON = { Basics:'✏️', 'Crazy!':'🤪', People:'🧑', Animals:'🐟', Ocean:'🌊', Space:'🪐', Holidays:'🎃', Sports:'⚽', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
+  const CATS = ['Basics','Crazy good','Crazy!','People','Animals','Monsters','Ocean','Space','Holidays','Sports','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
+  const CATICON = { Basics:'✏️', 'Crazy good':'💎', 'Crazy!':'🤪', People:'🧑', Animals:'🐟', Ocean:'🌊', Space:'🪐', Holidays:'🎃', Sports:'⚽', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
 
   // ---- more drawings ----
   const MORE_LESSONS = [
@@ -3154,6 +3154,70 @@
         { label:'Plain', p:null } ] } ] },
   ];
   LESSONS.push(...WORLD_LESSONS);
+
+  // ---- crazy good: real artist tricks ----
+  const MANDALA_DOTS = [[86,50],[81.2,68],[68,81.2],[50,86],[32,81.2],[18.8,68],[14,50],[18.8,32],[32,18.8],[50,14],[68,18.8],[81.2,32]]
+    .map(([x, y]) => `M${x - 1.8} ${y} A1.8 1.8 0 1 0 ${x + 1.8} ${y} A1.8 1.8 0 1 0 ${x - 1.8} ${y}`).join(' ');
+  const PRO_LESSONS = [
+    { id:'cube3d', name:'3D cube', cat:'Crazy good', hard:2, steps:[
+      { t:'Draw a square', tip:'This is the front of the cube.', p:'M22 40 L62 40 L62 80 L22 80 Z' },
+      { t:'Draw the top face going back', tip:'Every back line goes the same way — up and to the right.', p:'M22 40 L38 24 L78 24 L62 40' },
+      { t:'Draw the side face', p:'M62 80 L78 64 L78 24' },
+      { t:'Shade the side — it is away from the light', tip:'Shading one side is what makes it pop out in 3D.', p:'M62 40 L78 24 L78 64 L62 80 Z', shade:true },
+      { t:'Shade a shadow on the ground', p:'M62 80 L78 64 L96 72 L78 90 L26 90 L22 80 Z', shade:true } ] },
+    { id:'cylinder3d', name:'3D cylinder', cat:'Crazy good', hard:2, steps:[
+      { t:'Draw an oval for the top', tip:'Artists use ovals, not circles, to make round things look 3D.', p:'M26 26 A24 9 0 1 0 74 26 A24 9 0 1 0 26 26' },
+      { t:'Draw the two sides straight down', p:'M26 26 L26 76 M74 26 L74 76' },
+      { t:'Draw only the front half of the bottom', tip:'You can’t see the back of the bottom, so leave it out!', p:'M26 76 A24 9 0 0 0 74 76' },
+      { t:'Shade the right side', p:'M60 34.2 L60 84.2 A24 9 0 0 0 74 76 L74 26 A24 9 0 0 1 60 34.2 Z', shade:true },
+      { t:'Shade its shadow', p:'M40 88 A28 6 0 1 0 96 88 A28 6 0 1 0 40 88', shade:true } ] },
+    { id:'road3d', name:'Road in perspective', cat:'Crazy good', hard:3, steps:[
+      { t:'Draw the horizon line', tip:'Draw it lightly — it’s a helper line where the sky meets the ground.', helper:true, p:'M4 40 L96 40' },
+      { t:'Draw helper lines from one dot on the horizon', tip:'This dot is the vanishing point. Everything shrinks towards it!', helper:true, p:'M50 40 L4 96 M50 40 L96 96' },
+      { t:'Draw the edges of the road', tip:'Both edges point at the vanishing point.', p:'M46 40 L16 96 M54 40 L84 96' },
+      { t:'Middle lines that get smaller and smaller', p:'M50 90 L50 80 M50 72 L50 65 M50 59 L50 54 M50 50 L50 47 M50 45 L50 43.5' },
+      { t:'Mountains on the horizon', p:'M4 40 L18 26 L30 38 L42 22 L54 40 M60 40 L74 28 L96 40' },
+      { t:'Trees that shrink as they go back', p:'M10 80 L10 72 M4 72 L10 60 L16 72 Z M26 60 L26 55 M22 55 L26 47 L30 55 Z M36 50 L36 47 M33.5 47 L36 42 L38.5 47 Z M90 80 L90 72 M84 72 L90 60 L96 72 Z M74 60 L74 55 M70 55 L74 47 L78 55 Z M64 50 L64 47 M61.5 47 L64 42 L66.5 47 Z' },
+      { t:'Add the sun', p:'M80 14 A6 6 0 1 0 92 14 A6 6 0 1 0 80 14' },
+      { t:'Color your 3D world!', p:null } ] },
+    { id:'stairs3d', name:'3D stairs', cat:'Crazy good', hard:3, steps:[
+      { t:'Draw the stairs from the side', tip:'Go along, up, along, up — like a zigzag with flat steps.', p:'M16 84 L16 70 L32 70 L32 56 L48 56 L48 42 L64 42 L64 28 L80 28 L80 84 Z' },
+      { t:'Draw the back edge of every step', tip:'Every line going back points the same way.', p:'M16 70 L28 60 L44 60 L44 46 L60 46 L60 32 L76 32 L76 18 L92 18 L92 74 L80 84' },
+      { t:'Join the front and back corners', p:'M32 70 L44 60 M32 56 L44 46 M48 56 L60 46 M48 42 L60 32 M64 42 L76 32 M64 28 L76 18 M80 28 L92 18' },
+      { t:'Shade the side of the stairs', p:'M80 28 L92 18 L92 74 L80 84 Z', shade:true },
+      { t:'Color your stairs!', p:null } ] },
+    { id:'pencil3d', name:'Realistic pencil', cat:'Crazy good', hard:2, steps:[
+      { t:'Draw the long body of the pencil', p:'M14 42 L70 42 L70 58 L14 58 Z' },
+      { t:'Add the sharpened wood tip', p:'M70 42 L90 50 L70 58' },
+      { t:'Draw the lead point', p:'M84 47.6 L90 50 L84 52.4' },
+      { t:'Add the eraser and its metal band', p:'M14 42 L6 42 Q2 42 2 46 L2 54 Q2 58 6 58 L14 58 M18 42 L18 58' },
+      { t:'Two lines along the pencil', tip:'Pencils have flat sides — these lines show them.', p:'M18 47 L70 47 M18 53 L70 53' },
+      { t:'Shade the bottom side', p:'M18 53 L70 53 L70 58 L18 58 Z', shade:true },
+      { t:'Shade the shadow underneath', p:'M8 62 L86 56 L88 60 L10 67 Z', shade:true },
+      { t:'Color it yellow with a pink eraser!', p:null } ] },
+    { id:'hole3d', name:'Hole in the paper', cat:'Crazy good', hard:2, steps:[
+      { t:'Draw a wide oval', tip:'It looks like a hole because it is squashed flat.', p:'M22 56 A28 14 0 1 0 78 56 A28 14 0 1 0 22 56' },
+      { t:'Shade the far inside wall dark', tip:'The inside back of the hole is in shadow — this is the magic trick.', p:'M22 56 A28 14 0 0 1 78 56 Q50 64 22 56 Z', shade:true },
+      { t:'Add a ladder going down into it', p:'M42 44 L46 66 M58 44 L54 66 M43 50 L57 50 M44 56 L56 56 M45 62 L55 62' },
+      { t:'Draw cracks in the paper', p:'M22 56 L10 50 L6 54 M78 56 L90 62 L96 58' },
+      { t:'Color the paper around it!', p:null } ] },
+    { id:'mandala', name:'Mandala', cat:'Crazy good', hard:2, steps:[
+      { t:'Draw a big circle and a small circle', tip:'Same middle for both.', p:'M20 50 A30 30 0 1 0 80 50 A30 30 0 1 0 20 50 M38 50 A12 12 0 1 0 62 50 A12 12 0 1 0 38 50' },
+      { t:'Put a dot in the very middle', p:'M46 50 A4 4 0 1 0 54 50 A4 4 0 1 0 46 50' },
+      { t:'Four petals: up, down, left, right', p:'M62 50 Q69.6 54.2 79 50 Q69.6 45.8 62 50 M50 62 Q45.8 69.6 50 79 Q54.2 69.6 50 62 M38 50 Q30.4 45.8 21 50 Q30.4 54.2 38 50 M50 38 Q54.2 30.4 50 21 Q45.8 30.4 50 38' },
+      { t:'Four more petals in between', p:'M58.5 58.5 Q60.9 66.8 70.5 70.5 Q66.8 60.9 58.5 58.5 M41.5 58.5 Q33.2 60.9 29.5 70.5 Q39.1 66.8 41.5 58.5 M41.5 41.5 Q39.1 33.2 29.5 29.5 Q33.2 39.1 41.5 41.5 M58.5 41.5 Q66.8 39.1 70.5 29.5 Q60.9 33.2 58.5 41.5' },
+      { t:'A ring of dots around the outside', p:MANDALA_DOTS },
+      { t:'Color it with lots of colors!', p:null } ] },
+    { id:'glass3d', name:'Glass of juice', cat:'Crazy good', hard:3, steps:[
+      { t:'Draw an oval for the top of the glass', p:'M28 24 A22 7 0 1 0 72 24 A22 7 0 1 0 28 24' },
+      { t:'Draw the sides, a bit narrower at the bottom', p:'M28 24 L34 86 M72 24 L66 86' },
+      { t:'Draw the front of the bottom', p:'M34 86 A16 5 0 0 0 66 86' },
+      { t:'Draw the juice line as an oval too', tip:'Every level inside a glass is an oval.', p:'M30 44 A20 6 0 1 0 70 44 A20 6 0 1 0 30 44' },
+      { t:'Add a straw', p:'M56 44 L76 8 L80 10 L60 46' },
+      { t:'A shiny line to show it is glass', p:'M36 32 L40 76' },
+      { t:'Color the juice!', p:null } ] },
+  ];
+  LESSONS.push(...PRO_LESSONS);
 
   const lessonD = L => L.steps.filter(s => s.p && !s.helper).map(s => s.p).join(' ');
   const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
