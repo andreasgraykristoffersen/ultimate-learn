@@ -291,6 +291,31 @@
   @media (min-width:860px){ .tiles.art{grid-template-columns:repeat(2,minmax(0,1fr));max-width:calc(50% - 7px)} }
   .art.gallery{background:linear-gradient(160deg,#2a2530,#17141c)}
 
+  /* ---- home: keep going, today's challenge, badges, confetti ---- */
+  .homecards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .homecards:empty{display:none}
+  .hcard{position:relative;text-align:left;display:flex;flex-direction:column;gap:3px;padding:14px 58px 14px 16px;
+    border-radius:14px;border:1px solid var(--edge);background:var(--panel)}
+  .hcard:hover{border-color:var(--brass-deep)}
+  .hcard .hk{font:800 11px var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+  .hcard b{font-size:18px;font-weight:800;color:var(--ivory);text-wrap:balance}
+  .hcard .hsub{font-size:13px;font-weight:700;color:var(--muted)}
+  .hcard .hgo{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;
+    display:grid;place-items:center;background:var(--brass);color:#1b150c;font-size:14px}
+  .hcard.chal{background:linear-gradient(120deg,#3a2c14,var(--panel) 78%);border-color:var(--brass-deep)}
+  .hcard.chal.done .hgo{background:#3bb273;color:#fff}
+  .bcount{font-style:normal;color:var(--muted);letter-spacing:.06em;font-size:12px}
+  .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+  .badge{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px 10px;border-radius:12px;
+    border:1px solid var(--edge);background:var(--panel);text-align:center;filter:grayscale(1);opacity:.42}
+  .badge span{font-size:28px;line-height:1}
+  .badge b{font-size:11px;font-weight:800;color:var(--muted);text-wrap:balance}
+  .badge.on{filter:none;opacity:1;border-color:var(--brass-deep)}
+  .badge.on b{color:var(--ivory)}
+  .badge.new{box-shadow:0 0 0 2px var(--brass-lit),0 0 18px #e8c67966;animation:glow 1.4s ease-in-out 3}
+  .confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+  @media (prefers-reduced-motion:reduce){ .badge.new{animation:none} }
+
   /* ---- draw ---- */
   .draw-view{grid-template-rows:auto minmax(0,1fr) auto}
   .dwrap{position:relative;min-height:0;margin:0 12px;border-radius:6px;overflow:hidden;background:#fbf8f0;
@@ -419,6 +444,8 @@
         <div class="xpbar" id="homeProg"></div>
       </div>
 
+      <div class="homecards" id="homeCards"></div>
+
       <h2 class="shelf"><span>🎵</span> Music</h2>
       <div class="tiles">
         <button class="tile" data-go="pianoSongs">
@@ -475,6 +502,9 @@
           <span class="txt"><b>My drawings</b><span>Everything you finished</span></span>
         </button>
       </div>
+
+      <h2 class="shelf"><span>🏅</span> Badges <em class="bcount" id="badgeCount"></em></h2>
+      <div class="badges" id="badges"></div>
 
       <p class="tip">Tip: on a phone, turn it sideways for the piano, guitar and drums.</p>
     </div>
@@ -727,7 +757,7 @@
     get(k,d){ try{ const v = localStorage.getItem('ultimateLearn.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
     set(k,v){ try{ localStorage.setItem('ultimateLearn.'+k, JSON.stringify(v)); }catch(e){} }
   };
-  function saveStars(key, n){ const s = store.get('stars',{}); if(!(s[key] >= n)){ s[key] = n; store.set('stars', s); } }
+  function saveStars(key, n){ const s = store.get('stars',{}); if(!(s[key] >= n)){ s[key] = n; store.set('stars', s); } challengeCheck(key); }
 
   // ================= SONGS (note:beats) =================
   const SONGS = [
@@ -959,6 +989,7 @@
     current = v;
     Object.entries(views).forEach(([n,el]) => el.hidden = n !== v);
     if(hooks[v] && hooks[v].enter) hooks[v].enter(arg);
+    trackLast(v, arg);
   }
   function go(v, arg){ stack.push({ v, arg }); open(v, arg); }
   function back(){ if(stack.length < 2) return; stack.pop(); const t = stack[stack.length-1]; open(t.v, t.arg); }
@@ -1021,6 +1052,14 @@
 
   // the results screen every lesson ends on
   function showResult(o){
+    o.lines = (o.lines || []).slice();
+    if(challengeJustDone){ o.lines.push('⭐ Today’s challenge done — +50 bonus XP!'); challengeJustDone = false; }
+    const told = store.get('badgesTold', []), fresh = BADGES.filter(b => !told.includes(b.id) && b.test());
+    if(fresh.length){
+      fresh.forEach(b => o.lines.push(`🏅 New badge: ${b.e} ${b.n}`));
+      store.set('badgesTold', told.concat(fresh.map(b => b.id)));
+    }
+    if(o.stars >= 2) setTimeout(confetti, 150);
     let el = $('resultBox');
     if(!el){ el = document.createElement('div'); el.id = 'resultBox'; el.className = 'resultwrap'; document.body.appendChild(el); }
     el.innerHTML = `<div class="resultcard">
@@ -1056,7 +1095,120 @@
         `<span class="lvl">Level ${lvl} · ${xp} XP</span>`;
     }
   }
-  hooks.home = { enter: renderHome };
+  // ---- keep going: remember the last lesson you opened ----
+  function trackLast(v, arg){
+    if(!['piano','sing','draw','guitar','drums'].includes(v) || arg == null || arg === 'free') return;
+    const t = views[v] && views[v].querySelector('.ttl');
+    if(!t) return;
+    const sm = t.querySelector('small');
+    const title = [...t.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').trim();
+    if(title) store.set('last', { v, arg, kind: sm ? sm.textContent : '', title });
+  }
+
+  // ---- today's challenge: one lesson a day, rotating through the apps ----
+  let challengeJustDone = false;
+  function challengePool(){
+    const pool = [];
+    pianoUnits().forEach(u => { if(u.label !== 'Whole song') pool.push({ key:unitKeyOf(u), v:'piano', arg:u, kind:'Piano', title:`${songById(u.id).name} · ${u.label}` }); });
+    DLESSONS.forEach(l => pool.push({ key:'drums.'+l.id, v:'drums', arg:l.id, kind:'Drums', title:l.name }));
+    LESSONS.forEach(L => pool.push({ key:'draw.'+L.id, v:'draw', arg:L.id, kind:'Draw', title:L.name }));
+    PATTERNS.forEach(p => pool.push({ key:'guitar.'+p.id, v:'guitar', arg:p.id, kind:'Guitar', title:p.name }));
+    GSONGS.forEach(s => pool.push({ key:'guitar.'+s.id, v:'guitar', arg:s.id, kind:'Guitar', title:s.name }));
+    warmups().forEach(w => pool.push({ key:'sing.'+w.id, v:'sing', arg:w.id, kind:'Sing', title:w.name }));
+    return pool;
+  }
+  function todayChallenge(){
+    const d = Math.floor((Date.now() - new Date().getTimezoneOffset()*60000)/86400000);
+    const kinds = ['Draw','Piano','Drums','Guitar','Sing'];
+    const list = challengePool().filter(c => c.kind === kinds[d % kinds.length]);
+    return list.length ? list[(d*7 + 3) % list.length] : null;
+  }
+  function challengeCheck(key){
+    const c = todayChallenge();
+    if(!c || c.key !== key || store.get('challengeDone','') === today()) return;
+    store.set('challengeDone', today());
+    gainXP(50);
+    challengeJustDone = true;
+  }
+
+  // ---- badges ----
+  const progNow = () => store.get('prog', blankProg());
+  const starEntries = () => Object.entries(store.get('stars', {}));
+  const starCount = pre => starEntries().filter(([k]) => k.startsWith(pre)).length;
+  const BADGES = [
+    { id:'b-piano', e:'🎹', n:'First song', test:() => starCount('piano.') > 0 },
+    { id:'b-drums', e:'🥁', n:'First beat', test:() => starCount('drums.') > 0 },
+    { id:'b-guitar', e:'🎸', n:'First strum', test:() => starCount('guitar.') > 0 },
+    { id:'b-sing', e:'🎤', n:'First song sung', test:() => starCount('sing.') > 0 },
+    { id:'b-draw', e:'✏️', n:'First drawing', test:() => starCount('draw.') > 0 },
+    { id:'b-all', e:'🌈', n:'Tried all five', test:() => ['piano.','drums.','guitar.','sing.','draw.'].every(p => starCount(p) > 0) },
+    { id:'b-streak3', e:'🔥', n:'3 days in a row', test:() => (progNow().streak||0) >= 3 },
+    { id:'b-streak7', e:'📅', n:'7 days in a row', test:() => (progNow().streak||0) >= 7 },
+    { id:'b-stars50', e:'🌟', n:'50 stars', test:() => starsIn('') >= 50 },
+    { id:'b-stars150', e:'💫', n:'150 stars', test:() => starsIn('') >= 150 },
+    { id:'b-art10', e:'🖼️', n:'10 drawings', test:() => starCount('draw.') >= 10 },
+    { id:'b-perfect', e:'💯', n:'10 perfect lessons', test:() => starEntries().filter(([,v]) => v >= 3).length >= 10 },
+    { id:'b-level5', e:'🏆', n:'Level 5', test:() => (progNow().xp||0) >= 800 },
+    { id:'b-challenge', e:'⭐', n:'Daily challenge', test:() => !!store.get('challengeDone','') }
+  ];
+  function renderBadges(){
+    const el = $('badges'); if(!el) return;
+    const seen = store.get('badgesSeen', []), earned = [];
+    el.innerHTML = BADGES.map(b => {
+      const on = !!b.test(); if(on) earned.push(b.id);
+      const isNew = on && !seen.includes(b.id);
+      return `<div class="badge${on ? ' on' : ''}${isNew ? ' new' : ''}" title="${b.n}${on ? '' : ' (not yet)'}"><span>${b.e}</span><b>${b.n}</b></div>`;
+    }).join('');
+    const cnt = $('badgeCount'); if(cnt) cnt.textContent = `${earned.length} of ${BADGES.length}`;
+    store.set('badgesSeen', earned);
+  }
+
+  // ---- home cards: keep going + today's challenge ----
+  function renderHomeCards(){
+    const el = $('homeCards'); if(!el) return;
+    el.innerHTML = '';
+    const card = (cls, k, title, sub, fn) => {
+      const b = document.createElement('button');
+      b.className = 'hcard ' + cls;
+      b.innerHTML = `<span class="hk">${k}</span><b>${title}</b>${sub ? `<span class="hsub">${sub}</span>` : ''}<span class="hgo">▶</span>`;
+      b.onclick = () => { unlock(); fn(); };
+      el.appendChild(b);
+    };
+    const last = store.get('last', null);
+    if(last) card('cont', `Keep going · ${last.kind}`, last.title, 'Pick up where you left off', () => go(last.v, last.arg));
+    const c = todayChallenge();
+    if(c){
+      const done = store.get('challengeDone','') === today();
+      card('chal' + (done ? ' done' : ''), `Today’s challenge · ${c.kind}`, c.title, done ? 'Done! You got +50 bonus XP ✓' : 'Finish it today for +50 bonus XP', () => go(c.v, c.arg));
+    }
+  }
+
+  // ---- confetti for a good result ----
+  function confetti(){
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    const cv = document.createElement('canvas'); cv.className = 'confetti'; document.body.appendChild(cv);
+    const dpr = Math.min(2, devicePixelRatio||1), W = innerWidth, H = innerHeight;
+    cv.width = W*dpr; cv.height = H*dpr;
+    const x = cv.getContext('2d'); x.scale(dpr, dpr);
+    const cols = ['#e8c679','#d7263d','#7fc7e8','#3bb273','#f28bb5','#fbf7ec'];
+    const ps = Array.from({ length:110 }, () => ({ x:W/2 + (Math.random()-.5)*90, y:H*.34, vx:(Math.random()-.5)*10, vy:-Math.random()*10 - 3,
+      r:Math.random()*6.28, vr:(Math.random()-.5)*.3, s:5 + Math.random()*6, c:cols[Math.floor(Math.random()*cols.length)] }));
+    const t0 = performance.now();
+    const f = now => {
+      const t = now - t0;
+      x.clearRect(0,0,W,H);
+      ps.forEach(p => {
+        p.vy += .22; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.globalAlpha = Math.max(0, 1 - t/2400);
+        x.fillStyle = p.c; x.fillRect(-p.s/2, -p.s/4, p.s, p.s/2); x.restore();
+      });
+      if(t < 2400) requestAnimationFrame(f); else cv.remove();
+    };
+    requestAnimationFrame(f);
+    setTimeout(() => cv.remove(), 5000);
+  }
+
+  hooks.home = { enter(){ renderHome(); renderHomeCards(); renderBadges(); } };
 
   // ================= PIANO =================
   const starsFor = miss => miss <= 1 ? 3 : miss <= 5 ? 2 : 1;
