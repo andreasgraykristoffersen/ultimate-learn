@@ -560,6 +560,13 @@
   .art.games{background:linear-gradient(135deg,#f3ecdc,#e7dcc4)}
   .art.flip{background:linear-gradient(135deg,#3a2c14,#2a2530)}
 
+  /* ---- make it yours: live preview + scrollable choice card ---- */
+  .modeask{display:flex}
+  .modeask .card{margin:auto}
+  .askpreview{align-self:center;width:min(190px,52vw);aspect-ratio:1;border-radius:12px;overflow:hidden;background:#fbf8f0;box-shadow:inset 0 0 0 1px #d6cab1}
+  .askpreview svg{display:block;width:100%;height:100%}
+  .modeask .chips-pick .taste{font-size:14px;padding:8px 12px}
+
   /* ---- guitar ---- */
   .guitar-view{grid-template-rows:auto auto auto minmax(0,1fr)}
   .chordbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:2px 16px 10px}
@@ -3558,15 +3565,144 @@
       { t:'Shade the little groove above the lip', p:'M44 30 Q46 35 45 38 L50 40 L55 38 Q54 35 56 30 Z', tone:{ type:'linear', a:[50,30], b:[50,40], stops:[[0,0],[1,.3]] }, blur:1.8 },
       { t:'Lift out a shine on the lower lip', p:'M40 59 Q50 55 60 59 Q50 62 40 59 Z', erase:true, blur:1.2 } ] },
   ];
+  // ---- "make it yours" for the realistic lessons ----
+  const rc = (x, y, r) => `M${x - r} ${y} a${r} ${r} 0 1 0 ${2*r} 0 a${r} ${r} 0 1 0 ${-2*r} 0`;
+  const NONE = label => ({ label, p:null });
+  const REAL_VARIANTS = {
+    rball:[ { q:'What kind of ball?', choices:[ NONE('Plain ball'),
+      { label:'Striped', steps:[
+        { t:'Draw two lines that curve around the ball', tip:'They bend because the ball is round.', thin:true, p:'M29 40 Q50 52 71 40 M29 52 Q50 64 71 52' },
+        { t:'Shade the stripe', p:'M29 40 Q50 52 71 40 L71 52 Q50 64 29 52 Z', tone:{ type:'solid', dark:.4 }, blur:.3 } ] },
+      { label:'🎾 Tennis ball', steps:[
+        { t:'Draw the two tennis-ball curves', thin:true, p:'M34 30 Q46 46 34 62 M66 30 Q54 46 66 62' },
+        { t:'Add a little fuzzy texture', faint:true, p:'M40 40 l1.5 1 M58 52 l1.5 1 M48 60 l1.5 -1 M44 30 l1.5 1 M60 36 l-1.5 1 M38 54 l1 1.5' } ] },
+      { label:'🏀 Basketball', steps:[
+        { t:'Draw the basketball lines', thin:true, p:'M28 46 L72 46 M50 24 L50 68 M34 30 Q44 46 34 62 M66 30 Q56 46 66 62' } ] },
+      { label:'🎱 8-ball', steps:[
+        { t:'Make the whole ball dark', p:RBALL, tone:{ type:'solid', dark:.5 } },
+        { t:'Lift out a white circle', p:rc(55, 43, 7), erase:true, blur:.2 },
+        { t:'Draw the number 8', thin:true, p:`${rc(55, 40.6, 2.1)} ${rc(55, 45.4, 2.6)}` },
+        { t:'Make it shiny again', p:'M35 35 A5 4.2 0 1 0 45 35 A5 4.2 0 1 0 35 35', erase:true, blur:1 } ] } ] } ],
+    regg:[ { q:'What kind of egg?', choices:[ NONE('Plain'),
+      { label:'Speckled', t:'Dot on soft speckles', p:dots([[40,40],[56,34],[62,52],[46,58],[36,66],[58,70],[50,46],[66,40],[44,28]], 1.1), tone:{ type:'solid', dark:.4 } },
+      { label:'Brown egg', t:'Shade the whole egg a bit darker', tip:'Brown eggs are just darker all over.', p:REGG, tone:{ type:'solid', dark:.25 } },
+      { label:'Cracked', steps:[
+        { t:'Draw a zigzag crack', thin:true, p:'M30 46 L37 42 L42 49 L49 43 L55 50 L61 44 L70 48' },
+        { t:'Shade inside the crack', p:'M30 46 L37 42 L42 49 L49 43 L55 50 L61 44 L70 48 L61 46 L55 52 L49 45 L42 51 L37 44 Z', tone:{ type:'solid', dark:.6 }, blur:.3 } ] } ] },
+      { q:'Add something next to it?', choices:[ NONE('Nothing'),
+      { label:'🪶 A feather', steps:[
+        { t:'Draw a feather shape lightly', faint:true, p:'M78 84 Q86 64 99 50 Q94 72 81 86 Z' },
+        { t:'Shade the feather', p:'M78 84 Q86 64 99 50 Q94 72 81 86 Z', tone:{ type:'linear', a:[80,84], b:[98,52], stops:[[0,.5],[1,.1]] } },
+        { t:'Draw its middle line', thin:true, p:'M76 90 Q88 68 99 50' } ] } ] } ],
+    rapple:[ { q:'Your apple', choices:[ NONE('Whole apple'),
+      { label:'🍎 Bite taken', steps:[
+        { t:'Rub out a bite on the right', tip:'A bite is a bumpy scoop.', p:'M86 40 Q72 44 70 52 Q66 58 72 64 Q70 72 80 76 L90 76 L90 40 Z', erase:true },
+        { t:'Draw the bumpy bite edge', thin:true, p:'M78 42 Q71 46 70 52 Q66 58 72 64 Q70 72 78 76' },
+        { t:'Shade the juicy inside softly', p:'M78 42 Q71 46 70 52 Q66 58 72 64 Q70 72 78 76 Q74 70 75 64 Q70 58 74 52 Q74 46 78 42 Z', tone:{ type:'solid', dark:.25 }, blur:.6 } ] },
+      { label:'💧 Water drops', steps:[
+        { t:'Shade two tiny water drops', p:`${rc(62, 60, 3)} ${rc(38, 70, 2.2)}`, tone:{ type:'solid', dark:.35 }, blur:.2 },
+        { t:'Give each drop a shiny dot', p:`${rc(61, 59, 1)} ${rc(37.4, 69.4, .8)}`, erase:true } ] },
+      { label:'✨ Extra shiny', t:'Lift out a second shine', p:'M56 38 Q66 36 70 46 Q63 43 56 38 Z', erase:true, blur:.8 } ] } ],
+    rcherries:[ { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'💧 A water drop', steps:[
+        { t:'Shade a tiny drop on a cherry', p:rc(40, 72, 2.5), tone:{ type:'solid', dark:.4 }, blur:.2 },
+        { t:'Make the drop shine', p:rc(39.3, 71.3, .9), erase:true } ] },
+      { label:'✨ Extra sparkle', t:'Add a second small shine on each cherry', p:`${rc(42, 74, 1.2)} ${rc(72, 80, 1.2)}`, erase:true, blur:.3 } ] } ],
+    rcube:[ { q:'What is the cube?', choices:[ NONE('Plain block'),
+      { label:'🎲 Dice', t:'Dot on the dice spots', tip:'The dots on the top and side get squashed, just like the faces.', p:`${dots([[42,60]], 3)} ${dots([[42,32],[58,32]], 2.2)} ${dots([[65,68],[70,52],[75,36]], 2)}`, tone:{ type:'solid', dark:.9 } },
+      { label:'📦 Wooden crate', steps:[
+        { t:'Draw the planks', thin:true, p:'M22 53 L62 53 M22 67 L62 67 M62 53 L78 37 M62 67 L78 51 M30 32 L70 32' },
+        { t:'Add soft wood grain', faint:true, p:'M26 46 Q40 44 58 47 M26 60 Q42 58 58 61 M26 74 Q40 72 58 75' } ] },
+      { label:'🎁 Present', steps:[
+        { t:'Shade the ribbon', p:'M39 40 L45 40 L45 80 L39 80 Z M31 40 L47 24 L53 24 L37 40 Z', tone:{ type:'solid', dark:.35 } },
+        { t:'Tie a bow on top', thin:true, p:'M50 24 Q40 14 44 22 Q46 26 50 24 Q60 14 56 22 Q54 26 50 24' } ] } ] } ],
+    reye:[ { q:'Eye color', choices:[ NONE('Light'),
+      { label:'Dark brown', steps:[
+        { t:'Shade the iris darker', p:RIRIS, tone:{ type:'radial', a:[50,52], r:12, stops:[[0,.5],[1,.8]] } },
+        { t:'Lift the highlight out again', p:'M53 45 A3 3 0 1 0 59 45 A3 3 0 1 0 53 45', erase:true, blur:.2 } ] } ] },
+      { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'Eyebrow', steps:[
+        { t:'Draw the eyebrow shape lightly', faint:true, p:'M10 26 Q40 8 84 20 Q44 16 12 32 Z' },
+        { t:'Shade the eyebrow', tip:'Thicker near the nose, thinner at the end.', p:'M10 26 Q40 8 84 20 Q44 16 12 32 Z', tone:{ type:'linear', a:[10,26], b:[84,20], stops:[[0,.75],[1,.2]] } },
+        { t:'Flick little hairs', thin:true, p:'M18 26 L24 20 M28 22 L34 16 M40 19 L46 14 M52 17 L58 14 M64 17 L70 15' } ] },
+      { label:'💧 A tear', steps:[
+        { t:'Shade a tear under the eye', p:'M30 66 Q27 72 30 76 Q33 72 30 66 Z', tone:{ type:'solid', dark:.35 }, blur:.2 },
+        { t:'Make the tear shine', p:rc(29.4, 73, 1), erase:true } ] },
+      { label:'Long lashes', t:'Add extra long lashes', thin:true, p:'M24 43 Q18 36 17 28 M36 38 Q32 30 32 22 M49 36 Q49 27 51 19 M62 37 Q66 29 66 21 M74 41 Q79 34 81 27' } ] } ],
+    rdrop:[ { q:'Add?', choices:[ NONE('Just one drop'),
+      { label:'A tiny drop', steps:[
+        { t:'Shade the tiny drop’s shadow', p:'M78 84 Q80 91 88 91 Q96 89 95 82 Q92 87 87 87 Q81 87 78 84 Z', tone:{ type:'solid', dark:.5 }, blur:1 },
+        { t:'Shade inside the tiny drop', p:'M78 80 Q78 72 86 72 Q94 72 94 80 Q94 87 86 87 Q78 87 78 80', tone:{ type:'linear', a:[79,73], b:[93,86], stops:[[0,.8],[.5,.2],[1,0]] } },
+        { t:'Give it a sharp shine', p:rc(82, 76.5, 1.5), erase:true, blur:.2 } ] },
+      { label:'🪟 Window reflection', t:'Lift out a tiny window shape', tip:'Shiny water reflects the window — it looks super real.', p:'M53 42 L60 42 L60 48 L53 48 Z M56.5 42 L56.5 48', erase:true, blur:.15 } ] } ],
+    rpear:[ { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'🍃 A leaf', steps:[
+        { t:'Draw a leaf on the stem', faint:true, p:'M55 8 Q70 0 80 8 Q70 16 55 8' },
+        { t:'Shade the leaf', p:'M55 8 Q70 0 80 8 Q70 16 55 8 Z', tone:{ type:'linear', a:[56,6], b:[78,10], stops:[[0,.2],[1,.65]] } } ] },
+      { label:'More freckles', t:'Add more tiny freckles', p:dots([[48,70],[62,82],[38,80],[70,68],[52,60],[44,86]], .7), tone:{ type:'solid', dark:.4 } } ] } ],
+    rmug:[ { q:'Decorate the mug', choices:[ NONE('Plain'),
+      { label:'❤️ Heart', t:'Shade a heart on the mug', p:'M46 56 Q40 48 36 54 Q34 60 46 70 Q58 60 56 54 Q52 48 46 56 Z', tone:{ type:'solid', dark:.55 }, blur:.2 },
+      { label:'Stripes', t:'Shade two stripes around it', tip:'They curve with the mug.', p:'M26 50 A20 6 0 0 0 66 50 L66 56 A20 6 0 0 1 26 56 Z M26 64 A20 6 0 0 0 66 64 L66 70 A20 6 0 0 1 26 70 Z', tone:{ type:'solid', dark:.35 } },
+      { label:'Polka dots', t:'Shade polka dots', p:dots([[34,50],[46,58],[58,50],[40,72],[54,72]], 2.6), tone:{ type:'solid', dark:.45 } } ] },
+      { q:'Something hot?', choices:[ NONE('No'),
+      { label:'♨️ Steam', t:'Draw soft wavy steam', faint:true, p:'M38 24 Q33 16 39 10 Q45 4 39 -3 M50 22 Q45 14 51 8 Q57 2 51 -5 M60 24 Q56 18 61 12' },
+      { label:'☕ Hot chocolate', steps:[
+        { t:'Shade the dark drink inside', p:'M28 35 A18 4.5 0 1 0 64 35 A18 4.5 0 1 0 28 35', tone:{ type:'solid', dark:.75 } },
+        { t:'Lift out a shine on the drink', p:'M34 35 Q40 33 46 34 Q40 36 34 35 Z', erase:true, blur:.4 } ] } ] } ],
+    rcandle:[ { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'🍽️ A candle plate', steps:[
+        { t:'Clean out a plate under the candle', p:'M22 95 A28 5 0 1 0 78 95 A28 5 0 1 0 22 95', erase:true },
+        { t:'Shade the plate', p:'M22 95 A28 5 0 1 0 78 95 A28 5 0 1 0 22 95', tone:{ type:'linear', a:[22,95], b:[78,95], stops:[[0,.25],[.5,.05],[1,.55]] } },
+        { t:'Draw the plate’s front rim', thin:true, p:'M22 95 A28 5 0 0 0 78 95' } ] },
+      { label:'More wax drips', t:'Add more wax drips', faint:true, p:'M40 46 Q38 56 41 62 Q43 58 42 46 M46 47 Q47 52 45 55' },
+      { label:'✨ Brighter glow', t:'Lift out a bigger, brighter glow', p:rc(50, 26, 24), erase:true, blur:8 } ] } ],
+    rrose:[ { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'Thorns', t:'Shade little thorns on the stem', p:'M50 88 L45 86 L50 85 Z M51 95 L56 93 L51 92 Z', tone:{ type:'solid', dark:.8 } },
+      { label:'💧 Dew drop', steps:[
+        { t:'Shade a dew drop on a petal', p:rc(64, 64, 2.4), tone:{ type:'solid', dark:.4 }, blur:.2 },
+        { t:'Make it sparkle', p:rc(63.3, 63.3, .9), erase:true } ] },
+      { label:'🍃 Second leaf', steps:[
+        { t:'Draw another leaf', faint:true, p:'M51 88 Q64 80 72 86 Q62 94 51 90' },
+        { t:'Shade it', p:'M51 88 Q64 80 72 86 Q62 94 51 90 Z', tone:{ type:'linear', a:[52,88], b:[72,86], stops:[[0,.7],[1,.25]] } } ] } ] } ],
+    rberry:[ { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'A stem', t:'Draw a little stem', thin:true, p:'M50 27 Q51 18 56 12' },
+      { label:'💧 Water drops', steps:[
+        { t:'Shade two water drops', p:`${rc(58, 82, 2.2)} ${rc(30, 47, 2)}`, tone:{ type:'solid', dark:.45 }, blur:.2 },
+        { t:'Give them shiny dots', p:`${rc(57.3, 81.3, .8)} ${rc(29.4, 46.4, .7)}`, erase:true } ] } ] } ],
+    rnose:[ { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'Freckles', t:'Dot on some freckles', p:dots([[26,50],[30,46],[22,56],[74,50],[70,46],[78,56],[40,50],[60,50]], .8), tone:{ type:'solid', dark:.4 } },
+      { label:'👓 Glasses', steps:[
+        { t:'Draw the glasses', thin:true, p:'M20 30 Q30 26 42 28 Q46 34 44 40 Q36 44 26 42 Q20 38 20 30 Z M58 28 Q70 26 80 30 Q80 38 74 42 Q64 44 56 40 Q54 34 58 28 Z M42 30 Q50 26 58 30' },
+        { t:'Shade the shadow under the frames', p:'M26 43 Q36 46 44 41 L44 43 Q36 48 26 45 Z M56 41 Q64 46 74 43 L74 45 Q64 48 56 43 Z', tone:{ type:'solid', dark:.3 }, blur:1.2 } ] } ] } ],
+    rlips:[ { q:'Lip color', choices:[ NONE('Natural'),
+      { label:'💄 Dark lipstick', steps:[
+        { t:'Shade both lips darker', p:`${LIPUP} ${LIPLOW}`, tone:{ type:'solid', dark:.35 } },
+        { t:'Lift out the shine again', p:'M40 59 Q50 55 60 59 Q50 62 40 59 Z', erase:true, blur:1.2 } ] } ] },
+      { q:'Add?', choices:[ NONE('Nothing'),
+      { label:'Beauty mark', t:'Dot a beauty mark', p:rc(74, 40, 1.2), tone:{ type:'solid', dark:.85 }, blur:.2 },
+      { label:'Smile lines', t:'Add soft smile lines', faint:true, p:'M14 44 Q10 52 16 60 M86 44 Q90 52 84 60' } ] } ]
+  };
+  REAL_LESSONS.forEach(L => { if(REAL_VARIANTS[L.id]) L.variants = REAL_VARIANTS[L.id]; });
   LESSONS.push(...REAL_LESSONS);
 
   const lessonD = L => L.steps.filter(s => s.p && !s.helper && !s.tone && !s.erase).map(s => s.p).join(' ');
   // realistic lessons are drawn as SVG with soft graphite gradients, highlights and faint outlines
+  // ---- drawing style for realistic lessons: pencil color + paper ----
+  const PENCILS = [['graphite','✏️ Graphite','42,35,48'], ['charcoal','⚫ Charcoal','14,13,16'], ['sepia','🟤 Sepia','92,56,30'], ['blue','🔵 Blue','34,68,140'],
+    ['red','🔴 Red chalk','150,54,38'], ['green','🟢 Green','36,92,58'], ['purple','🟣 Purple','86,48,128']];
+  const RPAPERS = [['cream','Cream','#fbf8f0','251,248,240'], ['white','Bright white','#ffffff','255,255,255'], ['grey','Grey toned','#c8c5bf','255,255,255'],
+    ['tan','Tan toned','#d9c8a8','255,252,242'], ['blue','Blue toned','#b7c4d2','255,255,255']];
+  let RS = store.get('realStyle', null) || { pencil:'graphite', paper:'cream' };
+  const inkRGB = () => (PENCILS.find(p => p[0] === RS.pencil) || PENCILS[0])[2];
+  const rPaper = () => RPAPERS.find(p => p[0] === RS.paper) || RPAPERS[0];
+  const isToned = () => ['grey','tan','blue'].includes(RS.paper);
+  const rgbHex = s => '#' + s.split(',').map(n => (+n).toString(16).padStart(2, '0')).join('');
+  const LI = () => lesson && lesson.real ? inkRGB() : '42,35,48';
   // a tone's darkness curve: [offset, darkness] pairs (core shadow, reflected light…)
   const toneStops = T => T.stops || (T.invert ? [[0,1],[1,0]] : [[0,0],[.55,.45],[1,1]]);
   const toneDark = T => T.dark != null ? T.dark : T.stops ? 1 : .5;
-  function svgArt(L, cur, uid){
-    const pre = `${uid}-${L.id}`;
+  function svgArt(L, cur, uid, flip){
+    const pre = `${uid}-${L.id}`, ink = inkRGB(), pap = rPaper();
     // paper grain: noise punches tiny holes in the graphite, like pencil on real paper
     let defs = `<filter id="${pre}-grain" filterUnits="userSpaceOnUse" x="-6" y="-6" width="112" height="112"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="3"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.9 1.3"/><feComposite in="SourceGraphic" operator="in"/></filter>`;
     let body = '';
@@ -3582,17 +3718,29 @@
       const on = i === cur, ring = on ? ' stroke="#2f7fd8" stroke-width="2"' : ' stroke="none"';
       if(st.tone){
         const T = st.tone, id = `${pre}-${i}`, d = toneDark(T);
-        if(T.type === 'solid'){ body += `<path d="${st.p}" fill="#2a2330" fill-opacity="${Math.min(1, d)}"${ring}${blurAttr(st)}/>`; return; }
-        const stops = toneStops(T).map(([o, a]) => `<stop offset="${o}" stop-color="#2a2330" stop-opacity="${Math.min(1, a*d)}"/>`).join('');
+        if(T.type === 'solid'){ body += `<path d="${st.p}" fill="rgb(${ink})" fill-opacity="${Math.min(1, d)}"${ring}${blurAttr(st)}/>`; return; }
+        const stops = toneStops(T).map(([o, a]) => `<stop offset="${o}" stop-color="rgb(${ink})" stop-opacity="${Math.min(1, a*d)}"/>`).join('');
         defs += T.type === 'linear'
           ? `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${T.a[0]}" y1="${T.a[1]}" x2="${T.b[0]}" y2="${T.b[1]}">${stops}</linearGradient>`
           : `<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${T.a[0]}" cy="${T.a[1]}" r="${T.r}">${stops}</radialGradient>`;
         body += `<path d="${st.p}" fill="url(#${id})"${ring}${blurAttr(st)}/>`;
-      } else if(st.erase) body += `<path d="${st.p}" fill="#fbf8f0"${ring}${blurAttr(st)}/>`;
-      else if(st.shade) body += `<path d="${st.p}" fill="${on ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
-      else body += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : st.faint ? '#2a233055' : '#2a2330'}" stroke-width="${on ? 4 : st.faint ? 1.1 : st.thin ? 1.6 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      } else if(st.erase) body += `<path d="${st.p}" fill="rgb(${pap[3]})"${ring}${blurAttr(st)}/>`;
+      else if(st.shade) body += `<path d="${st.p}" fill="${on ? '#2f7fd855' : `rgba(${ink},.25)`}" stroke="none"/>`;
+      else body += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : st.faint ? `rgba(${ink},.33)` : `rgb(${ink})`}" stroke-width="${on ? 4 : st.faint ? 1.1 : st.thin ? 1.6 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
     });
-    return `<defs>${defs}</defs><g filter="url(#${pre}-grain)">${body}</g>`;
+    const bg = pap[0] === 'cream' ? '' : `<rect x="-6" y="-6" width="112" height="112" fill="${pap[2]}"/>`;
+    return `<defs>${defs}</defs>${bg}<g filter="url(#${pre}-grain)">${flip ? `<g transform="matrix(-1 0 0 1 100 0)">${body}</g>` : body}</g>`;
+  }
+  // plain line drawings (all the other lessons)
+  function plainArt(L, cur, flip){
+    let s = '';
+    L.steps.forEach((st, i) => {
+      if(!st.p || st.helper) return;
+      const on = i === cur;
+      if(st.shade) s += `<path d="${st.p}" fill="${on ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
+      else s += `<path d="${st.p}" fill="none" stroke="${on ? '#2f7fd8' : '#2a2330'}" stroke-width="${on ? 4 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    });
+    return flip ? `<g transform="matrix(-1 0 0 1 100 0)">${s}</g>` : s;
   }
   const thumb = L => L.real
     ? `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true">${svgArt(L, -1, 't')}</svg>`
@@ -3790,7 +3938,7 @@
   function snapshot(){
     const w = Math.min(720, paint.width), h = Math.round(paint.height*w/paint.width);
     const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const x = c.getContext('2d'); x.fillStyle = PAPERBASE[paper] || '#fbf8f0'; x.fillRect(0,0,w,h); x.drawImage(paint, 0, 0, w, h);
+    const x = c.getContext('2d'); x.fillStyle = dwrap.style.background && lesson && lesson.real ? rPaper()[2] : PAPERBASE[paper] || '#fbf8f0'; x.fillRect(0,0,w,h); x.drawImage(paint, 0, 0, w, h);
     return c.toDataURL('image/jpeg', .72);
   }
   const toastEl = $('dToast'); let toastT = 0;
@@ -4095,10 +4243,11 @@
   function box(){
     const tip = $('steptip'), topPad = lesson && !tip.hidden ? tip.offsetHeight + 18 : 12;
     const avail = dH - topPad - 10, S = Math.max(40, Math.min(dW*.9, avail*.94));
-    return { S, ox:(dW - S)/2, oy:topPad + (avail - S)/2 };
+    return { S, ox:(dW - S)/2, oy:topPad + (avail - S)/2, flip:!!(lesson && lesson.flip) };
   }
-  const mapP = (b,p) => ({ x:b.ox + p.x*b.S/100, y:b.oy + p.y*b.S/100 });
-  function pathPx(d, b){ const P = new Path2D(); P.addPath(new Path2D(d), new DOMMatrix([b.S/100,0,0,b.S/100,b.ox,b.oy])); return P; }
+  // "flip it" mirrors every lesson point left ↔ right
+  const mapP = (b,p) => ({ x:b.ox + (b.flip ? 100 - p.x : p.x)*b.S/100, y:b.oy + p.y*b.S/100 });
+  function pathPx(d, b){ const P = new Path2D(), k = b.S/100; P.addPath(new Path2D(d), b.flip ? new DOMMatrix([-k,0,0,k,b.ox + b.S,b.oy]) : new DOMMatrix([k,0,0,k,b.ox,b.oy])); return P; }
   function strokePts(pts, b, upto){
     gctx.beginPath();
     for(let i = 0; i < upto; i++){ const q = mapP(b, pts[i]); if(pts[i].brk) gctx.moveTo(q.x, q.y); else gctx.lineTo(q.x, q.y); }
@@ -4128,8 +4277,8 @@
     gctx.save(); gctx.setLineDash([]);
     // soft edges: blur the fill instead of clipping it
     if(blur) gctx.filter = `blur(${blur.toFixed(2)}px)`; else gctx.clip(P);
-    if(s.erase){ gctx.fillStyle = `rgba(251,248,240,${k})`; gctx.fill(P); gctx.restore(); return; }
-    const T = s.tone, dark = toneDark(T)*k, ink = a => `rgba(42,35,48,${Math.max(0, Math.min(1, a))})`;
+    if(s.erase){ gctx.fillStyle = `rgba(${lesson.real ? rPaper()[3] : '251,248,240'},${k})`; gctx.fill(P); gctx.restore(); return; }
+    const T = s.tone, dark = toneDark(T)*k, rgb = LI(), ink = a => `rgba(${rgb},${Math.max(0, Math.min(1, a))})`;
     if(T.type === 'solid'){ gctx.fillStyle = ink(dark); gctx.fill(P); gctx.restore(); return; }
     let g;
     if(T.type === 'linear'){ const A = mapP(b, { x:T.a[0], y:T.a[1] }), B = mapP(b, { x:T.b[0], y:T.b[1] }); g = gctx.createLinearGradient(A.x, A.y, B.x, B.y); }
@@ -4163,15 +4312,15 @@
       }
       if(i < step){
         if(!paper && !showGuideOn) return;
-        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? 'rgba(42,35,48,.3)' : '#2a2330') : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? (s.faint ? lw*.45 : s.thin ? lw*.55 : lw) : lw*.8;
+        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? `rgba(${LI()},.3)` : `rgb(${LI()})`) : 'rgba(42,35,48,.16)'; gctx.lineWidth = paper ? (s.faint ? lw*.45 : s.thin ? lw*.55 : lw) : lw*.8;
         strokePts(pts, b, pts.length); return;
       }
       if(anim){
         const k = Math.max(1, Math.floor(pts.length*frac));
-        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? 'rgba(42,35,48,.45)' : '#2a2330') : '#2f7fd8'; gctx.lineWidth = paper && (s.faint || s.thin) ? lw*.6 : lw*1.15;
+        gctx.setLineDash([]); gctx.strokeStyle = paper ? (s.faint ? `rgba(${LI()},.45)` : `rgb(${LI()})`) : '#2f7fd8'; gctx.lineWidth = paper && (s.faint || s.thin) ? lw*.6 : lw*1.15;
         strokePts(pts, b, k); tip = mapP(b, pts[k-1]);
       } else if(paper){
-        gctx.setLineDash([]); gctx.strokeStyle = s.faint ? 'rgba(42,35,48,.3)' : '#2a2330'; gctx.lineWidth = s.faint ? lw*.45 : s.thin ? lw*.55 : lw; strokePts(pts, b, pts.length);
+        gctx.setLineDash([]); gctx.strokeStyle = s.faint ? `rgba(${LI()},.3)` : `rgb(${LI()})`; gctx.lineWidth = s.faint ? lw*.45 : s.thin ? lw*.55 : lw; strokePts(pts, b, pts.length);
       } else if(showGuideOn){
         gctx.setLineDash([lw*2.2, lw*1.8]); gctx.strokeStyle = 'rgba(47,127,216,.85)'; gctx.lineWidth = lw; strokePts(pts, b, pts.length);
       }
@@ -4234,15 +4383,8 @@
   $('vSpeed').onclick = () => { vid.speed = vid.speed === 1 ? .5 : 1; vidSync(); };
   $('vLoop').onclick = () => { vid.loop = !vid.loop; if(vid.loop && !vid.playing){ vid.p = 0; vid.playing = true; vid.last = performance.now(); } vidSync(); };
   function drawRef(){
-    if(lesson.real){ $('dRefSvg').innerHTML = svgArt(lesson, dmode ? step : -1, 'ref'); return; }
-    let s = '';
-    lesson.steps.forEach((st,i) => {
-      if(!st.p || st.helper) return;
-      const cur = i === step && dmode;
-      if(st.shade) s += `<path d="${st.p}" fill="${cur ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
-      else s += `<path d="${st.p}" fill="none" stroke="${cur ? '#2f7fd8' : '#2a2330'}" stroke-width="${cur ? 4 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
-    });
-    $('dRefSvg').innerHTML = s;
+    const cur = dmode ? step : -1;
+    $('dRefSvg').innerHTML = lesson.real ? svgArt(lesson, cur, 'ref', lesson.flip) : plainArt(lesson, cur, lesson.flip);
   }
   function setBtns(list){
     const box = $('stepBtns'); box.innerHTML = '';
@@ -4259,41 +4401,105 @@
     opt('Coloring page', 'The lines are drawn for you. Pick colors, tap 🪣 Fill, add glitter and stamps!', () => afterMode('color'));
     $('modeAsk').hidden = false;
   }
+  // ---- scenes you can put around ANY drawing (kept to the edges so they don't cover it) ----
+  const circ = (x, y, r) => `M${x - r} ${y} a${r} ${r} 0 1 0 ${2*r} 0 a${r} ${r} 0 1 0 ${-2*r} 0`;
+  const starP = (x, y, r) => `M${x} ${y - r} L${x + r*.3} ${y - r*.3} L${x + r} ${y} L${x + r*.3} ${y + r*.3} L${x} ${y + r} L${x - r*.3} ${y + r*.3} L${x - r} ${y} L${x - r*.3} ${y - r*.3} Z`;
+  const flowerP = (x, y) => `M${x} ${y + 10} L${x} ${y + 2} ${circ(x, y - 2.2, 2)} ${circ(x + 2.2, y, 2)} ${circ(x, y + 2.2, 2)} ${circ(x - 2.2, y, 2)}`;
+  const SCENES = [
+    { label:'Nothing', p:null },
+    { label:'☀️ Sunny day', steps:[
+      { t:'Draw a sun in the corner', p:`${circ(5, 5, 7)} M5 -5 L5 -6 M15 5 L18 5 M12 12 L14 14 M-2 12 L-4 14 M12 -2 L14 -4` },
+      { t:'Add a fluffy cloud', p:'M78 8 Q78 1 85 2 Q89 -3 95 2 Q102 2 101 8 Z' },
+      { t:'Draw the ground', p:'M-5 101 Q25 97 50 101 Q75 105 105 100' },
+      { t:'Add some grass', p:'M0 101 L2 94 L4 101 M6 101 L9 95 L10 101 M90 101 L92 94 L94 101 M96 101 L99 95 L100 101' } ] },
+    { label:'🌙 Starry night', steps:[
+      { t:'Draw the moon', p:'M96 -3 A10 10 0 1 0 101 17 A8 8 0 1 1 96 -3 Z' },
+      { t:'Add twinkly stars', p:[starP(2, 4, 3), starP(16, -1, 2), starP(-1, 30, 2.5), starP(102, 40, 2.5), starP(80, -1, 2), starP(-1, 70, 2)].join(' ') },
+      { t:'Draw a hill', p:'M-5 103 Q30 95 60 101 Q85 105 105 99' } ] },
+    { label:'🌊 Under the sea', steps:[
+      { t:'Draw sand at the bottom', p:'M-5 103 Q50 97 105 103' },
+      { t:'Draw wavy seaweed', p:'M-2 103 Q-5 93 1 85 Q6 77 0 69 M102 103 Q106 95 100 87 Q95 79 101 73' },
+      { t:'Add bubbles', p:[circ(4, 50, 3), circ(8, 40, 2), circ(3, 31, 1.5), circ(96, 20, 3), circ(100, 10, 2), circ(94, 3, 1.5)].join(' ') } ] },
+    { label:'🎉 Party', steps:[
+      { t:'Hang a string of flags', p:'M-5 -2 Q50 8 105 -2 M8 0.4 L12 8 L16 2 M30 3.5 L34 11 L38 4.3 M60 4.4 L64 11.4 L68 3.6 M84 1.8 L88 8.5 L92 0.5' },
+      { t:'Add balloons', p:'M-3 60 A5 6 0 1 0 7 60 A5 6 0 1 0 -3 60 M2 66 Q0 76 3 86 M93 56 A5 6 0 1 0 103 56 A5 6 0 1 0 93 56 M98 62 Q100 72 97 82' },
+      { t:'Throw some confetti', p:'M20 99 L23 97 M40 102 L42 99 M70 99 L73 101 M86 102 L88 98 M12 30 L14 27 M90 30 L93 32' } ] },
+    { label:'🌸 Garden', steps:[
+      { t:'Draw the ground', p:'M-5 102 Q50 98 105 102' },
+      { t:'Add flowers', p:`${flowerP(1, 90)} ${flowerP(99, 88)}` },
+      { t:'Add a butterfly', p:'M93 6 Q87 -2 89 8 Q87 14 93 10 Q99 14 97 8 Q99 -2 93 6 M93 6 L93 11' } ] },
+    { label:'❄️ Snowy', steps:[
+      { t:'Add falling snowflakes', p:['M4 4 L10 10 M10 4 L4 10 M7 3 L7 11', 'M90 8 L96 14 M96 8 L90 14 M93 7 L93 15', 'M-2 40 L3 45 M3 40 L-2 45', 'M98 50 L103 55 M103 50 L98 55', 'M14 -3 L18 1 M18 -3 L14 1'].join(' ') },
+      { t:'Draw a snowy ground', p:'M-5 101 Q20 96 45 100 Q75 104 105 98' } ] }
+  ];
+  // the questions for this lesson: its own "make it yours" ones plus the ones every drawing gets
+  function lessonQuestions(){
+    const own = (raw.variants || []).map(v => ({ ...v }));
+    if(raw.real) return own.concat([
+      { q:'Where is the light?', kind:'flip', choices:[{ label:'☀️ Top left' }, { label:'Top right ☀️', flip:true }] },
+      { q:'Pencil color', kind:'pencil', def:Math.max(0, PENCILS.findIndex(p => p[0] === RS.pencil)), choices:PENCILS.map(p => ({ label:p[1], pencil:p[0] })) },
+      { q:'Paper', kind:'paper', def:Math.max(0, RPAPERS.findIndex(p => p[0] === RS.paper)), choices:RPAPERS.map(p => ({ label:p[1], paper:p[0] })) }
+    ]);
+    return own.concat([
+      { q:'Which way should it face?', kind:'flip', choices:[{ label:'→ Normal' }, { label:'← Flipped', flip:true }] },
+      { q:'Add a scene around it?', choices:SCENES }
+    ]);
+  }
   function afterMode(mode){
-    if(!raw.variants){ $('modeAsk').hidden = true; startLesson(mode, []); return; }
-    const picks = raw.variants.map(() => 0), card = $('askCard');
-    card.innerHTML = `<h2>Make it yours!</h2><p class="asksub">Pick what your ${raw.name.toLowerCase().replace(/^(a|an) /,'')} looks like.</p>`;
-    raw.variants.forEach((v,vi) => {
+    const qs = lessonQuestions(), picks = qs.map(q => q.def || 0), card = $('askCard');
+    card.innerHTML = `<h2>Make it yours!</h2><p class="asksub">Pick what your ${raw.name.toLowerCase().replace(/^(a|an) /,'')} looks like — the picture changes as you choose.</p>`;
+    const pv = mk('div', 'askpreview', '<svg viewBox="-6 -6 112 112" aria-label="Preview of your drawing"></svg>');
+    card.appendChild(pv);
+    const preview = () => {
+      const keep = RS; RS = { ...RS, ...styleOf(qs, picks) };
+      const L = { ...raw, steps:buildSteps(qs, picks) }, flip = flipOf(qs, picks);
+      pv.firstChild.innerHTML = raw.real ? svgArt(L, -1, 'pv', flip) : plainArt(L, -1, flip);
+      pv.classList.toggle('plainbg', !raw.real || RS.paper === 'cream');
+      RS = keep;
+    };
+    qs.forEach((v,vi) => {
       card.appendChild(mk('p','askq', v.q));
       const row = mk('div','chips-pick');
       v.choices.forEach((c,ci) => {
         const b = mk('button','taste', c.label);
-        b.setAttribute('aria-pressed', ci === 0);
-        b.onclick = () => { picks[vi] = ci; [...row.children].forEach((x,xi) => x.setAttribute('aria-pressed', xi === ci)); };
+        b.setAttribute('aria-pressed', ci === picks[vi]);
+        b.onclick = () => { picks[vi] = ci; [...row.children].forEach((x,xi) => x.setAttribute('aria-pressed', xi === ci)); preview(); };
         row.appendChild(b);
       });
       card.appendChild(row);
     });
     const go = mk('button','choice go-choice','<b>Start drawing ▶</b>');
-    go.onclick = () => { $('modeAsk').hidden = true; startLesson(mode, picks); };
+    go.onclick = () => { $('modeAsk').hidden = true; startLesson(mode, qs, picks); };
     card.appendChild(go);
+    preview();
   }
-  function buildSteps(picks){
+  const flipOf = (qs, picks) => qs.some((q, i) => q.choices[picks[i] || 0].flip);
+  function styleOf(qs, picks){
+    const out = {};
+    qs.forEach((q, i) => { const c = q.choices[picks[i] || 0]; if(c.pencil) out.pencil = c.pencil; if(c.paper) out.paper = c.paper; });
+    return out;
+  }
+  function buildSteps(qs, picks){
     const base = raw.steps.slice(), extra = [];
-    (raw.variants || []).forEach((v,i) => {
+    (qs || []).forEach((v,i) => {
       const c = v.choices[picks[i] || 0];
-      if(c && c.p) extra.push({ t:c.t || ('Add ' + c.label.toLowerCase()), tip:c.tip, p:c.p, shade:c.shade });
+      if(!c) return;
+      if(c.steps) extra.push(...c.steps.map(s => ({ ...s })));
+      else if(c.p){ const { label, ...rest } = c; extra.push({ ...rest, t:c.t || ('Add ' + label.toLowerCase()) }); }
     });
     if(!extra.length) return base;
     return base.length && !base[base.length-1].p ? [...base.slice(0,-1), ...extra, base[base.length-1]] : [...base, ...extra];
   }
-  function startLesson(mode, picks){
+  function startLesson(mode, qs, picks){
     dmode = mode;
-    lesson = { ...raw, steps:buildSteps(picks) };
+    qs = qs || []; picks = picks || [];
+    lesson = { ...raw, steps:buildSteps(qs, picks), flip:flipOf(qs, picks) };
+    if(raw.real){ RS = { ...RS, ...styleOf(qs, picks) }; store.set('realStyle', RS); }
+    dwrap.style.background = raw.real && RS.paper !== 'cream' ? rPaper()[2] : '';
     paint.style.pointerEvents = mode === 'paper' ? 'none' : '';
     $('drawbar').hidden = mode === 'paper';
     $('dGuide').hidden = mode !== 'screen';
-    if(mode === 'screen'){ brush = 'pencil'; color = INK; size = 10; syncDrawTools(); }
+    if(mode === 'screen'){ brush = 'pencil'; color = raw.real ? rgbHex(inkRGB()) : INK; size = 10; syncDrawTools(); }
     scores = []; sizeDraw();
     if(mode === 'color') return startColoring();
     showStep(0);
@@ -4335,14 +4541,19 @@
   function showStep(i){
     step = i; stepPts = []; warned = false;
     const s = lesson.steps[step], n = lesson.steps.length, last = step === n-1;
-    $('dSay').innerHTML = `<span class="count">STEP ${step+1} OF ${n}</span>${s.t}${s.tip ? `<span class="tipline">Tip: ${s.tip}</span>` : s.tone ? '<span class="tipline">Tip: use 🌫️ Soft shade, then 👆 Blend to make it smooth.</span>' : s.erase ? '<span class="tipline">Tip: use the 🧽 eraser to lift out a shiny spot.</span>' : !s.p ? '<span class="tipline">Tip: pick 🪣 Fill and tap inside a shape to color it in.</span>' : ''}`;
+    $('dSay').innerHTML = `<span class="count">STEP ${step+1} OF ${n}</span>${s.t}${s.tip ? `<span class="tipline">Tip: ${s.tip}</span>` : s.tone ? '<span class="tipline">Tip: use 🌫️ Soft shade, then 👆 Blend to make it smooth.</span>' : s.erase ? `<span class="tipline">${lesson.real && isToned() ? 'Tip: on toned paper, add bright spots with a white pencil.' : 'Tip: use the 🧽 eraser to lift out a shiny spot.'}</span>` : !s.p ? '<span class="tipline">Tip: pick 🪣 Fill and tap inside a shape to color it in.</span>' : ''}`;
     setBtns([
       s.p && { label:'▶ Watch again', fn:watch },
       step > 0 && { label:'◀', fn:() => showStep(step-1) },
       { label:last ? 'Finish ✓' : 'Next step ▶', cls:'go', fn:nextStep }
     ]);
     // realistic lessons hand you the right tool for each step
-    if(dmode === 'screen' && lesson.real){ brush = s.tone ? 'soft' : s.erase ? 'eraser' : 'pencil'; color = INK; syncDrawTools(); }
+    // on toned paper, highlights are drawn with a white pencil instead of rubbed out
+    if(dmode === 'screen' && lesson.real){
+      const white = s.erase && isToned();
+      brush = s.tone || white ? 'soft' : s.erase ? 'eraser' : 'pencil';
+      color = white ? '#ffffff' : rgbHex(inkRGB()); syncDrawTools();
+    }
     drawRef(); watch();
   }
   function scoreStep(s){
@@ -4409,7 +4620,7 @@
   hooks.draw = {
     enter(id){
       raw = id ? LESSONS.find(l => l.id === id) : null;
-      lesson = raw; step = 0; dmode = raw ? null : 'free'; showGuideOn = true;
+      lesson = raw; step = 0; dmode = raw ? null : 'free'; showGuideOn = true; dwrap.style.background = '';
       $('dTitle').innerHTML = `<small>DRAW</small>${raw ? raw.name : 'Playground'}`;
       $('dSave').hidden = !!raw; $('dGuide').hidden = true; $('dGuide').setAttribute('aria-pressed', true);
       $('steptip').hidden = $('dRef').hidden = !raw;
@@ -4421,7 +4632,7 @@
       stopReplay(); drawFrames = []; recordFrame(); $('nameRow').hidden = true; $('dName').setAttribute('aria-pressed', false);
       if(raw){ $('dSay').innerHTML = `<span class="count">${raw.steps.length} STEPS</span>${raw.name}`; setBtns([]); drawRef(); askMode(); }
     },
-    leave(){ cancelAnimationFrame(araf); }
+    leave(){ cancelAnimationFrame(araf); dwrap.style.background = ''; }
   };
 
 // ================= GUITAR =================
