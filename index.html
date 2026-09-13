@@ -2604,8 +2604,8 @@
           { label:'Blushing cheeks', t:'Add blushing cheeks', p:'M30 56 A5 4 0 1 0 40 56 A5 4 0 1 0 30 56 M60 56 A5 4 0 1 0 70 56 A5 4 0 1 0 60 56' },
           { label:'Nothing', p:null } ] } ] },
   ];
-  const CATS = ['Basics','Animals','Monsters','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
-  const CATICON = { Basics:'✏️', Animals:'🐟', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
+  const CATS = ['Basics','Crazy!','People','Animals','Monsters','Real things','Nature','Food','Vehicles','Fantasy','Faces','Shading'];
+  const CATICON = { Basics:'✏️', 'Crazy!':'🤪', People:'🧑', Animals:'🐟', Monsters:'👹', 'Real things':'👁️', Nature:'🌈', Food:'🍦', Vehicles:'🚀', Fantasy:'🦄', Faces:'😀', Shading:'⚫' };
 
   // ---- more drawings ----
   const MORE_LESSONS = [
@@ -2787,7 +2787,141 @@
   };
   LESSONS.forEach(L => { if(VARIANT_EXTRA[L.id]) L.variants = (L.variants || []).concat(VARIANT_EXTRA[L.id]); });
 
-  const lessonD = L => L.steps.filter(s => s.p).map(s => s.p).join(' ');
+  // ---- people and crazy drawings ----
+  const WILD_LESSONS = [
+    { id:'realface', name:'A real face', cat:'People', hard:3, steps:[
+      { t:'Draw an egg shape for the head', tip:'Round at the top, narrower at the chin — real heads are not circles.', p:'M30 40 Q30 10 50 10 Q70 10 70 40 Q70 70 58 84 Q50 92 42 84 Q30 70 30 40' },
+      { t:'Draw light helper lines', tip:'Artists do this! The eye line goes HALFWAY down the head. Draw these lightly.', helper:true, p:'M50 10 L50 90 M30 46 L70 46 M34 64 L66 64 M38 74 L62 74' },
+      { t:'Draw two almond eyes on the eye line', tip:'Leave one eye’s width of space between them.', p:'M36 46 Q41 42 46 46 Q41 49 36 46 M54 46 Q59 42 64 46 Q59 49 54 46' },
+      { t:'Add the round irises', p:'M39.2 45.8 A1.9 1.9 0 1 0 43 45.8 A1.9 1.9 0 1 0 39.2 45.8 M57 45.8 A1.9 1.9 0 1 0 60.8 45.8 A1.9 1.9 0 1 0 57 45.8' },
+      { t:'Draw the eyebrows', tip:'Just above the eyes, a little curved.', p:'M35 40 Q41 37 47 39 M53 39 Q59 37 65 40' },
+      { t:'Draw the nose down to the nose line', tip:'The bottom of the nose is about as wide as the gap between the eyes.', p:'M49 50 Q47 58 45 62 Q46 66 50 65 Q54 66 55 62' },
+      { t:'Draw the lips on the mouth line', tip:'The corners of the mouth line up with the middle of the eyes.', p:'M40 74 Q50 70 60 74 Q50 81 40 74 M40 74 L60 74' },
+      { t:'Add the ears between the eye line and the nose line', p:'M30 46 Q24 48 25 55 Q26 63 31 64 M70 46 Q76 48 75 55 Q74 63 69 64' },
+      { t:'Draw the hair', tip:'Hair sits ON TOP of the head, so start a little above it.', p:'M30 40 Q28 12 50 8 Q74 10 70 42 Q66 26 56 22 Q44 26 34 24 Q30 30 30 40' },
+      { t:'Draw the neck', p:'M42 84 L41 96 M58 84 L59 96' },
+      { t:'Shade under the chin', tip:'This little shadow makes the face pop out — press lightly.', p:'M42 86 Q50 94 58 86 L59 92 Q50 97 41 92 Z', shade:true },
+      { t:'Color your face!', p:null } ],
+      variants:[
+        { q:'What hair?', choices:[
+          { label:'Short', p:null },
+          { label:'Long hair', t:'Let the hair fall down past the ears', p:'M30 40 Q24 70 30 88 M70 42 Q76 70 70 88' },
+          { label:'A bun', t:'Add a bun on top', p:'M42 8 A8 6 0 1 0 58 8 A8 6 0 1 0 42 8' } ] },
+        { q:'Glasses?', choices:[
+          { label:'No glasses', p:null },
+          { label:'Round glasses', t:'Draw round glasses over the eyes', p:'M34 46 A7 6 0 1 0 48 46 A7 6 0 1 0 34 46 M52 46 A7 6 0 1 0 66 46 A7 6 0 1 0 52 46 M48 46 L52 46' } ] },
+        { q:'Anything else?', choices:[
+          { label:'Nothing', p:null },
+          { label:'Freckles', t:'Dot on some freckles', p:'M39 58 L39.6 58.4 M42 60 L42.6 60.4 M61 58 L60.4 58.4 M58 60 L57.4 60.4 M40 61.5 L40.6 61.9 M60 61.5 L59.4 61.9' },
+          { label:'Earrings', t:'Add little earrings', p:'M26 66 A2.2 2.2 0 1 0 30.4 66 A2.2 2.2 0 1 0 26 66 M69.6 66 A2.2 2.2 0 1 0 74 66 A2.2 2.2 0 1 0 69.6 66' } ] } ] },
+    { id:'cartoonme', name:'Cartoon of you', cat:'People', hard:1, steps:[
+      { t:'Draw a big round head', p:'M30 40 A20 20 0 1 0 70 40 A20 20 0 1 0 30 40' },
+      { t:'Draw the hair on top', p:'M30 38 Q32 18 50 18 Q68 18 70 38 Q60 28 50 30 Q40 28 30 38' },
+      { t:'Add eyes and a big smile', p:'M42 40 A2.5 2.5 0 1 0 47 40 A2.5 2.5 0 1 0 42 40 M53 40 A2.5 2.5 0 1 0 58 40 A2.5 2.5 0 1 0 53 40 M42 50 Q50 58 58 50' },
+      { t:'Draw your T-shirt', tip:'Start at the neck and go out for the sleeves.', p:'M42 59 L26 68 L30 80 L38 76 L38 96 L62 96 L62 76 L70 80 L74 68 L58 59' },
+      { t:'Color it to look like you!', p:null } ],
+      variants:[
+        { q:'Your hair?', choices:[
+          { label:'Short', p:null },
+          { label:'Long', t:'Add long hair down the sides', p:'M30 38 Q26 58 32 70 M70 38 Q74 58 68 70' },
+          { label:'Curly', t:'Add curls on top', p:'M32 30 A5 5 0 1 1 40 22 A5 5 0 1 1 50 18 A5 5 0 1 1 60 22 A5 5 0 1 1 68 30' },
+          { label:'A cap', t:'Put a cap on', p:'M30 30 Q50 12 70 30 Z M70 30 L86 33' } ] },
+        { q:'Glasses?', choices:[
+          { label:'No', p:null },
+          { label:'Yes', t:'Draw glasses', p:'M39 40 A5 5 0 1 0 49 40 A5 5 0 1 0 39 40 M51 40 A5 5 0 1 0 61 40 A5 5 0 1 0 51 40 M49 40 L51 40' } ] } ] },
+    { id:'hero', name:'Superhero', cat:'People', hard:3, steps:[
+      { t:'Draw the head', p:'M44 16 A6 6 0 1 0 56 16 A6 6 0 1 0 44 16' },
+      { t:'Add a mask and a smile', p:'M44 15 Q50 12 56 15 L56 18 Q50 16 44 18 Z M47 20 Q50 22 53 20' },
+      { t:'Draw the body', p:'M43 23 L57 23 L60 54 L40 54 Z' },
+      { t:'Arms up — ready to fly!', p:'M43 26 L30 10 M57 26 L70 10' },
+      { t:'Draw the legs', p:'M45 54 L43 82 M55 54 L57 82' },
+      { t:'Add a flowing cape behind', tip:'From the shoulders out wide, with a wavy bottom edge.', p:'M43 24 Q30 44 27 70 Q38 64 50 70 Q62 64 73 70 Q70 44 57 24' },
+      { t:'Add the belt and your hero sign', p:'M46 32 L54 32 L50 40 Z M40.5 48 L59.5 48' },
+      { t:'Color your superhero!', p:null } ] },
+
+    { id:'catastro', name:'Cat astronaut', cat:'Crazy!', hard:3, steps:[
+      { t:'Draw a big round space helmet', p:'M26 42 A24 24 0 1 0 74 42 A24 24 0 1 0 26 42' },
+      { t:'Draw the cat’s face inside', p:'M36 46 A14 13 0 1 0 64 46 A14 13 0 1 0 36 46' },
+      { t:'Add pointy ears', p:'M38 40 L37 28 L46 35 M62 40 L63 28 L54 35' },
+      { t:'Eyes, nose, mouth and whiskers', p:'M45 44 L45 46 M55 44 L55 46 M48 50 L50 52 L52 50 M50 52 Q47 56 44 54 M50 52 Q53 56 56 54 M40 50 L31 48 M60 50 L69 48' },
+      { t:'Draw the space suit', p:'M34 63 Q30 72 30 92 L70 92 Q70 72 66 63' },
+      { t:'Add a shine on the helmet and a collar', p:'M33 30 Q37 23 46 21 M36 66 Q50 72 64 66' },
+      { t:'Stars and a ringed planet', p:'M8 14 L8 22 M4 18 L12 18 M90 62 L90 70 M86 66 L94 66 M84 18 A6 6 0 1 0 96 18 A6 6 0 1 0 84 18 M78 21 Q90 13 102 16' },
+      { t:'Color your space cat!', p:null } ],
+      variants:[ { q:'What is it holding?', choices:[
+        { label:'Nothing', p:null },
+        { label:'A flag', t:'Plant a flag next to it', p:'M16 92 L16 56 M16 56 L30 61 L16 66' },
+        { label:'A fish snack', t:'Draw a fish floating by', p:'M6 40 Q14 32 22 40 Q14 48 6 40 M22 40 L27 35 L27 45 Z' } ] } ] },
+    { id:'pizzamon', name:'Pizza monster', cat:'Crazy!', hard:2, steps:[
+      { t:'Draw a big pizza slice', p:'M18 22 L82 22 L50 90 Z' },
+      { t:'Add the puffy crust', p:'M18 22 Q50 10 82 22' },
+      { t:'Give it crazy eyes', tip:'Make one eye bigger than the other!', p:'M34 34 A6 6 0 1 0 46 34 A6 6 0 1 0 34 34 M54 32 A8 8 0 1 0 70 32 A8 8 0 1 0 54 32 M40 34 L40 36 M62 32 L62 34' },
+      { t:'A big mouth with pointy teeth', p:'M38 50 Q50 64 62 50 Z M42 51 L44 56 L46 52 M50 53 L52 58 L54 53 M56 51 L58 55' },
+      { t:'Pepperoni spots', p:'M29 42 A3 3 0 1 0 35 42 A3 3 0 1 0 29 42 M56 66 A3 3 0 1 0 62 66 A3 3 0 1 0 56 66 M46 74 A2.5 2.5 0 1 0 51 74 A2.5 2.5 0 1 0 46 74' },
+      { t:'Arms and legs!', p:'M26.5 40 L10 33 M73.5 40 L90 33 M45 80 L40 96 M55 80 L60 96' },
+      { t:'Color your monster pizza!', p:null } ],
+      variants:[ { q:'Make it crazier?', choices:[
+        { label:'Just right', p:null },
+        { label:'A crown', t:'Put a crown on the crust', p:'M36 16 L36 6 L43 12 L50 2 L57 12 L64 6 L64 16' },
+        { label:'Tongue out', t:'Stick its tongue out', p:'M46 58 Q50 70 54 58' } ] } ] },
+    { id:'robodino', name:'Robot T-Rex', cat:'Crazy!', hard:3, steps:[
+      { t:'Draw a box for the body', p:'M24 52 L64 52 L64 78 L24 78 Z' },
+      { t:'Draw a box head on a neck', p:'M56 26 L90 26 L90 46 L56 46 Z M60 46 L60 52' },
+      { t:'Add square robot teeth', p:'M62 46 L62 50 L66 50 L66 46 M70 46 L70 50 L74 50 L74 46 M78 46 L78 50 L82 50 L82 46' },
+      { t:'Draw a pointy tail', p:'M24 58 L6 50 L6 62 L24 70' },
+      { t:'Draw blocky legs', p:'M30 78 L30 92 L38 92 L38 78 M50 78 L50 92 L58 92 L58 78' },
+      { t:'A screen eye and an antenna', p:'M72 32 L82 32 L82 38 L72 38 Z M76 26 L76 16 M73 13 A3 3 0 1 0 79 13 A3 3 0 1 0 73 13' },
+      { t:'Add bolts and a tiny robot arm', p:'M30 58 A2 2 0 1 0 34 58 A2 2 0 1 0 30 58 M54 58 A2 2 0 1 0 58 58 A2 2 0 1 0 54 58 M64 58 L72 62 L70 66' },
+      { t:'Color your robot dinosaur!', p:null } ] },
+    { id:'surfshark', name:'Surfing shark', cat:'Crazy!', hard:3, steps:[
+      { t:'Draw a long surfboard', p:'M8 72 Q50 62 92 70 Q50 82 8 72' },
+      { t:'Draw the shark standing on top of it', tip:'Keep a little gap above the board.', p:'M20 58 Q34 38 60 40 Q78 42 88 52 Q74 60 56 60 Q34 62 20 58' },
+      { t:'Add the tail and the fin', p:'M20 58 L8 44 L14 58 M44 40 Q50 25 60 40' },
+      { t:'Big cool sunglasses!', p:'M65 43 L80 43 L79 51 L66 51 Z M80 46 L89 48' },
+      { t:'A big grin with teeth', p:'M67 55 Q78 60 88 53 M71 56 L72 59 M76 57.5 L77 60.5 M81 57 L82 60' },
+      { t:'Draw the waves under the board', p:'M2 84 Q14 76 26 84 T50 84 T74 84 T98 84 M2 94 Q14 86 26 94 T50 94 T74 94 T98 94' },
+      { t:'Add some splash', p:'M93 66 L99 58 M95 73 L101 71 M89 60 L91 52' },
+      { t:'Color your surfing shark!', p:null } ] },
+    { id:'flyhouse', name:'Flying house', cat:'Crazy!', hard:2, steps:[
+      { t:'Draw a little house', p:'M32 62 L68 62 L68 90 L32 90 Z' },
+      { t:'Add the roof', p:'M28 64 L50 44 L72 64' },
+      { t:'A door and a window', p:'M46 90 L46 78 L54 78 L54 90 M36 70 L42 70 L42 76 L36 76 Z' },
+      { t:'Tie strings to the roof', p:'M50 44 L30 23 M50 44 L50 17 M50 44 L70 23' },
+      { t:'Draw the balloons', p:'M24 16 A6 7 0 1 0 36 16 A6 7 0 1 0 24 16 M44 10 A6 7 0 1 0 56 10 A6 7 0 1 0 44 10 M64 16 A6 7 0 1 0 76 16 A6 7 0 1 0 64 16' },
+      { t:'Clouds and birds', p:'M4 50 Q0 42 8 42 Q12 35 20 40 Q27 42 24 50 Z M78 44 Q74 36 82 36 Q86 29 94 34 Q100 36 97 44 Z M84 60 Q88 56 92 60 Q96 56 100 60' },
+      { t:'Color your flying house!', p:null } ],
+      variants:[ { q:'How many balloons?', choices:[
+        { label:'Three', p:null },
+        { label:'Loads more!', t:'Add more balloons', p:'M50 44 L20 36 M50 44 L80 36 M8 32 A6 7 0 1 0 20 32 A6 7 0 1 0 8 32 M80 32 A6 7 0 1 0 92 32 A6 7 0 1 0 80 32' } ] } ] },
+    { id:'octodj', name:'Octopus DJ', cat:'Crazy!', hard:3, steps:[
+      { t:'Draw the octopus head', p:'M32 36 Q32 12 50 12 Q68 12 68 36 Q68 46 62 50 L38 50 Q32 46 32 36' },
+      { t:'Put headphones on it', p:'M30 36 Q30 6 50 6 Q70 6 70 36 M26 30 L32 30 L32 42 L26 42 Z M68 30 L74 30 L74 42 L68 42 Z' },
+      { t:'Eyes and a happy mouth', p:'M42 30 A4 4 0 1 0 50 30 A4 4 0 1 0 42 30 M50 30 A4 4 0 1 0 58 30 A4 4 0 1 0 50 30 M46 31 L46 33 M54 31 L54 33 M44 40 Q50 45 56 40' },
+      { t:'Draw the DJ table', p:'M10 66 L90 66 L90 92 L10 92 Z' },
+      { t:'Add two records', p:'M16 62 A12 4 0 1 0 40 62 A12 4 0 1 0 16 62 M60 62 A12 4 0 1 0 84 62 A12 4 0 1 0 60 62' },
+      { t:'Tentacles spinning the records', p:'M38 50 Q30 55 28 60 M44 50 Q42 57 36 59 M56 50 Q58 57 64 59 M62 50 Q70 55 72 60' },
+      { t:'Music notes flying out', p:'M8 20 L8 34 M8 20 L16 18 L16 32 M4 34 A4 3 0 1 0 12 34 A4 3 0 1 0 4 34 M12 32 A4 3 0 1 0 20 32 A4 3 0 1 0 12 32 M88 16 L88 30 M84 30 A4 3 0 1 0 92 30 A4 3 0 1 0 84 30' },
+      { t:'Color your party octopus!', p:null } ] },
+    { id:'ufocow', name:'UFO takes a cow', cat:'Crazy!', hard:3, steps:[
+      { t:'Draw the flying saucer', p:'M14 30 Q50 16 86 30 Q50 44 14 30' },
+      { t:'Add the glass dome', p:'M34 26 Q36 8 50 8 Q64 8 66 26' },
+      { t:'Lights around the edge', p:'M24 32 L24 34 M38 36 L38 38 M50 37 L50 39 M62 36 L62 38 M76 32 L76 34' },
+      { t:'Draw the beam shining down', p:'M38 38 L22 92 M62 38 L78 92' },
+      { t:'Draw the cow’s body in the beam', p:'M34 70 Q34 60 46 60 L60 60 Q68 60 68 70 Q68 78 60 78 L42 78 Q34 78 34 70' },
+      { t:'Head and legs — it’s floating!', p:'M60 58 A6 6 0 1 0 72 58 A6 6 0 1 0 60 58 M40 78 L40 86 M48 78 L48 86 M56 78 L56 86 M64 78 L64 86' },
+      { t:'Spots, eyes and little horns', p:'M42 66 A3 3 0 1 0 48 66 A3 3 0 1 0 42 66 M54 72 A2.5 2.5 0 1 0 59 72 A2.5 2.5 0 1 0 54 72 M64 57 L64 58 M68 57 L68 58 M62 53 L60 48 M70 53 L72 48' },
+      { t:'Color the crazy scene!', p:null } ] },
+    { id:'icevolcano', name:'Ice cream volcano', cat:'Crazy!', hard:2, steps:[
+      { t:'Draw the volcano', p:'M8 92 L36 40 L64 40 L92 92 Z' },
+      { t:'Draw the crater at the top', p:'M36 40 Q50 46 64 40' },
+      { t:'Ice cream bursting out!', tip:'Big puffy bumps, like a cloud.', p:'M36 40 Q30 28 40 24 Q40 12 52 14 Q62 8 66 20 Q76 22 70 34 Q68 40 64 40' },
+      { t:'Drips running down the side', p:'M40 42 Q38 54 42 56 Q46 54 44 44 M58 42 Q60 58 64 58 Q66 50 62 42' },
+      { t:'Sprinkles and a cherry on top', p:'M44 20 L47 22 M56 18 L58 21 M50 28 L52 26 M62 26 L64 29 M53 10 Q55 3 61 1 M49 11 A4 4 0 1 0 57 11 A4 4 0 1 0 49 11' },
+      { t:'Color your yummy volcano!', p:null } ] },
+  ];
+  LESSONS.push(...WILD_LESSONS);
+
+  const lessonD = L => L.steps.filter(s => s.p && !s.helper).map(s => s.p).join(' ');
   const thumb = L => `<svg class="thumb" viewBox="-6 -6 112 112" aria-hidden="true"><path d="${lessonD(L)}" fill="none" stroke="#2a2330" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const mk = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
   const STICKERS = ['⭐','❤️','🌈','😀','🐟','🦄','🔥','🍦'];
@@ -3191,6 +3325,7 @@
     lesson.steps.forEach((s,i) => {
       if(!s.p || i > step) return;
       const pts = samples(s.p), cur = i === step, anim = cur && frac != null;
+      if(s.helper && i < step){ gctx.setLineDash([lw, lw*1.6]); gctx.strokeStyle = 'rgba(47,127,216,.22)'; gctx.lineWidth = lw*.6; strokePts(pts, b, pts.length); gctx.setLineDash([]); return; }
       if(s.shade){
         if(i < step){ if(paper) hatch(s.p, b, 'rgba(42,35,48,.55)', 1); return; }
         if(anim || paper) hatch(s.p, b, paper ? 'rgba(42,35,48,.55)' : 'rgba(47,127,216,.45)', anim ? frac : 1);
@@ -3255,7 +3390,7 @@
   function drawRef(){
     let s = '';
     lesson.steps.forEach((st,i) => {
-      if(!st.p) return;
+      if(!st.p || st.helper) return;
       const cur = i === step && dmode;
       if(st.shade) s += `<path d="${st.p}" fill="${cur ? '#2f7fd855' : '#2a233040'}" stroke="none"/>`;
       else s += `<path d="${st.p}" fill="none" stroke="${cur ? '#2f7fd8' : '#2a2330'}" stroke-width="${cur ? 4 : 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -3321,7 +3456,7 @@
     const b = box(), lw = Math.max(3, b.S*.013);
     pctx.save(); resetPen();
     pctx.strokeStyle = INK; pctx.lineWidth = lw; pctx.lineCap = 'round'; pctx.lineJoin = 'round';
-    lesson.steps.forEach(s => { if(s.p) pctx.stroke(pathPx(s.p, b)); });
+    lesson.steps.forEach(s => { if(s.p && !s.helper) pctx.stroke(pathPx(s.p, b)); });
     pctx.restore();
   }
   const shortName = () => raw.name.toLowerCase().replace(/^(a|an) /,'');
