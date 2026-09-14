@@ -830,7 +830,7 @@
     <div class="home-in">
       <div class="hero">
         <h1 class="brand">ULTIMATE LEARN</h1>
-        <p class="hello"><button class="avatar" id="homeAvatar" data-go="custom" aria-label="Customize">🙂</button><span id="homeHello">What do you want to learn today?</span><span class="herobtns"><button class="btn" id="installBtn" hidden>📲 Install app</button><button class="btn" data-go="progress">📊 My progress</button><button class="btn custbtn" data-go="custom">🎨 Customize</button></span></p>
+        <p class="hello"><button class="avatar" id="homeAvatar" data-go="custom" aria-label="Customize">🙂</button><span id="homeHello">What do you want to learn today?</span><span class="herobtns"><button class="btn notr" id="langBtn" aria-label="Language">🌐</button><button class="btn" id="installBtn" hidden>📲 Install app</button><button class="btn" data-go="progress">📊 My progress</button><button class="btn custbtn" data-go="custom">🎨 Customize</button></span></p>
         <div class="xpbar" id="homeProg"></div>
       </div>
 
@@ -1341,6 +1341,7 @@
     },
     set(k,v){ memStore[k] = JSON.stringify(v); try{ localStorage.setItem('ultimateLearn.'+k, memStore[k]); }catch(e){} }
   };
+  let I18N = null; // the LANGUAGE block (translations)
   let SCHOOL_LIST = []; // filled in by the SCHOOL block (for today's challenge)
   let levelHook = null, pendingLevel = 0; // the CUSTOMIZE block shows the level-up party
   let CUST = store.get('custom', null) || {}; // your customize settings (the CUSTOMIZE block keeps this up to date)
@@ -4197,7 +4198,7 @@
   function openViewer(e){
     viewing = e;
     $('viewImg').src = e.img; $('viewName').textContent = e.name;
-    $('viewDel').textContent = 'Delete';
+    $('viewDel').textContent = 'Delete'; delete $('viewDel').dataset.sure;
     $('viewNote').value = e.note || '';
     const row = $('stickRow'); row.innerHTML = '';
     STICKERS.forEach(s => { const b = mk('button', null, s); b.onclick = () => addSticker(s); row.appendChild(b); });
@@ -4214,7 +4215,7 @@
   $('viewClose').onclick = () => { $('viewer').hidden = true; renderJournal(); };
   $('viewDel').onclick = () => {
     const b = $('viewDel');
-    if(b.textContent === 'Delete'){ b.textContent = 'Tap again to delete'; return; }
+    if(!b.dataset.sure){ b.dataset.sure = '1'; b.textContent = 'Tap again to delete'; return; } // (not by text: the words may be translated)
     J.remove(viewing.id); $('viewer').hidden = true; renderJournal();
   };
   hooks.journal = { enter(){ $('viewer').hidden = true; renderJournal(); } };
@@ -7540,6 +7541,8 @@
       const el = $('custList'); if(!el) return;
       const keepScroll = el.parentElement.scrollTop;
       el.innerHTML = '';
+      // language
+      if(I18N){ const ls = section('🌐 Language', I18N.lang === 'en' ? '' : 'The words in the lessons are still in English.'); I18N.picker(ls); }
       // you
       const you = section('🙂 You', 'Your name and your avatar show on the home page.');
       const nameIn = mkEl('input', 'custname'); nameIn.maxLength = 16; nameIn.placeholder = 'Your name'; nameIn.value = C.name; nameIn.setAttribute('aria-label', 'Your name');
@@ -7679,6 +7682,613 @@
     const prevHome = hooks.home && hooks.home.enter;
     if(hooks.home) hooks.home.enter = arg => { if(prevHome) prevHome(arg); apply(); };
     apply();
+  })();
+
+  // ================= LANGUAGE =================
+  (() => {
+    const LANGS = [['en','English','🇬🇧'], ['no','Norsk','🇳🇴'], ['da','Dansk','🇩🇰'], ['sv','Svenska','🇸🇪'], ['de','Deutsch','🇩🇪'], ['es','Español','🇪🇸'], ['fr','Français','🇫🇷']];
+    const COLS = ['no','da','sv','de','es','fr'];
+    // English | Norsk | Dansk | Svenska | Deutsch | Español | Français   (words only — emoji and ▶ ✓ etc. are kept around them)
+    const RAW = `
+What do you want to learn today|Hva vil du lære i dag|Hvad vil du lære i dag|Vad vill du lära dig idag|Was möchtest du heute lernen|¿Qué quieres aprender hoy|Qu’est-ce que tu veux apprendre aujourd’hui
+My progress|Mine fremskritt|Mine fremskridt|Mina framsteg|Mein Fortschritt|Mi progreso|Mes progrès
+Customize|Tilpass|Tilpas|Anpassa|Anpassen|Personalizar|Personnaliser
+Install app|Installer appen|Installer appen|Installera appen|App installieren|Instalar la app|Installer l’appli
+Pick up where you left off|Fortsett der du slapp|Fortsæt hvor du slap|Fortsätt där du slutade|Mach da weiter, wo du aufgehört hast|Sigue donde lo dejaste|Reprends là où tu t’es arrêté
+Finish it today for +50 bonus XP|Fullfør i dag for +50 bonus-XP|Gør den færdig i dag for +50 bonus-XP|Klara den idag för +50 bonus-XP|Schaff es heute für +50 Bonus-XP|Termínalo hoy y gana +50 XP extra|Termine-le aujourd’hui pour +50 XP bonus
+Done! You got +50 bonus XP|Ferdig! Du fikk +50 bonus-XP|Færdig! Du fik +50 bonus-XP|Klart! Du fick +50 bonus-XP|Geschafft! Du hast +50 Bonus-XP|¡Hecho! Ganaste +50 XP extra|Fini ! Tu as gagné +50 XP bonus
+Music|Musikk|Musik|Musik|Musik|Música|Musique
+Piano|Piano|Klaver|Piano|Klavier|Piano|Piano
+Courses · 36 songs · hears your piano|Kurs · 36 sanger · hører pianoet ditt|Kurser · 36 sange · hører dit klaver|Kurser · 36 låtar · hör ditt piano|Kurse · 36 Lieder · hört dein Klavier|Cursos · 36 canciones · escucha tu piano|Cours · 36 chansons · écoute ton piano
+Not started|Ikke startet|Ikke startet|Inte påbörjad|Nicht begonnen|Sin empezar|Pas commencé
+Guitar|Gitar|Guitar|Gitarr|Gitarre|Guitarra|Guitare
+Chords · strumming · tuner|Akkorder · klimpring · stemmer|Akkorder · anslag · stemmer|Ackord · slag · stämapparat|Akkorde · Schlagen · Stimmgerät|Acordes · rasgueo · afinador|Accords · grattage · accordeur
+Drums|Trommer|Trommer|Trummor|Schlagzeug|Batería|Batterie
+Grooves · fills · rudiments|Rytmer · fills · grunnslag|Rytmer · fills · grundslag|Komp · fills · grundslag|Grooves · Fills · Grundschläge|Ritmos · redobles · rudimentos|Rythmes · breaks · rudiments
+Sing|Syng|Syng|Sjung|Singen|Cantar|Chanter
+Your voice range · sing along|Stemmeomfanget ditt · syng med|Dit stemmeleje · syng med|Ditt röstomfång · sjung med|Dein Stimmumfang · sing mit|Tu registro de voz · canta|Ta tessiture · chante avec
+More instruments|Flere instrumenter|Flere instrumenter|Fler instrument|Mehr Instrumente|Más instrumentos|Plus d’instruments
+Ukulele, violin, trumpet, xylophone and 9 more|Ukulele, fiolin, trompet, xylofon og 9 til|Ukulele, violin, trompet, xylofon og 9 mere|Ukulele, fiol, trumpet, xylofon och 9 till|Ukulele, Geige, Trompete, Xylofon und 9 mehr|Ukelele, violín, trompeta, xilófono y 9 más|Ukulélé, violon, trompette, xylophone et 9 autres
+Art|Kunst|Kunst|Konst|Kunst|Arte|Art
+Draw|Tegn|Tegn|Rita|Zeichnen|Dibujar|Dessiner
+Step-by-step lessons · make it yours|Steg-for-steg-kurs · gjør det til ditt|Trin-for-trin-lektioner · gør det til dit|Steg-för-steg-lektioner · gör det till ditt|Schritt-für-Schritt · mach es zu deinem|Lecciones paso a paso · hazlo tuyo|Leçons pas à pas · à ta façon
+My drawings|Tegningene mine|Mine tegninger|Mina teckningar|Meine Zeichnungen|Mis dibujos|Mes dessins
+Everything you finished|Alt du har laget ferdig|Alt det, du har lavet færdigt|Allt du har gjort klart|Alles, was du fertig hast|Todo lo que terminaste|Tout ce que tu as fini
+School|Skole|Skole|Skola|Schule|Escuela|École
+How music and art work · music, art, composers and famous artists · 36 lessons|Hvordan musikk og kunst virker · musikk, kunst, komponister og kjente kunstnere · 36 kurs|Sådan virker musik og kunst · musik, kunst, komponister og kendte kunstnere · 36 lektioner|Hur musik och konst fungerar · musik, konst, kompositörer och kända konstnärer · 36 lektioner|Wie Musik und Kunst funktionieren · Musik, Kunst, Komponisten und berühmte Künstler · 36 Lektionen|Cómo funcionan la música y el arte · música, arte, compositores y artistas famosos · 36 lecciones|Comment marchent la musique et l’art · musique, art, compositeurs et artistes célèbres · 36 leçons
+stars|stjerner|stjerner|stjärnor|Sterne|estrellas|étoiles
+Play & Create|Lek og lag|Leg og skab|Lek och skapa|Spielen & Gestalten|Juega y crea|Jouer et créer
+Beat maker|Beatmaker|Beatmaker|Beatmaker|Beatmaker|Crea ritmos|Boîte à rythmes
+Make your own music|Lag din egen musikk|Lav din egen musik|Gör din egen musik|Mach deine eigene Musik|Haz tu propia música|Crée ta propre musique
+Note games|Notespill|Nodespil|Notspel|Notenspiele|Juegos de notas|Jeux de notes
+Name notes · train your ears|Navngi noter · tren ørene|Navngiv noder · træn ørerne|Namnge noter · träna öronen|Noten benennen · Ohren trainieren|Nombra notas · entrena el oído|Nomme les notes · entraîne tes oreilles
+Flipbook|Bladrebok|Flipbog|Blädderbok|Daumenkino|Libro animado|Folioscope
+Draw a cartoon that moves|Tegn en tegnefilm som beveger seg|Tegn en tegnefilm der bevæger sig|Rita en tecknad film som rör sig|Zeichne einen Film, der sich bewegt|Dibuja una caricatura que se mueve|Dessine un dessin animé qui bouge
+Badges|Merker|Mærker|Märken|Abzeichen|Insignias|Badges
+First song|Første sang|Første sang|Första låten|Erstes Lied|Primera canción|Première chanson
+First beat|Første beat|Første beat|Första takten|Erster Beat|Primer ritmo|Premier rythme
+First strum|Første klimpring|Første anslag|Första slaget|Erster Schlag|Primer rasgueo|Premier grattage
+First song sung|Første sang sunget|Første sang sunget|Första låten sjungen|Erstes Lied gesungen|Primera canción cantada|Première chanson chantée
+First drawing|Første tegning|Første tegning|Första teckningen|Erste Zeichnung|Primer dibujo|Premier dessin
+Tried all five|Prøvd alle fem|Prøvet alle fem|Testat alla fem|Alle fünf probiert|Probaste las cinco|Essayé les cinq
+Daily challenge|Dagens utfordring|Dagens udfordring|Dagens utmaning|Tagesaufgabe|Reto diario|Défi du jour
+First school lesson|Første skoletime|Første skolelektion|Första skollektionen|Erste Schulstunde|Primera lección|Première leçon
+Music scholar|Musikkekspert|Musikekspert|Musikexpert|Musik-Profi|Experto en música|Pro de la musique
+Art scholar|Kunstekspert|Kunstekspert|Konstexpert|Kunst-Profi|Experto en arte|Pro de l’art
+Level 10 legend|Nivå 10-legende|Niveau 10-legende|Nivå 10-legend|Level-10-Legende|Leyenda de nivel 10|Légende niveau 10
+Tip: on a phone, turn it sideways for the piano, guitar and drums|Tips: på mobil, snu den på siden for piano, gitar og trommer|Tip: på en telefon, vend den på siden til klaver, guitar og trommer|Tips: på mobilen, vänd den på sidan för piano, gitarr och trummor|Tipp: Dreh das Handy quer für Klavier, Gitarre und Schlagzeug|Consejo: en el móvil, gíralo de lado para el piano, la guitarra y la batería|Astuce : sur un téléphone, tourne-le pour le piano, la guitare et la batterie
+Today’s 5 minute goal|Dagens 5-minuttersmål|Dagens 5-minutters mål|Dagens 5-minutersmål|Heutiges 5-Minuten-Ziel|Meta de 5 minutos de hoy|Objectif de 5 minutes du jour
+Back|Tilbake|Tilbage|Tillbaka|Zurück|Atrás|Retour
+PIANO|PIANO|KLAVER|PIANO|KLAVIER|PIANO|PIANO
+GUITAR|GITAR|GUITAR|GITARR|GITARRE|GUITARRA|GUITARE
+DRUMS|TROMMER|TROMMER|TRUMMOR|SCHLAGZEUG|BATERÍA|BATTERIE
+SING|SYNG|SYNG|SJUNG|SINGEN|CANTAR|CHANTER
+DRAW|TEGN|TEGN|RITA|ZEICHNEN|DIBUJAR|DESSINER
+MUSIC|MUSIKK|MUSIK|MUSIK|MUSIK|MÚSICA|MUSIQUE
+SCHOOL|SKOLE|SKOLE|SKOLA|SCHULE|ESCUELA|ÉCOLE
+PLAY & CREATE|LEK OG LAG|LEG OG SKAB|LEK OCH SKAPA|SPIELEN & GESTALTEN|JUEGA Y CREA|JOUER ET CRÉER
+MAKE IT YOURS|GJØR DET TIL DITT|GØR DET TIL DIT|GÖR DET TILL DITT|MACH ES ZU DEINEM|HAZLO TUYO|À TA FAÇON
+HOW YOU’RE DOING|SLIK GÅR DET|SÅDAN GÅR DET|SÅ GÅR DET|SO LÄUFT ES|CÓMO VAS|OÙ TU EN ES
+NOTE GAMES|NOTESPILL|NODESPIL|NOTSPEL|NOTENSPIELE|JUEGOS DE NOTAS|JEUX DE NOTES
+MUSIC SCHOOL|MUSIKKSKOLE|MUSIKSKOLE|MUSIKSKOLA|MUSIKSCHULE|ESCUELA DE MÚSICA|ÉCOLE DE MUSIQUE
+ART SCHOOL|KUNSTSKOLE|KUNSTSKOLE|KONSTSKOLA|KUNSTSCHULE|ESCUELA DE ARTE|ÉCOLE D’ART
+MUSIC WORLD|MUSIKKENS VERDEN|MUSIKKENS VERDEN|MUSIKENS VÄRLD|WELT DER MUSIK|MUNDO DE LA MÚSICA|MONDE DE LA MUSIQUE
+FAMOUS ARTISTS|KJENTE KUNSTNERE|KENDTE KUNSTNERE|KÄNDA KONSTNÄRER|BERÜHMTE KÜNSTLER|ARTISTAS FAMOSOS|ARTISTES CÉLÈBRES
+Pick a song|Velg en sang|Vælg en sang|Välj en låt|Wähle ein Lied|Elige una canción|Choisis une chanson
+Free play|Fri lek|Frit spil|Fritt spel|Freies Spiel|Juego libre|Jeu libre
+Play anything you like|Spill hva du vil|Spil hvad du vil|Spela vad du vill|Spiel, was du willst|Toca lo que quieras|Joue ce que tu veux
+Next up|Neste|Næste|Nästa|Als Nächstes|Siguiente|À suivre
+Sheet|Noter|Noder|Noter|Noten|Partitura|Partition
+Highway|Motorvei|Motorvej|Motorväg|Autobahn|Autopista|Autoroute
+Wait for me|Vent på meg|Vent på mig|Vänta på mig|Warte auf mich|Espérame|Attends-moi
+Play along|Spill med|Spil med|Spela med|Mitspielen|Toca a la vez|Joue avec
+My real piano|Mitt ekte piano|Mit rigtige klaver|Mitt riktiga piano|Mein echtes Klavier|Mi piano de verdad|Mon vrai piano
+More|Mer|Mere|Mer|Mehr|Más|Plus
+Listen|Lytt|Lyt|Lyssna|Anhören|Escuchar|Écouter
+Start lesson|Start timen|Start lektionen|Starta lektionen|Lektion starten|Empezar la lección|Commencer la leçon
+Tap Start — I’ll wait for each gold key|Trykk Start — jeg venter på hver gull-tangent|Tryk Start — jeg venter på hver guldtangent|Tryck Start — jag väntar på varje guldtangent|Tippe Start — ich warte auf jede goldene Taste|Toca Empezar — espero cada tecla dorada|Appuie sur Démarrer — j’attends chaque touche dorée
+Record|Ta opp|Optag|Spela in|Aufnehmen|Grabar|Enregistrer
+Slow|Sakte|Langsom|Långsam|Langsam|Lento|Lent
+Medium|Middels|Mellem|Mellan|Mittel|Medio|Moyen
+Normal|Normal|Normal|Normal|Normal|Normal|Normal
+Pick something|Velg noe|Vælg noget|Välj något|Wähle etwas|Elige algo|Choisis quelque chose
+Free strum|Fri klimpring|Frit anslag|Fritt slag|Frei schlagen|Rasgueo libre|Grattage libre
+Pick chords and strum anything|Velg akkorder og klimpre i vei|Vælg akkorder og spil løs|Välj ackord och spela vad du vill|Wähle Akkorde und schlag los|Elige acordes y rasguea lo que quieras|Choisis des accords et gratte ce que tu veux
+Tune my guitar|Stem gitaren|Stem min guitar|Stäm min gitarr|Gitarre stimmen|Afinar mi guitarra|Accorder ma guitare
+Uses the microphone|Bruker mikrofonen|Bruger mikrofonen|Använder mikrofonen|Nutzt das Mikrofon|Usa el micrófono|Utilise le micro
+Strumming patterns|Klimpremønstre|Anslagsmønstre|Slagmönster|Schlagmuster|Patrones de rasgueo|Rythmiques de grattage
+Chord change challenge|Akkordbytte-utfordring|Akkordskift-udfordring|Ackordbytesutmaning|Akkordwechsel-Challenge|Reto de cambio de acordes|Défi changement d’accords
+My real guitar|Min ekte gitar|Min rigtige guitar|Min riktiga gitarr|Meine echte Gitarre|Mi guitarra de verdad|Ma vraie guitare
+Strum|Klimpre|Slå an|Slå an|Schlagen|Rasguear|Gratter
+Pick a beat|Velg en rytme|Vælg en rytme|Välj en takt|Wähle einen Beat|Elige un ritmo|Choisis un rythme
+Bash the whole kit|Spill på hele settet|Spil på hele trommesættet|Spela på hela trumsetet|Spiel das ganze Schlagzeug|Toca toda la batería|Joue sur toute la batterie
+Rudiments|Grunnslag|Grundslag|Grundslag|Grundschläge|Rudimentos|Rudiments
+Grooves|Rytmer|Rytmer|Komp|Grooves|Ritmos|Rythmes
+Fills|Fills|Fills|Fills|Fills|Redobles|Breaks
+Hear it|Hør den|Hør den|Lyssna|Anhören|Escúchalo|Écoute
+Play|Spill|Spil|Spela|Spielen|Tocar|Jouer
+Stop|Stopp|Stop|Stopp|Stopp|Parar|Stop
+Test my voice|Test stemmen min|Test min stemme|Testa min röst|Stimme testen|Probar mi voz|Tester ma voix
+Free sing|Fri sang|Frit sang|Fri sång|Frei singen|Canto libre|Chant libre
+Daily warm-ups|Daglig oppvarming|Daglig opvarmning|Daglig uppvärmning|Tägliches Einsingen|Calentamientos diarios|Échauffements du jour
+Start|Start|Start|Starta|Start|Empezar|Démarrer
+Strings you strum|Strenger du klimprer på|Strenge du slår an|Strängar du slår an|Saiten zum Schlagen|Cuerdas que se rasguean|Cordes à gratter
+Strings you bow|Strenger med bue|Strenge med bue|Strängar med stråke|Saiten mit Bogen|Cuerdas con arco|Cordes à l’archet
+Blow into it|Blås i den|Blæs i den|Blås i den|Hineinblasen|Sopla|Souffle dedans
+Tap and pluck|Slå og knips|Slå og knips|Slå och knäpp|Schlagen und zupfen|Golpea y pulsa|Tape et pince
+Violin|Fiolin|Violin|Fiol|Geige|Violín|Violon
+Cello|Cello|Cello|Cello|Cello|Violonchelo|Violoncelle
+Recorder|Blokkfløyte|Blokfløjte|Blockflöjt|Blockflöte|Flauta dulce|Flûte à bec
+Flute|Fløyte|Fløjte|Flöjt|Querflöte|Flauta|Flûte
+Trumpet|Trompet|Trompet|Trumpet|Trompete|Trompeta|Trompette
+Harmonica|Munnspill|Mundharmonika|Munspel|Mundharmonika|Armónica|Harmonica
+Xylophone|Xylofon|Xylofon|Xylofon|Xylofon|Xilófono|Xylophone
+Steel drum|Steeldrum|Steeldrum|Steeldrum|Steeldrum|Tambor de acero|Steel-drum
+Bass guitar|Bassgitar|Basguitar|Elbas|Bassgitarre|Bajo|Guitare basse
+Chord songs|Akkordsanger|Akkordsange|Ackordlåtar|Akkord-Lieder|Canciones con acordes|Chansons à accords
+What do you want to draw|Hva vil du tegne|Hvad vil du tegne|Vad vill du rita|Was möchtest du zeichnen|¿Qué quieres dibujar|Qu’est-ce que tu veux dessiner
+What I like|Det jeg liker|Det jeg kan lide|Det jag gillar|Was ich mag|Lo que me gusta|Ce que j’aime
+Playground|Lekeplass|Legeplads|Lekplats|Spielplatz|Zona libre|Terrain de jeu
+A blank page — draw anything|Et blankt ark — tegn hva du vil|En blank side — tegn hvad du vil|En tom sida — rita vad du vill|Ein leeres Blatt — zeichne, was du willst|Una hoja en blanco — dibuja lo que quieras|Une page blanche — dessine ce que tu veux
+Finished drawings show up here|Ferdige tegninger vises her|Færdige tegninger vises her|Färdiga teckningar syns här|Fertige Zeichnungen erscheinen hier|Aquí aparecen tus dibujos terminados|Tes dessins finis apparaissent ici
+Basics|Grunnleggende|Grundlæggende|Grunder|Grundlagen|Lo básico|Les bases
+Realistic|Realistisk|Realistisk|Realistiskt|Realistisch|Realista|Réaliste
+Crazy good|Sykt bra|Vildt god|Galet bra|Mega gut|Increíble|Trop fort
+Crazy|Sprøtt|Skørt|Galet|Verrückt|Loco|Délirant
+People|Mennesker|Mennesker|Människor|Menschen|Personas|Personnes
+Animals|Dyr|Dyr|Djur|Tiere|Animales|Animaux
+Monsters|Monstre|Monstre|Monster|Monster|Monstruos|Monstres
+Ocean|Havet|Havet|Havet|Meer|Océano|Océan
+Space|Verdensrommet|Rummet|Rymden|Weltraum|Espacio|Espace
+Holidays|Høytider|Højtider|Högtider|Feiertage|Fiestas|Fêtes
+Sports|Sport|Sport|Sport|Sport|Deportes|Sports
+Real things|Ekte ting|Rigtige ting|Riktiga saker|Echte Dinge|Cosas reales|Vraies choses
+Nature|Natur|Natur|Natur|Natur|Naturaleza|Nature
+Food|Mat|Mad|Mat|Essen|Comida|Nourriture
+Vehicles|Kjøretøy|Køretøjer|Fordon|Fahrzeuge|Vehículos|Véhicules
+Fantasy|Fantasi|Fantasi|Fantasi|Fantasie|Fantasía|Fantastique
+Faces|Ansikter|Ansigter|Ansikten|Gesichter|Caras|Visages
+Shading|Skyggelegging|Skyggelægning|Skuggning|Schattieren|Sombreado|Ombrage
+make it yours|gjør det til ditt|gør det til dit|gör det till ditt|mach es zu deinem|hazlo tuyo|à ta façon
+Your path|Din vei|Din vej|Din väg|Dein Weg|Tu camino|Ton parcours
+What do you like to draw|Hva liker du å tegne|Hvad kan du lide at tegne|Vad gillar du att rita|Was zeichnest du gern|¿Qué te gusta dibujar|Qu’est-ce que tu aimes dessiner
+Pick as many as you want. Your path starts with these|Velg så mange du vil. Veien din starter med disse|Vælg så mange du vil. Din vej starter med dem|Välj så många du vill. Din väg börjar med dessa|Wähle so viele du willst. Dein Weg beginnt damit|Elige todos los que quieras. Tu camino empieza con estos|Choisis-en autant que tu veux. Ton parcours commence par ceux-là
+That’s me|Det er meg|Det er mig|Det är jag|Das bin ich|Así soy yo|C’est moi
+Save to My drawings|Lagre i Tegningene mine|Gem i Mine tegninger|Spara i Mina teckningar|In Meine Zeichnungen speichern|Guardar en Mis dibujos|Enregistrer dans Mes dessins
+Pencil|Blyant|Blyant|Blyerts|Bleistift|Lápiz|Crayon
+Soft shade|Myk skygge|Blød skygge|Mjuk skuggning|Weich schattieren|Sombra suave|Ombre douce
+Blend|Gni utover|Gnid ud|Blanda|Verwischen|Difuminar|Estomper
+Marker|Tusj|Tusch|Tuschpenna|Filzstift|Rotulador|Feutre
+Crayon|Fargestift|Farvekridt|Krita|Wachsmalstift|Cera|Craie grasse
+Watercolor|Vannfarge|Vandfarve|Vattenfärg|Wasserfarbe|Acuarela|Aquarelle
+Spray|Spray|Spray|Sprej|Spray|Espray|Aérosol
+Rainbow|Regnbue|Regnbue|Regnbåge|Regenbogen|Arcoíris|Arc-en-ciel
+Glitter|Glitter|Glimmer|Glitter|Glitzer|Purpurina|Paillettes
+Neon|Neon|Neon|Neon|Neon|Neón|Néon
+Shapes|Former|Former|Former|Formen|Formas|Formes
+Fill|Fyll|Fyld|Fyll|Füllen|Rellenar|Remplir
+Stamps|Stempler|Stempler|Stämplar|Stempel|Sellos|Tampons
+Eraser|Viskelær|Viskelæder|Suddgummi|Radiergummi|Goma|Gomme
+Mirror|Speil|Spejl|Spegel|Spiegel|Espejo|Miroir
+off|av|fra|av|aus|no|non
+Cream|Krem|Creme|Gräddvit|Creme|Crema|Crème
+White|Hvit|Hvid|Vit|Weiß|Blanco|Blanc
+Dots|Prikker|Prikker|Prickar|Punkte|Puntos|Points
+Lines|Linjer|Linjer|Linjer|Linien|Líneas|Lignes
+My name|Navnet mitt|Mit navn|Mitt namn|Mein Name|Mi nombre|Mon nom
+Replay|Spill av|Afspil|Spela upp|Abspielen|Repetir|Revoir
+Clear|Tøm|Ryd|Rensa|Löschen|Borrar|Effacer
+Brushes and tools|Pensler og verktøy|Pensler og værktøj|Penslar och verktyg|Pinsel und Werkzeuge|Pinceles y herramientas|Pinceaux et outils
+Colors|Farger|Farver|Färger|Farben|Colores|Couleurs
+Pick any color|Velg hvilken som helst farge|Vælg en farve|Välj valfri färg|Wähle eine Farbe|Elige cualquier color|Choisis une couleur
+Brush size|Penselstørrelse|Penselstørrelse|Penselstorlek|Pinselgröße|Tamaño del pincel|Taille du pinceau
+Undo|Angre|Fortryd|Ångra|Rückgängig|Deshacer|Annuler
+Redo|Gjør om|Gentag|Gör om|Wiederholen|Rehacer|Rétablir
+Watch again|Se igjen|Se igen|Titta igen|Nochmal ansehen|Ver otra vez|Revoir
+Next step|Neste steg|Næste trin|Nästa steg|Nächster Schritt|Siguiente paso|Étape suivante
+Show guide|Vis hjelpelinjer|Vis hjælpelinjer|Visa hjälplinjer|Hilfslinien zeigen|Mostrar guía|Afficher le guide
+Where do you want to draw|Hvor vil du tegne|Hvor vil du tegne|Var vill du rita|Wo möchtest du zeichnen|¿Dónde quieres dibujar|Où veux-tu dessiner
+On the screen|På skjermen|På skærmen|På skärmen|Auf dem Bildschirm|En la pantalla|Sur l’écran
+Trace the lines with your finger or the mouse. I’ll tell you how close you got|Følg linjene med fingeren eller musa. Jeg sier hvor nærme du kom|Følg stregerne med fingeren eller musen. Jeg siger, hvor tæt du kom|Följ linjerna med fingret eller musen. Jag säger hur nära du kom|Fahr die Linien mit dem Finger oder der Maus nach. Ich sage dir, wie nah du warst|Repasa las líneas con el dedo o el ratón. Te diré lo cerca que estuviste|Suis les lignes avec ton doigt ou la souris. Je te dirai si tu étais près
+On paper|På papir|På papir|På papper|Auf Papier|En papel|Sur papier
+Watch each step, then draw it with a real pencil. Take a photo at the end|Se hvert steg og tegn det med en ekte blyant. Ta et bilde til slutt|Se hvert trin og tegn det med en rigtig blyant. Tag et billede til sidst|Titta på varje steg och rita med en riktig penna. Ta ett foto på slutet|Schau jeden Schritt an und zeichne mit einem echten Stift. Mach am Ende ein Foto|Mira cada paso y dibújalo con un lápiz de verdad. Haz una foto al final|Regarde chaque étape et dessine avec un vrai crayon. Prends une photo à la fin
+Coloring page|Fargelegging|Malebog|Målarbild|Ausmalbild|Página para colorear|Coloriage
+Make it yours|Gjør det til ditt|Gør det til dit|Gör det till ditt|Mach es zu deinem|Hazlo tuyo|À ta façon
+Picture|Bilde|Billede|Bild|Bild|Dibujo|Image
+Move|Flytt|Flyt|Flytta|Bewegen|Mover|Déplacer
+Style|Stil|Stil|Stil|Stil|Estilo|Style
+Stickers|Klistremerker|Klistermærker|Klistermärken|Sticker|Pegatinas|Autocollants
+Surprise me|Overrask meg|Overrask mig|Överraska mig|Überrasch mich|Sorpréndeme|Surprends-moi
+Start over|Start på nytt|Start forfra|Börja om|Neu anfangen|Empezar de nuevo|Recommencer
+Drag to move|Dra for å flytte|Træk for at flytte|Dra för att flytta|Ziehen zum Bewegen|Arrastra para mover|Glisse pour déplacer
+Move it|Flytt den|Flyt den|Flytta den|Bewege es|Muévelo|Déplace-le
+Drag the picture above, or use these|Dra bildet over, eller bruk disse|Træk i billedet ovenfor, eller brug disse|Dra i bilden ovanför, eller använd dessa|Zieh das Bild oben oder nutze diese|Arrastra el dibujo de arriba o usa esto|Glisse l’image au-dessus ou utilise ceci
+Size|Størrelse|Størrelse|Storlek|Größe|Tamaño|Taille
+Turn|Snu|Drej|Vrid|Drehen|Girar|Tourner
+Center|Midten|Midten|Mitten|Mitte|Centro|Centre
+Left|Venstre|Venstre|Vänster|Links|Izquierda|Gauche
+Right|Høyre|Højre|Höger|Rechts|Derecha|Droite
+Up|Opp|Op|Upp|Hoch|Arriba|Haut
+Down|Ned|Ned|Ner|Runter|Abajo|Bas
+Reset|Tilbakestill|Nulstil|Återställ|Zurücksetzen|Reiniciar|Réinitialiser
+How many|Hvor mange|Hvor mange|Hur många|Wie viele|Cuántos|Combien
+One|Én|Én|En|Eins|Uno|Un
+Two|To|To|Två|Zwei|Dos|Deux
+Three|Tre|Tre|Tre|Drei|Tres|Trois
+Four|Fire|Fire|Fyra|Vier|Cuatro|Quatre
+Mirror twins|Speiltvillinger|Spejltvillinger|Spegeltvillingar|Spiegelzwillinge|Gemelos espejo|Jumeaux miroir
+Big + little|Stor + liten|Stor + lille|Stor + liten|Groß + klein|Grande + pequeño|Grand + petit
+Which way should it face|Hvilken vei skal den se|Hvilken vej skal den vende|Åt vilket håll ska den titta|In welche Richtung soll es schauen|¿Hacia dónde mira|De quel côté regarde-t-il
+Flipped|Speilvendt|Spejlvendt|Spegelvänd|Gespiegelt|Volteado|Retourné
+Add a scene around it|Legg til en scene rundt|Tilføj en scene omkring|Lägg till en miljö runt|Füge eine Szene hinzu|Añade un escenario|Ajoute un décor
+Nothing|Ingenting|Ingenting|Ingenting|Nichts|Nada|Rien
+Sunny day|Solskinnsdag|Solskinsdag|Solig dag|Sonniger Tag|Día soleado|Journée ensoleillée
+Starry night|Stjernenatt|Stjernenat|Stjärnnatt|Sternennacht|Noche estrellada|Nuit étoilée
+Under the sea|Under havet|Under havet|Under havet|Unter dem Meer|Bajo el mar|Sous la mer
+Party|Fest|Fest|Fest|Party|Fiesta|Fête
+Garden|Hage|Have|Trädgård|Garten|Jardín|Jardin
+Snowy|Snø|Sne|Snöigt|Verschneit|Nevado|Neige
+Add a frame|Legg til en ramme|Tilføj en ramme|Lägg till en ram|Füge einen Rahmen hinzu|Añade un marco|Ajoute un cadre
+No frame|Ingen ramme|Ingen ramme|Ingen ram|Kein Rahmen|Sin marco|Pas de cadre
+Simple|Enkel|Enkel|Enkel|Einfach|Simple|Simple
+Rounded|Avrundet|Afrundet|Rundad|Abgerundet|Redondeado|Arrondi
+Wavy|Bølget|Bølget|Vågig|Wellig|Ondulado|Ondulé
+Zigzag|Sikksakk|Zigzag|Sicksack|Zickzack|Zigzag|Zigzag
+Fancy corners|Pyntede hjørner|Pyntede hjørner|Snygga hörn|Schicke Ecken|Esquinas elegantes|Coins décorés
+Star border|Stjernekant|Stjernekant|Stjärnkant|Sternenrand|Borde de estrellas|Bordure d’étoiles
+Line color|Strekfarge|Stregfarve|Linjefärg|Linienfarbe|Color de línea|Couleur du trait
+Black|Svart|Sort|Svart|Schwarz|Negro|Noir
+Blue|Blå|Blå|Blå|Blau|Azul|Bleu
+Red|Rød|Rød|Röd|Rot|Rojo|Rouge
+Purple|Lilla|Lilla|Lila|Lila|Morado|Violet
+Green|Grønn|Grøn|Grön|Grün|Verde|Vert
+Brown|Brun|Brun|Brun|Braun|Marrón|Marron
+Paper color|Papirfarge|Papirfarve|Pappersfärg|Papierfarbe|Color del papel|Couleur du papier
+Sky blue|Himmelblå|Himmelblå|Himmelsblå|Himmelblau|Azul cielo|Bleu ciel
+Pink|Rosa|Lyserød|Rosa|Rosa|Rosa|Rose
+Mint|Mint|Mint|Mint|Mint|Menta|Menthe
+Lemon|Sitron|Citron|Citron|Zitrone|Limón|Citron
+Night|Natt|Nat|Natt|Nacht|Noche|Nuit
+Blueprint|Blåkopi|Blåtryk|Ritning|Bauplan|Plano|Plan
+Chalkboard|Tavle|Tavle|Svarta tavlan|Tafel|Pizarra|Tableau
+Paper pattern|Papirmønster|Papirmønster|Pappersmönster|Papiermuster|Estampado del papel|Motif du papier
+Plain|Blank|Blank|Slät|Einfach|Liso|Uni
+Grid|Rutenett|Ternet|Rutnät|Kariert|Cuadrícula|Quadrillage
+Stripes|Striper|Striber|Ränder|Streifen|Rayas|Rayures
+Hearts|Hjerter|Hjerter|Hjärtan|Herzen|Corazones|Cœurs
+Stars|Stjerner|Stjerner|Stjärnor|Sterne|Estrellas|Étoiles
+Line style|Strekstil|Stregstil|Linjestil|Linienstil|Estilo de línea|Style de trait
+Solid|Hel|Hel|Hel|Durchgezogen|Continua|Plein
+Dashed|Stiplet|Stiplet|Streckad|Gestrichelt|Discontinua|Tirets
+Dotted|Prikket|Prikket|Prickad|Gepunktet|Punteada|Pointillés
+Sketchy|Skissete|Skitseagtig|Skissig|Skizzenhaft|Boceto|Esquisse
+Line effect|Streikeffekt|Stregeffekt|Linjeeffekt|Linieneffekt|Efecto de línea|Effet de trait
+None|Ingen|Ingen|Ingen|Keiner|Ninguno|Aucun
+Glow|Glød|Glød|Glöd|Leuchten|Brillo|Lueur
+Shadow|Skygge|Skygge|Skugga|Schatten|Sombra|Ombre
+Bubble lines|Boblestreker|Boblestreger|Bubbellinjer|Blasenlinien|Líneas burbuja|Traits bulles
+Line thickness|Strektykkelse|Stregtykkelse|Linjetjocklek|Liniendicke|Grosor de línea|Épaisseur du trait
+Thin|Tynn|Tynd|Tunn|Dünn|Fina|Fin
+Thick|Tykk|Tyk|Tjock|Dick|Gruesa|Épais
+Extra thick|Ekstra tykk|Ekstra tyk|Extra tjock|Extra dick|Extra gruesa|Très épais
+Where is the light|Hvor kommer lyset fra|Hvor kommer lyset fra|Var kommer ljuset ifrån|Wo ist das Licht|¿Dónde está la luz|D’où vient la lumière
+Top left|Oppe til venstre|Øverst til venstre|Uppe till vänster|Oben links|Arriba a la izquierda|En haut à gauche
+Top right|Oppe til høyre|Øverst til højre|Uppe till höger|Oben rechts|Arriba a la derecha|En haut à droite
+Pencil color|Blyantfarge|Blyantfarve|Pennfärg|Stiftfarbe|Color del lápiz|Couleur du crayon
+Graphite|Grafitt|Grafit|Grafit|Graphit|Grafito|Graphite
+Charcoal|Kull|Kul|Kol|Kohle|Carboncillo|Fusain
+Sepia|Sepia|Sepia|Sepia|Sepia|Sepia|Sépia
+Red chalk|Rødkritt|Rødkridt|Rödkrita|Rötel|Sanguina|Sanguine
+Paper|Papir|Papir|Papper|Papier|Papel|Papier
+Bright white|Kritthvit|Kridhvid|Kritvit|Strahlend weiß|Blanco brillante|Blanc éclatant
+Grey toned|Grå tonet|Gråtonet|Grå tonad|Grau getönt|Tono gris|Teinté gris
+Tan toned|Beige tonet|Beigetonet|Beige tonad|Beige getönt|Tono beige|Teinté beige
+Blue toned|Blå tonet|Blåtonet|Blå tonad|Blau getönt|Tono azul|Teinté bleu
+How dark is the shading|Hvor mørk skal skyggen være|Hvor mørk skal skyggen være|Hur mörk ska skuggningen vara|Wie dunkel ist die Schattierung|¿Qué tan oscuro es el sombreado|Ombre plus ou moins foncée
+Soft|Myk|Blød|Mjuk|Weich|Suave|Doux
+Bold|Kraftig|Kraftig|Kraftig|Kräftig|Intenso|Fort
+Ready-made looks|Ferdige stiler|Færdige stilarter|Färdiga stilar|Fertige Looks|Estilos listos|Styles tout prêts
+Neon night|Neonnatt|Neonnat|Neonnatt|Neonnacht|Noche neón|Nuit néon
+Comic|Tegneserie|Tegneserie|Serietidning|Comic|Cómic|BD
+Candy|Godteri|Slik|Godis|Süßigkeiten|Caramelo|Bonbon
+Sketchbook|Skissebok|Skitsebog|Skissbok|Skizzenbuch|Cuaderno de bocetos|Carnet de croquis
+Bubbly|Boblete|Boblende|Bubblig|Sprudelnd|Burbujeante|Pétillant
+Classic|Klassisk|Klassisk|Klassisk|Klassisch|Clásico|Classique
+Old photo|Gammelt foto|Gammelt foto|Gammalt foto|Altes Foto|Foto antigua|Vieille photo
+Blue sketch|Blå skisse|Blå skitse|Blå skiss|Blaue Skizze|Boceto azul|Croquis bleu
+Museum|Museum|Museum|Museum|Museum|Museo|Musée
+My looks|Mine stiler|Mine stilarter|Mina stilar|Meine Looks|Mis estilos|Mes styles
+Save this look|Lagre denne stilen|Gem denne stil|Spara den här stilen|Diesen Look speichern|Guardar este estilo|Garder ce style
+Save this look to use again|Lagre stilen for å bruke den igjen|Gem stilen og brug den igen|Spara stilen och använd den igen|Speichern und wieder benutzen|Guarda este estilo para usarlo otra vez|Garde ce style pour le réutiliser
+Tap to add a sticker|Trykk for å legge til et klistremerke|Tryk for at tilføje et klistermærke|Tryck för att lägga till ett klistermärke|Tippe, um einen Sticker hinzuzufügen|Toca para añadir una pegatina|Touche pour ajouter un autocollant
+Speech bubble|Snakkeboble|Taleboble|Pratbubbla|Sprechblase|Bocadillo|Bulle
+Add|Legg til|Tilføj|Lägg till|Hinzufügen|Añadir|Ajouter
+Change words|Endre ordene|Skift ordene|Ändra orden|Wörter ändern|Cambiar palabras|Changer les mots
+Drag a sticker or bubble in the picture to move it. The one with the blue ring is picked|Dra et klistremerke eller en boble i bildet for å flytte det. Den med blå ring er valgt|Træk i et klistermærke eller en boble for at flytte det. Den med den blå ring er valgt|Dra i ett klistermärke eller en bubbla för att flytta. Den med blå ring är vald|Zieh einen Sticker oder eine Blase, um sie zu bewegen. Der mit dem blauen Ring ist ausgewählt|Arrastra una pegatina o un bocadillo para moverlo. El del anillo azul está elegido|Glisse un autocollant ou une bulle pour le déplacer. Celui avec l’anneau bleu est choisi
+Remove picked|Fjern valgt|Fjern valgt|Ta bort vald|Ausgewählten entfernen|Quitar elegido|Enlever la sélection
+Remove all|Fjern alle|Fjern alle|Ta bort alla|Alle entfernen|Quitar todo|Tout enlever
+Sign your name|Skriv navnet ditt|Skriv dit navn|Skriv ditt namn|Unterschreibe|Firma con tu nombre|Signe ton nom
+Your name|Navnet ditt|Dit navn|Ditt namn|Dein Name|Tu nombre|Ton nom
+Start drawing|Begynn å tegne|Begynd at tegne|Börja rita|Los zeichnen|Empieza a dibujar|Commencer à dessiner
+Close|Lukk|Luk|Stäng|Schließen|Cerrar|Fermer
+Try again|Prøv igjen|Prøv igen|Försök igen|Nochmal versuchen|Inténtalo otra vez|Réessaie
+Next lesson|Neste time|Næste lektion|Nästa lektion|Nächste Lektion|Siguiente lección|Leçon suivante
+Next|Neste|Næste|Nästa|Weiter|Siguiente|Suivant
+Finish|Ferdig|Færdig|Klar|Fertig|Terminar|Terminer
+Beautiful drawing|Nydelig tegning|Smuk tegning|Vacker teckning|Wunderschöne Zeichnung|Precioso dibujo|Magnifique dessin
+Nice drawing|Fin tegning|Flot tegning|Fin teckning|Schöne Zeichnung|Buen dibujo|Joli dessin
+You finished it|Du ble ferdig|Du blev færdig|Du blev klar|Du bist fertig|Lo terminaste|Tu l’as fini
+Great work on paper|Flott jobbet på papir|Flot arbejde på papir|Bra jobbat på papper|Toll gemacht auf Papier|Gran trabajo en papel|Beau travail sur papier
+Draw again|Tegn igjen|Tegn igen|Rita igen|Nochmal zeichnen|Dibujar otra vez|Redessiner
+Take a photo|Ta et bilde|Tag et billede|Ta ett foto|Foto machen|Hacer una foto|Prendre une photo
+Saved to My drawings|Lagret i Tegningene mine|Gemt i Mine tegninger|Sparad i Mina teckningar|In Meine Zeichnungen gespeichert|Guardado en Mis dibujos|Enregistré dans Mes dessins
+Lesson done|Timen er ferdig|Lektionen er færdig|Lektionen klar|Lektion geschafft|Lección terminada|Leçon terminée
+Perfect lesson|Perfekt time|Perfekt lektion|Perfekt lektion|Perfekte Lektion|Lección perfecta|Leçon parfaite
+LEVEL UP|NYTT NIVÅ|NYT NIVEAU|NY NIVÅ|LEVEL UP|SUBISTE DE NIVEL|NIVEAU SUPÉRIEUR
+You unlocked|Du låste opp|Du låste op|Du låste upp|Du hast freigeschaltet|Desbloqueaste|Tu as débloqué
+Try them|Prøv dem|Prøv dem|Testa dem|Ausprobieren|Pruébalos|Essaie-les
+Awesome|Kjempebra|Fedt|Grymt|Super|Genial|Génial
+Keep going — more surprises at the next levels|Fortsett — flere overraskelser på neste nivåer|Bliv ved — flere overraskelser på de næste niveauer|Fortsätt — fler överraskningar på nästa nivåer|Mach weiter — mehr Überraschungen auf den nächsten Levels|Sigue — más sorpresas en los siguientes niveles|Continue — d’autres surprises aux prochains niveaux
+You|Du|Du|Du|Du|Tú|Toi
+Your name and your avatar show on the home page|Navnet og avataren din vises på startsiden|Dit navn og din avatar vises på forsiden|Ditt namn och din avatar syns på startsidan|Dein Name und dein Avatar erscheinen auf der Startseite|Tu nombre y tu avatar salen en el inicio|Ton nom et ton avatar s’affichent sur l’accueil
+App colors|Appfarger|Appfarver|Appfärger|App-Farben|Colores de la app|Couleurs de l’appli
+Changes the colors of every page|Endrer fargene på alle sider|Ændrer farverne på alle sider|Ändrar färgerna på alla sidor|Ändert die Farben aller Seiten|Cambia los colores de todas las páginas|Change les couleurs de toutes les pages
+Letters|Bokstaver|Bogstaver|Bokstäver|Buchstaben|Letras|Lettres
+Round|Runde|Runde|Runda|Rund|Redondas|Rondes
+Handwritten|Håndskrift|Håndskrift|Handskrift|Handschrift|A mano|Manuscrites
+Chunky|Tykke|Tykke|Tjocka|Fett|Gruesas|Épaisses
+Storybook|Eventyrbok|Eventyrbog|Sagobok|Märchenbuch|Cuento|Livre de contes
+Typewriter|Skrivemaskin|Skrivemaskine|Skrivmaskin|Schreibmaschine|Máquina de escribir|Machine à écrire
+Home background|Bakgrunn på startsiden|Baggrund på forsiden|Bakgrund på startsidan|Hintergrund der Startseite|Fondo del inicio|Fond de l’accueil
+Music notes|Noter|Noder|Noter|Noten|Notas musicales|Notes de musique
+Waves|Bølger|Bølger|Vågor|Wellen|Olas|Vagues
+Fireworks|Fyrverkeri|Fyrværkeri|Fyrverkerier|Feuerwerk|Fuegos artificiales|Feux d’artifice
+Celebrations|Feiring|Fejring|Firanden|Feiern|Celebraciones|Fêtes
+What happens when you finish a lesson|Det som skjer når du blir ferdig med en time|Det, der sker, når du bliver færdig med en lektion|Vad som händer när du klarar en lektion|Was passiert, wenn du eine Lektion schaffst|Lo que pasa al terminar una lección|Ce qui se passe quand tu finis une leçon
+Confetti|Konfetti|Konfetti|Konfetti|Konfetti|Confeti|Confettis
+On|På|Til|På|An|Sí|Oui
+Off|Av|Fra|Av|Aus|No|Non
+Paper bits|Papirbiter|Papirstykker|Pappersbitar|Papierschnipsel|Trocitos de papel|Bouts de papier
+Notes|Noter|Noder|Noter|Noten|Notas|Notes
+My avatar|Min avatar|Min avatar|Min avatar|Mein Avatar|Mi avatar|Mon avatar
+Sparkles|Glitrer|Gnister|Gnistor|Funkeln|Destellos|Étincelles
+Dinos|Dinoer|Dinoer|Dinosar|Dinos|Dinos|Dinos
+Crowns|Kroner|Kroner|Kronor|Kronen|Coronas|Couronnes
+Rainbows|Regnbuer|Regnbuer|Regnbågar|Regenbögen|Arcoíris|Arcs-en-ciel
+Ta-da sound|Tadaa-lyd|Tadaa-lyd|Tada-ljud|Tada-Klang|Sonido tachán|Son tadaa
+Try it|Prøv det|Prøv det|Testa|Ausprobieren|Pruébalo|Essaie
+Piano key light|Lys på pianotangent|Lys på klavertangent|Ljus på pianotangent|Tastenlicht|Luz de las teclas|Lumière des touches
+The color of the key you should play next|Fargen på tangenten du skal spille nå|Farven på den tangent, du skal spille nu|Färgen på tangenten du ska spela nu|Die Farbe der Taste, die du als Nächstes spielst|El color de la tecla que tocas ahora|La couleur de la touche à jouer
+Gold|Gull|Guld|Guld|Gold|Dorado|Or
+Orange|Oransje|Orange|Orange|Orange|Naranja|Orange
+Drum pads|Trommeputer|Trommepads|Trumplattor|Drum-Pads|Pads de batería|Pads de batterie
+Reset all my customizing|Tilbakestill alt jeg har tilpasset|Nulstil alt, hvad jeg har tilpasset|Återställ allt jag har anpassat|Alles zurücksetzen|Restablecer todo lo personalizado|Tout réinitialiser
+Tap again to reset|Trykk igjen for å tilbakestille|Tryk igen for at nulstille|Tryck igen för att återställa|Nochmal tippen zum Zurücksetzen|Toca otra vez para restablecer|Touche encore pour réinitialiser
+Language|Språk|Sprog|Språk|Sprache|Idioma|Langue
+The words in the lessons are still in English|Ordene i timene er fortsatt på engelsk|Ordene i lektionerne er stadig på engelsk|Orden i lektionerna är fortfarande på engelska|Die Texte in den Lektionen sind noch auf Englisch|Los textos de las lecciones siguen en inglés|Les textes des leçons sont encore en anglais
+day streak|dager på rad|dage i træk|dagar i rad|Tage am Stück|días seguidos|jours d’affilée
+days practiced|dager øvd|dage øvet|dagar övat|Tage geübt|días practicados|jours pratiqués
+badges|merker|mærker|märken|Abzeichen|insignias|badges
+lessons done|timer fullført|lektioner klaret|lektioner klara|Lektionen geschafft|lecciones hechas|leçons faites
+Practice this week|Øving denne uka|Øvning denne uge|Övning den här veckan|Üben diese Woche|Práctica esta semana|Entraînement cette semaine
+Today|I dag|I dag|Idag|Heute|Hoy|Aujourd’hui
+Gold bars = you hit your 5-minute goal that day|Gullstolper = du nådde 5-minuttersmålet den dagen|Guldsøjler = du nåede dit 5-minutters mål den dag|Guldstaplar = du nådde 5-minutersmålet den dagen|Goldene Balken = Ziel von 5 Minuten geschafft|Barras doradas = cumpliste tu meta de 5 minutos ese día|Barres dorées = objectif de 5 minutes atteint ce jour-là
+Stars in every app|Stjerner i hver app|Stjerner i hver app|Stjärnor i varje app|Sterne in jeder App|Estrellas en cada app|Étoiles dans chaque appli
+Games|Spill|Spil|Spel|Spiele|Juegos|Jeux
+Rewards path|Belønningsstien|Belønningsvejen|Belöningsvägen|Belohnungsweg|Camino de premios|Chemin des récompenses
+Earn XP by finishing lessons. Every level unlocks something new|Tjen XP ved å fullføre timer. Hvert nivå låser opp noe nytt|Tjen XP ved at klare lektioner. Hvert niveau låser noget nyt op|Tjäna XP genom att klara lektioner. Varje nivå låser upp något nytt|Sammle XP mit Lektionen. Jedes Level schaltet etwas Neues frei|Gana XP terminando lecciones. Cada nivel desbloquea algo nuevo|Gagne des XP en finissant des leçons. Chaque niveau débloque quelque chose
+What do you want to learn|Hva vil du lære|Hvad vil du lære|Vad vill du lära dig|Was möchtest du lernen|¿Qué quieres aprender|Qu’est-ce que tu veux apprendre
+Music school|Musikkskole|Musikskole|Musikskola|Musikschule|Escuela de música|École de musique
+How music works — notes, rhythm, chords and your ears|Hvordan musikk virker — noter, rytme, akkorder og ørene dine|Sådan virker musik — noder, rytme, akkorder og dine ører|Hur musik fungerar — noter, rytm, ackord och dina öron|Wie Musik funktioniert — Noten, Rhythmus, Akkorde und deine Ohren|Cómo funciona la música — notas, ritmo, acordes y tu oído|Comment marche la musique — notes, rythme, accords et oreilles
+Art school|Kunstskole|Kunstskole|Konstskola|Kunstschule|Escuela de arte|École d’art
+How art works — colors, light, perspective and faces|Hvordan kunst virker — farger, lys, perspektiv og ansikter|Sådan virker kunst — farver, lys, perspektiv og ansigter|Hur konst fungerar — färger, ljus, perspektiv och ansikten|Wie Kunst funktioniert — Farben, Licht, Perspektive und Gesichter|Cómo funciona el arte — colores, luz, perspectiva y caras|Comment marche l’art — couleurs, lumière, perspective et visages
+Music world|Musikkens verden|Musikkens verden|Musikens värld|Welt der Musik|Mundo de la música|Monde de la musique
+Orchestras, instruments from every country and famous composers|Orkestre, instrumenter fra hele verden og kjente komponister|Orkestre, instrumenter fra hele verden og kendte komponister|Orkestrar, instrument från hela världen och kända kompositörer|Orchester, Instrumente aus aller Welt und berühmte Komponisten|Orquestas, instrumentos del mundo y compositores famosos|Orchestres, instruments du monde et compositeurs célèbres
+Famous artists|Kjente kunstnere|Kendte kunstnere|Kända konstnärer|Berühmte Künstler|Artistas famosos|Artistes célèbres
+Great artists — and how they painted|Store kunstnere — og hvordan de malte|Store kunstnere — og hvordan de malede|Stora konstnärer — och hur de målade|Große Künstler — und wie sie malten|Grandes artistas — y cómo pintaban|Grands artistes — et comment ils peignaient
+The music alphabet|Musikkalfabetet|Musikalfabetet|Musikalfabetet|Das Musik-Alphabet|El alfabeto musical|L’alphabet musical
+Note lengths|Notelengder|Nodelængder|Notlängder|Notenlängen|Duración de las notas|Durée des notes
+Beat and tempo|Takt og tempo|Takt og tempo|Takt och tempo|Takt und Tempo|Pulso y tempo|Pulsation et tempo
+Reading notes|Lese noter|Læse noder|Läsa noter|Noten lesen|Leer notas|Lire les notes
+Sharps and flats|Kryss og b-er|Kryds og b’er|Höjningar och sänkningar|Kreuze und Bs|Sostenidos y bemoles|Dièses et bémols
+Loud and soft|Sterkt og svakt|Kraftigt og svagt|Starkt och svagt|Laut und leise|Fuerte y suave|Fort et doux
+Happy and sad chords|Glade og triste akkorder|Glade og triste akkorder|Glada och ledsna ackord|Fröhliche und traurige Akkorde|Acordes alegres y tristes|Accords joyeux et tristes
+Steps, leaps and ears|Trinn, sprang og ører|Trin, spring og ører|Steg, språng och öron|Schritte, Sprünge und Ohren|Pasos, saltos y oído|Pas, sauts et oreilles
+Rhythm master|Rytmemester|Rytmemester|Rytmmästare|Rhythmus-Meister|Maestro del ritmo|Maître du rythme
+Rests: counting silence|Pauser: tell stillheten|Pauser: tæl stilheden|Pauser: räkna tystnaden|Pausen: Stille zählen|Silencios: contar el silencio|Silences : compter le silence
+Time signatures|Taktarter|Taktarter|Taktarter|Taktarten|Compases|Chiffrages de mesure
+Scales: do re mi|Skalaer: do re mi|Skalaer: do re mi|Skalor: do re mi|Tonleitern: do re mi|Escalas: do re mi|Gammes : do ré mi
+Music symbols|Musikksymboler|Musiksymboler|Musiksymboler|Musikzeichen|Símbolos musicales|Symboles musicaux
+Mixing colors|Blande farger|Blande farver|Blanda färger|Farben mischen|Mezclar colores|Mélanger les couleurs
+The color wheel|Fargesirkelen|Farvecirklen|Färgcirkeln|Der Farbkreis|La rueda de colores|Le cercle chromatique
+Warm and cool colors|Varme og kalde farger|Varme og kolde farver|Varma och kalla färger|Warme und kalte Farben|Colores cálidos y fríos|Couleurs chaudes et froides
+Light and dark colors|Lyse og mørke farger|Lyse og mørke farver|Ljusa och mörka färger|Helle und dunkle Farben|Colores claros y oscuros|Couleurs claires et foncées
+Light and shadow|Lys og skygge|Lys og skygge|Ljus och skugga|Licht und Schatten|Luz y sombra|Lumière et ombre
+Perspective|Perspektiv|Perspektiv|Perspektiv|Perspektive|Perspectiva|Perspective
+Drawing faces|Tegne ansikter|Tegne ansigter|Rita ansikten|Gesichter zeichnen|Dibujar caras|Dessiner des visages
+Shapes first|Former først|Former først|Former först|Zuerst Formen|Primero las formas|Les formes d’abord
+Shading styles|Skyggeteknikker|Skyggeteknikker|Skuggningstekniker|Schattier-Techniken|Estilos de sombreado|Techniques d’ombrage
+Where to put things|Hvor du plasserer ting|Hvor du placerer ting|Var man placerar saker|Wohin mit den Dingen|Dónde poner las cosas|Où placer les choses
+Cartoon feelings|Følelser i tegneserier|Følelser i tegneserier|Känslor i serier|Gefühle im Cartoon|Emociones en caricaturas|Émotions en dessin animé
+How cartoons move|Hvordan tegnefilm beveger seg|Hvordan tegnefilm bevæger sig|Hur tecknat rör sig|Wie Cartoons sich bewegen|Cómo se mueven los dibujos animados|Comment bougent les dessins animés
+The orchestra families|Orkesterfamiliene|Orkesterfamilierne|Orkesterns familjer|Die Orchesterfamilien|Las familias de la orquesta|Les familles de l’orchestre
+Instruments around the world|Instrumenter rundt i verden|Instrumenter rundt om i verden|Instrument runt om i världen|Instrumente aus aller Welt|Instrumentos del mundo|Instruments du monde entier
+Bach and Mozart|Bach og Mozart|Bach og Mozart|Bach och Mozart|Bach und Mozart|Bach y Mozart|Bach et Mozart
+More famous composers|Flere kjente komponister|Flere kendte komponister|Fler kända kompositörer|Weitere berühmte Komponisten|Más compositores famosos|D’autres compositeurs célèbres
+Listen|Lytt|Lyt|Lyssna|Anhören|Escuchar|Écouter
+My turn|Min tur|Min tur|Min tur|Ich bin dran|Mi turno|À moi
+TAP|TRYKK|TRYK|TRYCK|TIPPEN|TOCA|TAPE
+Draw it now|Tegn det nå|Tegn det nu|Rita det nu|Jetzt zeichnen|Dibújalo ahora|Dessine-le maintenant
+Hear the chord|Hør akkorden|Hør akkorden|Hör ackordet|Akkord anhören|Escucha el acorde|Écoute l’accord
+Hear 2 notes|Hør 2 noter|Hør 2 noder|Hör 2 toner|2 Noten anhören|Escucha 2 notas|Écoute 2 notes
+Hear the rhythm|Hør rytmen|Hør rytmen|Hör rytmen|Rhythmus anhören|Escucha el ritmo|Écoute le rythme
+Hear the scale|Hør skalaen|Hør skalaen|Hör skalan|Tonleiter anhören|Escucha la escala|Écoute la gamme
+Which letter is this note|Hvilken bokstav er denne noten|Hvilket bogstav er denne node|Vilken bokstav är den här noten|Welcher Buchstabe ist diese Note|¿Qué letra es esta nota|Quelle lettre est cette note
+Happy (major|Glad (dur|Glad (dur|Glad (dur|Fröhlich (Dur|Alegre (mayor|Joyeux (majeur
+Sad (minor|Trist (moll|Trist (mol|Ledsen (moll|Traurig (Moll|Triste (menor|Triste (mineur
+Higher|Høyere|Højere|Högre|Höher|Más agudo|Plus aigu
+Lower|Lavere|Lavere|Lägre|Tiefer|Más grave|Plus grave
+Step|Trinn|Trin|Steg|Schritt|Paso|Pas
+Leap|Sprang|Spring|Språng|Sprung|Salto|Saut
+Warm|Varm|Varm|Varm|Warm|Cálido|Chaud
+Cool|Kald|Kold|Kall|Kalt|Frío|Froid
+Name that note|Hvilken note er det|Hvilken node er det|Vilken not är det|Wie heißt die Note|Adivina la nota|Devine la note
+Find the key|Finn tangenten|Find tangenten|Hitta tangenten|Finde die Taste|Encuentra la tecla|Trouve la touche
+Higher or lower|Høyere eller lavere|Højere eller lavere|Högre eller lägre|Höher oder tiefer|Más agudo o más grave|Plus aigu ou plus grave
+Hear it again|Hør den igjen|Hør den igen|Lyssna igen|Nochmal anhören|Escúchalo otra vez|Réécoute
+Which note is this|Hvilken note er dette|Hvilken node er det|Vilken not är det här|Welche Note ist das|¿Qué nota es esta|Quelle note est-ce
+Music box|Spilledåse|Spilledåse|Speldosa|Spieluhr|Caja de música|Boîte à musique
+Organ|Orgel|Orgel|Orgel|Orgel|Órgano|Orgue
+Speed|Fart|Fart|Fart|Tempo|Velocidad|Vitesse
+Save|Lagre|Gem|Spara|Speichern|Guardar|Enregistrer
+My beats|Mine beats|Mine beats|Mina beats|Meine Beats|Mis ritmos|Mes rythmes
+Back to grid|Tilbake til rutenettet|Tilbage til gitteret|Tillbaka till rutnätet|Zurück zum Raster|Volver a la cuadrícula|Retour à la grille
+Name your beat|Gi beaten et navn|Giv dit beat et navn|Namnge ditt beat|Benenne deinen Beat|Ponle nombre a tu ritmo|Nomme ton rythme
+Tap squares to turn sounds on, or try a starter beat|Trykk på rutene for å slå på lyder, eller prøv en ferdig beat|Tryk på felterne for at tænde lyde, eller prøv et startbeat|Tryck på rutorna för att slå på ljud, eller testa ett färdigt beat|Tippe Felder an, um Klänge einzuschalten, oder probier einen Start-Beat|Toca los cuadros para activar sonidos o prueba un ritmo listo|Touche les cases pour activer les sons, ou essaie un rythme tout prêt
+Download|Last ned|Hent|Ladda ner|Herunterladen|Descargar|Télécharger
+Open|Åpne|Åbn|Öppna|Öffnen|Abrir|Ouvrir
+New|Ny|Ny|Ny|Neu|Nuevo|Nouveau
+Copy|Kopier|Kopiér|Kopiera|Kopieren|Copiar|Copier
+Delete|Slett|Slet|Radera|Löschen|Borrar|Supprimer
+Tap again to delete|Trykk igjen for å slette|Tryk igen for at slette|Tryck igen för att radera|Nochmal tippen zum Löschen|Toca otra vez para borrar|Touche encore pour supprimer
+Clear frame|Tøm bildet|Ryd billedet|Rensa bilden|Bild leeren|Borrar fotograma|Effacer l’image
+Save frame|Lagre bildet|Gem billedet|Spara bilden|Bild speichern|Guardar fotograma|Garder l’image
+Pen size|Pennstørrelse|Pennestørrelse|Pennstorlek|Stiftgröße|Tamaño del lápiz|Taille du stylo
+No drawings yet. Finish a lesson, or tap “Save to My drawings” in the Playground|Ingen tegninger ennå. Fullfør en time, eller trykk «Lagre i Tegningene mine» på Lekeplassen|Ingen tegninger endnu. Klar en lektion, eller tryk “Gem i Mine tegninger” på Legepladsen|Inga teckningar än. Klara en lektion eller tryck ”Spara i Mina teckningar” på Lekplatsen|Noch keine Zeichnungen. Schaffe eine Lektion oder tippe im Spielplatz auf „In Meine Zeichnungen speichern“|Aún no hay dibujos. Termina una lección o toca “Guardar en Mis dibujos” en la Zona libre|Pas encore de dessins. Finis une leçon ou touche « Enregistrer dans Mes dessins » dans le Terrain de jeu
+Mon|Man|Man|Mån|Mo|Lun|Lun
+Tue|Tir|Tir|Tis|Di|Mar|Mar
+Wed|Ons|Ons|Ons|Mi|Mié|Mer
+Thu|Tor|Tor|Tor|Do|Jue|Jeu
+Fri|Fre|Fre|Fre|Fr|Vie|Ven
+Sat|Lør|Lør|Lör|Sa|Sáb|Sam
+Sun|Søn|Søn|Sön|So|Dom|Dim
+Easy|Lett|Let|Lätt|Leicht|Fácil|Facile
+Birthday|Bursdag|Fødselsdag|Födelsedag|Geburtstag|Cumpleaños|Anniversaire
+Sing-alongs|Allsang|Fællessange|Allsång|Mitsinglieder|Para cantar|Chansons à chanter
+Famous tunes|Kjente melodier|Kendte melodier|Kända melodier|Berühmte Melodien|Melodías famosas|Airs célèbres
+More classics|Flere klassikere|Flere klassikere|Fler klassiker|Mehr Klassiker|Más clásicos|Plus de classiques
+Fun songs|Morsomme sanger|Sjove sange|Roliga låtar|Lustige Lieder|Canciones divertidas|Chansons rigolotes
+`;
+    const DICT = {};
+    RAW.trim().split('\n').forEach(line => { const p = line.split('|'); if(p.length !== 7) return; const d = DICT[p[0]] = {}; COLS.forEach((c, i) => d[c] = p[i + 1]); });
+    // words with numbers or names inside: {1} keeps the value, {t1} translates it too
+    const PATS = [
+      [/^Hi (.+)! What do you want to learn today$/, ['Hei {1}! Hva vil du lære i dag', 'Hej {1}! Hvad vil du lære i dag', 'Hej {1}! Vad vill du lära dig idag', 'Hallo {1}! Was möchtest du heute lernen', '¡Hola {1}! ¿Qué quieres aprender hoy', 'Salut {1} ! Qu’est-ce que tu veux apprendre aujourd’hui']],
+      [/^(\d+)-day streak$/, ['{1} dager på rad', '{1} dage i træk', '{1} dagar i rad', '{1} Tage am Stück', '{1} días seguidos', '{1} jours d’affilée']],
+      [/^Level (\d+) · (\d+) XP$/, ['Nivå {1} · {2} XP', 'Niveau {1} · {2} XP', 'Nivå {1} · {2} XP', 'Level {1} · {2} XP', 'Nivel {1} · {2} XP', 'Niveau {1} · {2} XP']],
+      [/^Level (\d+)$/, ['Nivå {1}', 'Niveau {1}', 'Nivå {1}', 'Level {1}', 'Nivel {1}', 'Niveau {1}']],
+      [/^(\d+) of (\d+)$/, ['{1} av {2}', '{1} af {2}', '{1} av {2}', '{1} von {2}', '{1} de {2}', '{1} sur {2}']],
+      [/^Keep going · (.+)$/, ['Fortsett · {t1}', 'Fortsæt · {t1}', 'Fortsätt · {t1}', 'Weitermachen · {t1}', 'Sigue · {t1}', 'Continue · {t1}']],
+      [/^Today’s challenge · (.+)$/, ['Dagens utfordring · {t1}', 'Dagens udfordring · {t1}', 'Dagens utmaning · {t1}', 'Tagesaufgabe · {t1}', 'Reto de hoy · {t1}', 'Défi du jour · {t1}']],
+      [/^(\d+) steps$/, ['{1} steg', '{1} trin', '{1} steg', '{1} Schritte', '{1} pasos', '{1} étapes']],
+      [/^(\d+) STEPS$/, ['{1} STEG', '{1} TRIN', '{1} STEG', '{1} SCHRITTE', '{1} PASOS', '{1} ÉTAPES']],
+      [/^STEP (\d+) OF (\d+)$/, ['STEG {1} AV {2}', 'TRIN {1} AF {2}', 'STEG {1} AV {2}', 'SCHRITT {1} VON {2}', 'PASO {1} DE {2}', 'ÉTAPE {1} SUR {2}']],
+      [/^(\d+) cards$/, ['{1} kort', '{1} kort', '{1} kort', '{1} Karten', '{1} tarjetas', '{1} cartes']],
+      [/^(\d+) notes$/, ['{1} noter', '{1} noder', '{1} toner', '{1} Noten', '{1} notas', '{1} notes']],
+      [/^Part (\d+) · (\d+) notes$/, ['Del {1} · {2} noter', 'Del {1} · {2} noder', 'Del {1} · {2} toner', 'Teil {1} · {2} Noten', 'Parte {1} · {2} notas', 'Partie {1} · {2} notes']],
+      [/^Whole song · (\d+) notes$/, ['Hele sangen · {1} noter', 'Hele sangen · {1} noder', 'Hela låten · {1} toner', 'Ganzes Lied · {1} Noten', 'Canción entera · {1} notas', 'Chanson entière · {1} notes']],
+      [/^Course · Piano Basics (\d+)$/, ['Kurs · Piano for nybegynnere {1}', 'Kursus · Klaver for begyndere {1}', 'Kurs · Piano för nybörjare {1}', 'Kurs · Klavier-Grundlagen {1}', 'Curso · Piano básico {1}', 'Cours · Piano débutant {1}']],
+      [/^All (\d+) songs$/, ['Alle {1} sanger', 'Alle {1} sange', 'Alla {1} låtar', 'Alle {1} Lieder', 'Las {1} canciones', 'Les {1} chansons']],
+      [/^(\d+) done$/, ['{1} ferdig', '{1} klaret', '{1} klara', '{1} geschafft', '{1} hechas', '{1} faites']],
+      [/^(\d+) days in a row$/, ['{1} dager på rad', '{1} dage i træk', '{1} dagar i rad', '{1} Tage am Stück', '{1} días seguidos', '{1} jours d’affilée']],
+      [/^(\d+) stars$/, ['{1} stjerner', '{1} stjerner', '{1} stjärnor', '{1} Sterne', '{1} estrellas', '{1} étoiles']],
+      [/^(\d+) drawings$/, ['{1} tegninger', '{1} tegninger', '{1} teckningar', '{1} Zeichnungen', '{1} dibujos', '{1} dessins']],
+      [/^(\d+) perfect lessons$/, ['{1} perfekte timer', '{1} perfekte lektioner', '{1} perfekta lektioner', '{1} perfekte Lektionen', '{1} lecciones perfectas', '{1} leçons parfaites']],
+      [/^(.+) \(not yet$/, ['{t1} (ikke ennå', '{t1} (ikke endnu', '{t1} (inte än', '{t1} (noch nicht', '{t1} (todavía no', '{t1} (pas encore']],
+      [/^Mirror: (\w+)$/, ['Speil: {t1}', 'Spejl: {t1}', 'Spegel: {t1}', 'Spiegel: {t1}', 'Espejo: {t1}', 'Miroir : {t1}']],
+      [/^Chords: (.+)$/, ['Akkorder: {1}', 'Akkorder: {1}', 'Ackord: {1}', 'Akkorde: {1}', 'Acordes: {1}', 'Accords : {1}']],
+      [/^You got (\d+) of (\d+) right$/, ['Du fikk {1} av {2} riktige', 'Du fik {1} af {2} rigtige', 'Du fick {1} av {2} rätt', 'Du hattest {1} von {2} richtig', 'Acertaste {1} de {2}', 'Tu as {1} bonnes réponses sur {2}']],
+      [/^You stayed (\d+)% on the lines$/, ['Du holdt deg {1} % på linjene', 'Du blev {1} % på stregerne', 'Du höll dig {1} % på linjerna', 'Du warst zu {1} % auf den Linien', 'Te mantuviste un {1} % en las líneas', 'Tu es resté à {1} % sur les lignes']],
+      [/^LEVEL UP! You reached level (\d+)$/, ['NYTT NIVÅ! Du nådde nivå {1}', 'NYT NIVEAU! Du nåede niveau {1}', 'NY NIVÅ! Du nådde nivå {1}', 'LEVEL UP! Du hast Level {1} erreicht', '¡SUBISTE! Llegaste al nivel {1}', 'NIVEAU SUPÉRIEUR ! Tu es au niveau {1}']],
+      [/^(\d+) XP to level (\d+)(.*)$/, ['{1} XP til nivå {2}', '{1} XP til niveau {2}', '{1} XP till nivå {2}', 'Noch {1} XP bis Level {2}', '{1} XP para el nivel {2}', '{1} XP avant le niveau {2}']],
+      [/^Reach level (\d+) to unlock this — (\d+) more XP\. Finish lessons to earn XP$/, ['Nå nivå {1} for å låse opp — {2} XP til. Fullfør timer for å tjene XP', 'Nå niveau {1} for at låse op — {2} XP mere. Klar lektioner for at tjene XP', 'Nå nivå {1} för att låsa upp — {2} XP till. Klara lektioner för att tjäna XP', 'Erreiche Level {1} zum Freischalten — noch {2} XP. Schaffe Lektionen für XP', 'Llega al nivel {1} para desbloquearlo — faltan {2} XP. Termina lecciones para ganar XP', 'Atteins le niveau {1} pour débloquer — encore {2} XP. Finis des leçons pour gagner des XP']],
+      [/^Yes! (.*)$/, ['Ja! {1}', 'Ja! {1}', 'Ja! {1}', 'Ja! {1}', '¡Sí! {1}', 'Oui ! {1}']],
+      [/^Not quite\. (.*)$/, ['Ikke helt. {1}', 'Ikke helt. {1}', 'Inte riktigt. {1}', 'Nicht ganz. {1}', 'Casi. {1}', 'Pas tout à fait. {1}']],
+      [/^Pick what your (.+) looks like — the picture changes as you choose$/, ['Velg hvordan den skal se ut — bildet endrer seg mens du velger', 'Vælg hvordan den skal se ud — billedet ændrer sig, mens du vælger', 'Välj hur den ska se ut — bilden ändras medan du väljer', 'Wähle, wie es aussieht — das Bild ändert sich sofort', 'Elige cómo es — el dibujo cambia mientras eliges', 'Choisis à quoi il ressemble — l’image change en direct']],
+      [/^(.+), step (\d+)$/, ['{1}, steg {2}', '{1}, trin {2}', '{1}, steg {2}', '{1}, Schritt {2}', '{1}, paso {2}', '{1}, étape {2}']]
+    ];
+    const detect = () => {
+      const saved = store.get('lang', null); if(saved && LANGS.some(l => l[0] === saved)) return saved;
+      for(const l of (navigator.languages || [navigator.language || 'en'])){
+        const c = String(l).toLowerCase().slice(0, 2);
+        if(['nb','nn','no'].includes(c)) return 'no';
+        if(COLS.includes(c)) return c;
+        if(c === 'en') return 'en';
+      }
+      return 'en';
+    };
+    let lang = detect();
+    const col = () => COLS.indexOf(lang);
+    const split = t => t.match(/^([^\p{L}\p{N}]*)([\s\S]*?)([^\p{L}\p{N}]*)$/u);
+    function trCore(core){
+      const d = DICT[core]; if(d && d[lang]) return d[lang];
+      for(const [re, outs] of PATS){
+        const m = core.match(re); if(!m) continue;
+        const tpl = outs[col()]; if(!tpl) return null;
+        return tpl.replace(/\{(t?)(\d)\}/g, (_, t, i) => t ? trPiece(m[+i]) : m[+i]);
+      }
+      return null;
+    }
+    const trPiece = w => { const s = split(w); if(!s) return w; const x = trCore(s[2]); return x == null ? w : s[1] + x + s[3]; };
+    function trText(en){
+      if(lang === 'en' || !en || !/\p{L}/u.test(en)) return en;
+      const s = split(en); if(!s || !s[2]) return en;
+      const t = trCore(s[2]);
+      return t == null ? en : s[1] + t + s[3];
+    }
+    // remember the English for every text we change, so switching language always starts from English
+    const origText = new WeakMap(), outText = new WeakMap(), origAttr = new WeakMap();
+    const ATTRS = ['placeholder', 'aria-label', 'title'];
+    const SKIP = 'script,style,textarea,input,select,.notr,[contenteditable="true"]';
+    function doText(n){
+      const p = n.parentElement; if(!p || p.closest(SKIP)) return;
+      const cur = n.nodeValue;
+      let en = origText.get(n);
+      if(en == null || cur !== outText.get(n)){ en = cur; origText.set(n, en); }
+      const out = trText(en);
+      outText.set(n, out);
+      if(out !== cur) n.nodeValue = out;
+    }
+    function doAttrs(el){
+      if(!el.getAttribute || el.closest('.notr')) return;
+      let rec = origAttr.get(el);
+      ATTRS.forEach(a => {
+        const cur = el.getAttribute(a); if(cur == null) return;
+        if(!rec){ rec = {}; origAttr.set(el, rec); }
+        if(!rec[a] || cur !== rec[a].out) rec[a] = { en:cur, out:cur };
+        const out = trText(rec[a].en);
+        rec[a].out = out;
+        if(out !== cur) el.setAttribute(a, out);
+      });
+    }
+    function walk(root){
+      if(!root) return;
+      if(root.nodeType === 3) return doText(root);
+      if(root.nodeType !== 1 || root.matches('script,style')) return;
+      doAttrs(root);
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+      let n; while((n = w.nextNode())){ if(n.nodeType === 3) doText(n); else doAttrs(n); }
+    }
+    const queue = new Set(); let queued = false;
+    const mo = new MutationObserver(recs => {
+      recs.forEach(r => { if(r.type === 'childList') r.addedNodes.forEach(x => queue.add(x)); else queue.add(r.target); });
+      if(!queued){ queued = true; queueMicrotask(flush); }
+    });
+    const observe = () => mo.observe(document.body, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:ATTRS });
+    function flush(){
+      queued = false;
+      const items = [...queue]; queue.clear();
+      mo.disconnect();
+      items.forEach(x => x.isConnected && walk(x));
+      mo.takeRecords();
+      observe();
+    }
+    function setLang(l){
+      lang = l; store.set('lang', l);
+      document.documentElement.lang = l === 'no' ? 'nb' : l;
+      mo.disconnect(); walk(document.body); mo.takeRecords(); observe();
+      syncBtn();
+    }
+    const cur = () => LANGS.find(x => x[0] === lang) || LANGS[0];
+    function syncBtn(){ const b = $('langBtn'); if(b) b.textContent = `${cur()[2]} ${cur()[1]}`; }
+    I18N = {
+      get lang(){ return lang; },
+      picker(parent){
+        const row = document.createElement('div'); row.className = 'custchips notr';
+        LANGS.forEach(([id, name, flag]) => {
+          const b = document.createElement('button'); b.className = 'custchip'; b.textContent = `${flag} ${name}`;
+          b.setAttribute('aria-pressed', id === lang);
+          b.onclick = () => { setLang(id); [...row.children].forEach((x, i) => x.setAttribute('aria-pressed', LANGS[i][0] === id)); };
+          row.appendChild(b);
+        });
+        parent.appendChild(row);
+      }
+    };
+    const lb = $('langBtn'); if(lb) lb.onclick = () => go('custom');
+    document.documentElement.lang = lang === 'no' ? 'nb' : lang;
+    syncBtn();
+    walk(document.body);
+    observe();
   })();
 
   // ================= START =================
