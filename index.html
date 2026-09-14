@@ -658,6 +658,15 @@
   .wheel{width:170px;height:170px;border-radius:50%;background:conic-gradient(#e0404f,#f28c28,#f6c945,#9bcf3e,#3bb273,#17c3b2,#2f7fd8,#7b4fc9,#c94fa3,#e0404f);box-shadow:inset 0 0 0 30px #fffaf055}
   .artpic{width:min(300px,100%);height:auto;border-radius:12px;background:#fffaf0}
   .cresc{font-family:Georgia,serif}
+  .emojipic{font-size:46px;letter-spacing:.08em;line-height:1.2}
+  .timesig{display:inline-grid;justify-items:center;padding:4px 16px;border-radius:10px;background:#fffaf0;font:700 38px/0.95 Georgia,serif}
+  .symgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;width:100%}
+  .symgrid span{display:grid;justify-items:center;gap:4px;padding:8px;border-radius:12px;background:#fffaf0}
+  .symgrid svg{width:64px;height:auto}
+  .symgrid b{font-size:13px}
+  .feelpic{width:96px;height:auto}
+  .framerow{display:flex;gap:6px;justify-content:center}
+  .framerow svg{width:62px;height:auto}
   .taplane{position:relative;width:100%;height:34px;border-radius:10px;background:#efe6d2;overflow:hidden}
   .taplane .tmark{position:absolute;top:6px;bottom:6px;border-left:3px solid #2a2330;background:#2a233014}
   .taplane .tap{position:absolute;top:0;bottom:0;width:4px;margin-left:-2px;background:#d7263d;border-radius:2px}
@@ -892,7 +901,7 @@
       <div class="tiles">
         <button class="tile wide" data-go="schoolMenu">
           <span class="art school" aria-hidden="true">🎼🎨</span>
-          <span class="txt"><b>School</b><span>How music and art work · rhythm, notes, chords, colors, light, faces · 17 lessons</span></span>
+          <span class="txt"><b>School</b><span>How music and art work · music, art, composers and famous artists · 36 lessons</span></span>
         </button>
       </div>
 
@@ -7113,8 +7122,168 @@
         { t:'quiz', q:'What should you draw first?', choices:['Tiny details','Big simple shapes','The shading'], a:1, why:'Big shapes first, details last.' },
         { t:'try', title:'Try it for real!', text:'Draw a cat from simple shapes.', lesson:'cat' } ] }
     ];
+    // ---- more lessons: extra music + art, music world, famous artists ----
+    const snippet = (id, max) => { const s = SONGS.find(x => x.id === id); if(!s) return; const beat = 60/(s.bpm || 100); let t = 0; s.list.slice(0, max || 16).forEach(n => { blip(n.m, t, Math.max(.15, n.dur*beat*.9), .42); t += n.dur*beat; }); };
+    const EMO = s => `<div class="emojipic">${s}</div>`;
+    const RESTS = `<svg class="artpic" viewBox="0 0 220 90" aria-label="Rests"><g stroke="#8d8190" stroke-width="1.2">${[20,32,44,56,68].map(y => `<line x1="6" x2="214" y1="${y}" y2="${y}"/>`).join('')}</g>
+      <rect x="30" y="32" width="22" height="7" fill="#2a2330"/><rect x="92" y="37" width="22" height="7" fill="#2a2330"/>
+      <path d="M156 22 L166 34 L158 44 L168 56 Q156 52 160 64 Q146 54 160 50 L150 38 Z" fill="#2a2330"/>
+      <g font-size="10" font-weight="800" fill="#6d6272" text-anchor="middle"><text x="41" y="86">4 beats</text><text x="103" y="86">2 beats</text><text x="159" y="86">1 beat</text></g></svg>`;
+    const TIMESIG = (a, b) => `<div class="timesig"><b>${a}</b><b>${b}</b></div>`;
+    const SYMBOLS = `<div class="symgrid">
+      <span><svg viewBox="0 0 60 50"><g stroke="#2a2330"><line x1="30" y1="6" x2="30" y2="44" stroke-width="2"/><line x1="38" y1="6" x2="38" y2="44" stroke-width="6"/></g><circle cx="20" cy="20" r="3.5" fill="#2a2330"/><circle cx="20" cy="31" r="3.5" fill="#2a2330"/></svg><b>Repeat</b></span>
+      <span><svg viewBox="0 0 60 50"><path d="M12 34 Q30 6 48 34" fill="none" stroke="#2a2330" stroke-width="4"/><circle cx="30" cy="30" r="4" fill="#2a2330"/></svg><b>Fermata (hold)</b></span>
+      <span><svg viewBox="0 0 60 50"><ellipse cx="16" cy="36" rx="7" ry="5" fill="#2a2330"/><ellipse cx="44" cy="36" rx="7" ry="5" fill="#2a2330"/><path d="M18 26 Q30 16 42 26" fill="none" stroke="#2a2330" stroke-width="2.5"/></svg><b>Tie</b></span>
+      <span><svg viewBox="0 0 60 50"><ellipse cx="24" cy="36" rx="8" ry="6" fill="#2a2330"/><line x1="31" y1="34" x2="31" y2="6" stroke="#2a2330" stroke-width="2.5"/><circle cx="42" cy="36" r="3" fill="#2a2330"/></svg><b>Dot (+ half)</b></span></div>`;
+    const HATCH = `<div class="symgrid">
+      <span><svg viewBox="0 0 60 60"><rect x="4" y="4" width="52" height="52" fill="#fffaf0" stroke="#cdbfa3"/><g stroke="#2a2330" stroke-width="1.6">${[10,18,26,34,42,50].map(x => `<line x1="${x}" y1="8" x2="${x - 6}" y2="52"/>`).join('')}</g></svg><b>Hatching</b></span>
+      <span><svg viewBox="0 0 60 60"><rect x="4" y="4" width="52" height="52" fill="#fffaf0" stroke="#cdbfa3"/><g stroke="#2a2330" stroke-width="1.4">${[10,18,26,34,42,50].map(x => `<line x1="${x}" y1="8" x2="${x - 6}" y2="52"/><line x1="8" y1="${x}" x2="52" y2="${x - 6}"/>`).join('')}</g></svg><b>Cross-hatching</b></span>
+      <span><svg viewBox="0 0 60 60"><rect x="4" y="4" width="52" height="52" fill="#fffaf0" stroke="#cdbfa3"/><g fill="#2a2330">${Array.from({ length:70 }, (_, i) => `<circle cx="${8 + (i*37 % 44)}" cy="${8 + (i*23 % 44)}" r="${i % 3 ? 1.2 : 1.8}"/>`).join('')}</g></svg><b>Stippling</b></span>
+      <span><svg viewBox="0 0 60 60"><defs><linearGradient id="sch-bl" x1="0" x2="1"><stop offset="0" stop-color="#2a2330"/><stop offset="1" stop-color="#fffaf0"/></linearGradient></defs><rect x="4" y="4" width="52" height="52" fill="url(#sch-bl)" stroke="#cdbfa3"/></svg><b>Blending</b></span></div>`;
+    const THIRDS = `<svg class="artpic" viewBox="0 0 210 140" aria-label="Rule of thirds"><rect width="210" height="140" fill="#cfe6f5"/><rect y="93" width="210" height="47" fill="#9bcf6e"/>
+      <g stroke="#2f7fd8" stroke-width="1.2" stroke-dasharray="5 4"><line x1="70" x2="70" y1="0" y2="140"/><line x1="140" x2="140" y1="0" y2="140"/><line x1="0" x2="210" y1="47" y2="47"/><line x1="0" x2="210" y1="93" y2="93"/></g>
+      <circle cx="140" cy="47" r="15" fill="#f6c945"/><path d="M60 93 L70 60 L80 93 Z" fill="#3a7a3a"/></svg>`;
+    const FEEL = mood => { const brow = { happy:'M36 38 Q44 34 52 38 M68 38 Q76 34 84 38', sad:'M36 36 Q44 40 52 40 M68 40 Q76 40 84 36', angry:'M36 34 L52 42 M68 42 L84 34', surprised:'M36 32 Q44 26 52 32 M68 32 Q76 26 84 32' }[mood];
+      const mouth = { happy:'M44 72 Q60 88 76 72', sad:'M44 80 Q60 66 76 80', angry:'M46 78 L74 78', surprised:'M54 76 A6 8 0 1 0 66 76 A6 8 0 1 0 54 76' }[mood];
+      return `<svg class="feelpic" viewBox="0 0 120 110" aria-label="A cartoon face"><circle cx="60" cy="56" r="46" fill="#ffe08a" stroke="#2a2330" stroke-width="3"/><path d="${brow}" fill="none" stroke="#2a2330" stroke-width="3.5" stroke-linecap="round"/><circle cx="44" cy="50" r="4.5" fill="#2a2330"/><circle cx="76" cy="50" r="4.5" fill="#2a2330"/><path d="${mouth}" fill="none" stroke="#2a2330" stroke-width="3.5" stroke-linecap="round"/></svg>`; };
+    const FRAMES = `<div class="framerow">${[20, 48, 76, 48].map((y, i) => `<svg viewBox="0 0 60 90"><rect x="2" y="2" width="56" height="86" rx="4" fill="#fffaf0" stroke="#cdbfa3"/><line x1="4" x2="56" y1="82" y2="82" stroke="#8d8190"/><ellipse cx="30" cy="${y}" rx="${y > 70 ? 10 : 8}" ry="${y > 70 ? 6 : 8}" fill="#e0404f"/><text x="8" y="14" font-size="9" font-weight="800" fill="#6d6272">${i + 1}</text></svg>`).join('')}</div>`;
+    const SWIRLS = `<svg class="artpic" viewBox="0 0 210 140" aria-label="Swirly night sky in the style of Van Gogh"><rect width="210" height="140" fill="#1d3a78"/>
+      <g fill="none" stroke-linecap="round" stroke-width="5"><path d="M10 50 Q40 20 70 50 T130 50 T190 40" stroke="#7fb0ef"/><path d="M20 70 Q60 40 100 70 T180 66" stroke="#b9d4f7"/><path d="M96 56 A14 14 0 1 1 110 42" stroke="#f6e27a"/></g>
+      <circle cx="170" cy="24" r="12" fill="#f6d94a"/><circle cx="170" cy="24" r="18" fill="none" stroke="#f6e27a" stroke-width="3"/><g fill="#f6e27a"><circle cx="40" cy="22" r="6"/><circle cx="120" cy="18" r="5"/></g>
+      <path d="M26 140 Q30 80 44 60 Q50 90 56 140 Z" fill="#12261a"/><path d="M80 140 L80 118 L120 108 L170 118 L170 140 Z" fill="#2b2f4a"/></svg>`;
+    const DABS = `<svg class="artpic" viewBox="0 0 210 140" aria-label="Dabs of color in the style of Monet"><rect width="210" height="140" fill="#9cc7c4"/>${Array.from({ length:90 }, (_, i) => { const x = (i*47) % 210, y = 50 + (i*29) % 90, c = ['#cfe3a2','#79a86a','#f2c1d1','#e3e9f7','#5b8f9a','#f7e59a'][i % 6]; return `<ellipse cx="${x}" cy="${y}" rx="${6 + i % 5}" ry="3" fill="${c}" opacity=".85"/>`; }).join('')}
+      ${[[50,80],[120,100],[170,70]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="18" ry="6" fill="#4f8f58"/><circle cx="${x}" cy="${y - 4}" r="5" fill="#f28bb5"/>`).join('')}</svg>`;
+    const WAVE = `<svg class="artpic" viewBox="0 0 210 140" aria-label="A big wave in the style of Hokusai"><rect width="210" height="140" fill="#efe2c4"/>
+      <path d="M0 140 L0 90 Q40 30 96 40 Q130 46 120 70 Q110 58 94 62 Q106 76 90 90 Q140 92 210 70 L210 140 Z" fill="#1f3e78"/>
+      <path d="M96 40 Q130 46 120 70 Q110 58 94 62" fill="none" stroke="#fbf7ec" stroke-width="5" stroke-linecap="round"/><g fill="#fbf7ec">${[[98,38],[108,40],[118,46],[124,54]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5"/>`).join('')}</g>
+      <path d="M150 100 L170 76 L190 100 Z" fill="#6b7a99"/><path d="M162 86 L170 76 L178 86 Z" fill="#fbf7ec"/></svg>`;
+    const CUBIST = `<svg class="artpic" viewBox="0 0 210 150" aria-label="A face made of shapes in a cubist style"><rect width="210" height="150" fill="#e9d8b4"/>
+      <path d="M60 20 L110 12 L118 80 L70 120 L50 70 Z" fill="#e8a37a" stroke="#2a2330" stroke-width="2.5"/><path d="M110 12 L160 30 L150 110 L118 80 Z" fill="#7fa6c9" stroke="#2a2330" stroke-width="2.5"/>
+      <path d="M72 48 L94 40 L92 56 Z" fill="#fff" stroke="#2a2330" stroke-width="2"/><circle cx="86" cy="49" r="4" fill="#2a2330"/><ellipse cx="136" cy="56" rx="10" ry="6" fill="#fff" stroke="#2a2330" stroke-width="2"/><circle cx="136" cy="56" r="3.5" fill="#2a2330"/>
+      <path d="M118 60 L104 92 L122 92" fill="none" stroke="#2a2330" stroke-width="2.5"/><path d="M88 104 Q104 96 126 104" fill="none" stroke="#c0392b" stroke-width="4"/></svg>`;
+    const FAMILY_Q = () => { const items = [['🎻 Violin','Strings'],['🎸 Harp','Strings'],['🎷 Saxophone','Woodwinds'],['🪈 Flute','Woodwinds'],['🎺 Trumpet','Brass'],['📯 French horn','Brass'],['🥁 Drum','Percussion'],['🪘 Timpani','Percussion']], it = pickRand(items), fams = ['Strings','Woodwinds','Brass','Percussion'];
+      return { q:`Which family is the ${it[0].slice(it[0].indexOf(' ') + 1).toLowerCase()} in?`, pic:EMO(it[0].split(' ')[0]), choices:fams, a:fams.indexOf(it[1]), why:`The ${it[0].slice(it[0].indexOf(' ') + 1).toLowerCase()} belongs to the ${it[1].toLowerCase()} family.` }; };
+    const FEEL_Q = () => { const moods = [['happy','😊 Happy'],['sad','😢 Sad'],['angry','😠 Angry'],['surprised','😮 Surprised']], m = pickRand(moods), ch = shuffle(moods);
+      return { q:'How does this face feel?', pic:FEEL(m[0]), choices:ch.map(x => x[1]), a:ch.indexOf(m), why:'Look at the eyebrows and the mouth — they show the feeling.' }; };
+    const SCALE_Q = () => { const up = Math.random() < .5, notes = ['C4','D4','E4','F4','G4','A4','B4','C5'];
+      return { q:'Did the scale go up or down?', hear:hear('▶ Hear the scale', () => tune(up ? notes : notes.slice().reverse(), .22)), choices:['⬆️ Up','⬇️ Down'], a:up ? 0 : 1, why:up ? 'It climbed from low to high.' : 'It walked down from high to low.' }; };
+    LESSONS.push(
+      // 🎼 music school extras
+      { id:'m-rests', track:'music', e:'🤫', name:'Rests: counting silence', cards:[
+        { t:'info', title:'Silence is music too', text:'A <b>rest</b> means “don’t play” — but keep counting! Every note length has a matching rest.', pic:RESTS },
+        { t:'info', title:'Hear the gaps', text:'Listen: play, play, rest, play. The rest is a quiet beat.', hear:hear('▶ Listen', () => { [0, 1, 3].forEach(b => blip(72, b*.5, .4, .45)); for(let i = 0; i < 4; i++) click(i*.5, i === 0); }) },
+        { t:'quiz', q:'What do you do on a rest?', choices:['Play loud','Stay quiet and keep counting','Stop the song'], a:1, why:'Rests are silent beats — keep counting.' },
+        { t:'quiz', q:'The rest that sits ON the line lasts…', pic:RESTS, choices:['4 beats','2 beats','1 beat'], a:1, why:'The half rest sits on the line like a hat: 2 beats. The whole rest hangs down: 4 beats.' },
+        { t:'tap', q:'Tap ta, ta, (rest), ta — skip the gap!', beats:[1,1,2], bpm:90 } ] },
+      { id:'m-time', track:'music', e:'⏱️', name:'Time signatures', cards:[
+        { t:'info', title:'Two numbers at the start', text:'The <b>time signature</b> tells you how beats are grouped. The top number is how many beats are in each bar.', pic:TIMESIG(4, 4) },
+        { t:'info', title:'4/4 marches, 3/4 waltzes', text:'<b>4/4</b> goes 1-2-3-4 (most pop songs). <b>3/4</b> goes 1-2-3, 1-2-3 — like a waltz or Happy Birthday.', pic:`<div class="swrow">${TIMESIG(4, 4)}${TIMESIG(3, 4)}</div>`, hear:hear('▶ Hear 4/4 then 3/4', () => { for(let i = 0; i < 8; i++) click(i*.4, i % 4 === 0); for(let i = 0; i < 6; i++) click(3.6 + i*.4, i % 3 === 0); }) },
+        { t:'quiz', q:'In 3/4 time, how many beats are in a bar?', pic:TIMESIG(3, 4), choices:['2','3','4'], a:1, why:'The top number says 3.' },
+        { t:'quiz', q:'A waltz usually counts…', choices:['1-2-3, 1-2-3','1-2-3-4','1-2, 1-2'], a:0, why:'Waltzes swing in threes.' },
+        { t:'quiz', q:'Listen. Is it counting in 3 or in 4?', hear:hear('▶ Listen', () => { for(let i = 0; i < 9; i++) click(i*.42, i % 3 === 0); }), choices:['In 3','In 4'], a:0, why:'The loud click came every 3 beats.' } ] },
+      { id:'m-scales', track:'music', e:'🪜', name:'Scales: do re mi', cards:[
+        { t:'info', title:'A musical ladder', text:'A <b>scale</b> is notes going up step by step. The <b>C major scale</b> uses all the white keys from C to C: do, re, mi, fa, sol, la, ti, do!', pic:keysPic(['C','D','E','F','G','A','B'], true), hear:hear('▶ Do re mi…', () => tune(['C4','D4','E4','F4','G4','A4','B4','C5'], .35)) },
+        { t:'info', title:'Minor scales sound darker', text:'The <b>A minor scale</b> uses the same white keys, but starts on A. It sounds sadder!', hear:hear('▶ A minor scale', () => tune(['A3','B3','C4','D4','E4','F4','G4','A4'], .35)) },
+        { t:'quiz', q:'Which note comes after "mi"?', choices:['Re','Fa','Sol'], a:1, why:'Do, re, mi, fa, sol, la, ti, do.' },
+        { t:'quiz', gen:SCALE_Q }, { t:'quiz', gen:EAR_MAJMIN },
+        { t:'quiz', q:'How many different notes are in a major scale?', choices:['5','7','12'], a:1, why:'Seven notes, then do comes back an octave higher.' } ] },
+      { id:'m-symbols', track:'music', e:'🔁', name:'Music symbols', cards:[
+        { t:'info', title:'Road signs for music', text:'Music has signs that tell you what to do: <b>repeat</b> a part, <b>hold</b> a note longer, <b>tie</b> two notes together, or add half the length with a <b>dot</b>.', pic:SYMBOLS },
+        { t:'quiz', q:'Two dots next to a thick line mean…', choices:['Go back and repeat','Play very loud','The end'], a:0, why:'That’s a repeat sign.' },
+        { t:'quiz', q:'A dot after a half note (2 beats) makes it last…', choices:['2 beats','3 beats','4 beats'], a:1, why:'The dot adds half: 2 + 1 = 3 beats.' },
+        { t:'quiz', q:'The eye-shaped fermata means…', choices:['Hold the note longer','Play faster','Skip the note'], a:0, why:'A fermata says: hold it as long as you like.' } ] },
+      // 🎨 art school extras
+      { id:'a-hatch', track:'art', e:'✏️', name:'Shading styles', cards:[
+        { t:'info', title:'Four ways to shade', text:'Lines close together look dark. <b>Hatching</b> = lines. <b>Cross-hatching</b> = crossed lines. <b>Stippling</b> = dots. <b>Blending</b> = smooth, rubbed shading.', pic:HATCH },
+        { t:'quiz', q:'Shading made of tiny dots is called…', choices:['Hatching','Stippling','Blending'], a:1, why:'Stippling uses dots — more dots = darker.' },
+        { t:'quiz', q:'How do you make hatching look darker?', choices:['Draw the lines closer together','Draw fewer lines','Use an eraser'], a:0, why:'Closer lines look darker.' },
+        { t:'try', title:'Try it for real!', text:'Use the 🌫️ soft pencil and 👆 blend tool on a realistic egg.', lesson:'regg' } ] },
+      { id:'a-thirds', track:'art', e:'📐', name:'Where to put things', cards:[
+        { t:'info', title:'The rule of thirds', text:'Split your page into 3 × 3 boxes. Putting the important thing where the lines cross often looks better than the exact middle!', pic:THIRDS },
+        { t:'quiz', q:'In the picture, where is the sun?', pic:THIRDS, choices:['Exactly in the middle','Where two lines cross','In a corner'], a:1, why:'It’s on a crossing point — that’s the rule of thirds.' },
+        { t:'quiz', q:'Things drawn bigger look…', choices:['Closer or more important','Farther away','Invisible'], a:0, why:'Big usually means close or important.' },
+        { t:'try', title:'Try it for real!', text:'Draw a sun — then use ✋ Move to place it on a crossing point.', lesson:'sun' } ] },
+      { id:'a-feel', track:'art', e:'😃', name:'Cartoon feelings', cards:[
+        { t:'info', title:'Eyebrows do the talking', text:'Change just the <b>eyebrows</b> and <b>mouth</b> and the same face can feel happy, sad, angry or surprised.', pic:`<div class="swrow">${['happy','sad','angry','surprised'].map(FEEL).join('')}</div>` },
+        { t:'quiz', gen:FEEL_Q }, { t:'quiz', gen:FEEL_Q }, { t:'quiz', gen:FEEL_Q },
+        { t:'try', title:'Try it for real!', text:'Draw a face and give it your favorite feeling.', lesson:'face' } ] },
+      { id:'a-anim', track:'art', e:'🎞️', name:'How cartoons move', cards:[
+        { t:'info', title:'Lots of pictures, very fast', text:'Cartoons are many drawings called <b>frames</b>. Each one changes a tiny bit. Flip through them fast and your brain sees movement!', pic:FRAMES },
+        { t:'info', title:'Squash and stretch', text:'When a ball hits the ground, draw it a little <b>squashed</b>. It makes the bounce look alive — look at frame 3.', pic:FRAMES },
+        { t:'quiz', q:'One drawing in an animation is called a…', choices:['Frame','Page','Scene'], a:0, why:'Each picture is a frame.' },
+        { t:'quiz', q:'To show movement, each frame should change…', choices:['A tiny bit','Completely','Not at all'], a:0, why:'Small changes look smooth.' },
+        { t:'try', title:'Try it for real!', text:'Make your own bouncing ball in the Flipbook.', view:'flip', btn:'🎞️ Open Flipbook' } ] },
+      // 🎻 music world
+      { id:'w-orch', track:'world', e:'🎻', name:'The orchestra families', cards:[
+        { t:'info', title:'Four families', text:'An orchestra has 4 instrument families: <b>strings</b> (violin, cello, harp), <b>woodwinds</b> (flute, clarinet), <b>brass</b> (trumpet, tuba) and <b>percussion</b> (drums, xylophone).', pic:EMO('🎻 🪈 🎺 🥁') },
+        { t:'info', title:'How they make sound', text:'Strings <b>vibrate</b>. Woodwinds use <b>air</b> over a hole or a reed. Brass players <b>buzz their lips</b>. Percussion is <b>hit, shaken or scraped</b>.', hear:hear('▶ Hear a buzz, a pluck and a hit', () => { blip(60, 0, .6, .35, 'sawtooth'); blip(72, .8, .5, .4, 'triangle'); click(1.6, true); }) },
+        { t:'quiz', gen:FAMILY_Q }, { t:'quiz', gen:FAMILY_Q }, { t:'quiz', gen:FAMILY_Q },
+        { t:'quiz', q:'How do brass players make a sound?', choices:['Buzz their lips','Hit it with sticks','Pluck strings'], a:0, why:'They buzz their lips into the mouthpiece.' },
+        { t:'try', title:'Play them!', text:'Try the violin, flute, trumpet and more.', view:'instHub', btn:'🎻 More instruments' } ] },
+      { id:'w-world', track:'world', e:'🌍', name:'Instruments around the world', cards:[
+        { t:'info', title:'Every country has its sound', text:'The <b>steel drum</b> comes from Trinidad. The <b>sitar</b> from India. The <b>didgeridoo</b> from Australia. <b>Bagpipes</b> from Scotland. The <b>koto</b> from Japan. The <b>djembe</b> drum from West Africa.', pic:EMO('🇹🇹 🇮🇳 🇦🇺 🏴 🇯🇵 🌍') },
+        { t:'quiz', q:'The didgeridoo comes from…', choices:['Australia','Japan','Scotland'], a:0, why:'Aboriginal Australians have played it for a very long time.' },
+        { t:'quiz', q:'Which country do bagpipes come from?', choices:['India','Scotland','Trinidad'], a:1, why:'Bagpipes are famous in Scotland.' },
+        { t:'quiz', q:'The steel drum was invented in…', choices:['Trinidad','Japan','Brazil'], a:0, why:'Steel drums (steelpans) come from Trinidad and Tobago.' },
+        { t:'quiz', q:'The koto, a long string instrument, is from…', choices:['Japan','Australia','Scotland'], a:0, why:'The koto is Japan’s national instrument.' } ] },
+      { id:'w-bach', track:'world', e:'🎹', name:'Bach and Mozart', cards:[
+        { t:'info', title:'Johann Sebastian Bach (1685–1750)', text:'Bach lived in Germany and wrote over 1,000 pieces, many for organ and church choirs. This <b>Minuet in G</b> comes from a music notebook of his family.', hear:hear('▶ Minuet in G', () => snippet('minuet', 14)) },
+        { t:'info', title:'Wolfgang Amadeus Mozart (1756–1791)', text:'Mozart from Austria wrote his first music when he was about <b>5 years old</b>! He also wrote 12 variations on the tune we know as <b>Twinkle Twinkle Little Star</b>.', hear:hear('▶ The Twinkle tune', () => snippet('twinkle', 14)) },
+        { t:'quiz', q:'About how old was Mozart when he started writing music?', choices:['5','15','50'], a:0, why:'He was a child star at about 5.' },
+        { t:'quiz', q:'Which instrument did Bach write lots of music for?', choices:['Organ','Electric guitar','Drum kit'], a:0, why:'Bach was a famous organ player.' },
+        { t:'quiz', q:'Mozart wrote variations on which tune?', choices:['Twinkle Twinkle','Jingle Bells','Happy Birthday'], a:0, why:'The French song “Ah vous dirai-je, Maman” — the Twinkle tune.' },
+        { t:'try', title:'Play it!', text:'Learn Minuet in G on the piano.', view:'piano', arg:'minuet', btn:'🎹 Play Minuet in G' } ] },
+      { id:'w-beet', track:'world', e:'🎼', name:'Beethoven', cards:[
+        { t:'info', title:'Ludwig van Beethoven (1770–1827)', text:'Beethoven was born in Germany. He slowly went <b>deaf</b> — but kept writing amazing music by hearing it in his head!', hear:hear('▶ Ode to Joy', () => snippet('ode', 15)) },
+        { t:'info', title:'Ode to Joy and Für Elise', text:'<b>Ode to Joy</b> comes from his 9th Symphony, written when he could not hear anymore. <b>Für Elise</b> is one of the most famous piano pieces ever.', hear:hear('▶ Für Elise', () => snippet('elise', 18)) },
+        { t:'quiz', q:'What happened to Beethoven’s hearing?', choices:['He became deaf','He heard extra well','Nothing'], a:0, why:'He lost his hearing but kept composing.' },
+        { t:'quiz', q:'Which tune is by Beethoven?', choices:['Ode to Joy','Jingle Bells','Greensleeves'], a:0, why:'Ode to Joy is from his 9th Symphony.' },
+        { t:'try', title:'Play it!', text:'Learn Ode to Joy on the piano.', view:'piano', arg:'ode', btn:'🎹 Play Ode to Joy' } ] },
+      { id:'w-more', track:'world', e:'🏆', name:'More famous composers', cards:[
+        { t:'info', title:'Vivaldi', text:'<b>Antonio Vivaldi</b> from Italy wrote <b>The Four Seasons</b> — music that paints spring, summer, autumn and winter.', hear:hear('▶ Spring', () => snippet('spring', 16)) },
+        { t:'info', title:'Grieg', text:'<b>Edvard Grieg</b> from Norway wrote <b>In the Hall of the Mountain King</b>. It starts sneaky and quiet and gets faster and louder!', hear:hear('▶ Mountain King', () => snippet('mountain', 14)) },
+        { t:'info', title:'Joplin', text:'<b>Scott Joplin</b> from the USA was the “King of Ragtime”. His bouncy piece is <b>The Entertainer</b>.', hear:hear('▶ The Entertainer', () => snippet('entertainer', 16)) },
+        { t:'quiz', q:'Who wrote The Four Seasons?', choices:['Vivaldi','Grieg','Joplin'], a:0, why:'Antonio Vivaldi.' },
+        { t:'quiz', q:'Which country was Grieg from?', choices:['Norway','Italy','USA'], a:0, why:'Edvard Grieg was Norwegian.' },
+        { t:'quiz', q:'Listen. Which piece is it?', hear:hear('▶ Listen', () => snippet('entertainer', 16)), choices:['The Entertainer','Spring','Mountain King'], a:0, why:'That bouncy ragtime is The Entertainer.' } ] },
+      // 🖼️ famous artists
+      { id:'f-leo', track:'artists', e:'🧑‍🎨', name:'Leonardo da Vinci', cards:[
+        { t:'info', title:'Painter and inventor (1452–1519)', text:'Leonardo from Italy painted the <b>Mona Lisa</b> with her mysterious smile. He also drew ideas for flying machines — hundreds of years before planes!', pic:EMO('🖼️ 🚁 📓') },
+        { t:'info', title:'Soft, smoky shading', text:'Leonardo blended shadows so softly there are no hard lines — the Italian word is <b>sfumato</b> (“like smoke”). It’s what makes faces look real.', pic:FACE },
+        { t:'quiz', q:'Which famous painting did Leonardo make?', choices:['Mona Lisa','The Starry Night','The Great Wave'], a:0, why:'The Mona Lisa.' },
+        { t:'quiz', q:'Besides painting, Leonardo drew ideas for…', choices:['Flying machines','Video games','Phones'], a:0, why:'His notebooks are full of inventions.' },
+        { t:'try', title:'Try it for real!', text:'Draw a realistic face with soft shading.', lesson:'realface' } ] },
+      { id:'f-gogh', track:'artists', e:'🌻', name:'Vincent van Gogh', cards:[
+        { t:'info', title:'Swirls and thick paint (1853–1890)', text:'Van Gogh from the Netherlands painted with <b>thick, swirly brushstrokes</b> and bold colors. His most famous painting is <b>The Starry Night</b>. He also loved painting sunflowers.', pic:SWIRLS },
+        { t:'info', title:'Feelings in color', text:'Van Gogh sold very few paintings while he was alive. Today he is one of the most loved artists in the world.' },
+        { t:'quiz', q:'Van Gogh’s paint strokes were…', choices:['Thick and swirly','Tiny dots only','Invisible'], a:0, why:'You can see every swirly brushstroke.' },
+        { t:'quiz', q:'Which painting is by Van Gogh?', choices:['The Starry Night','Mona Lisa','The Great Wave'], a:0, why:'The Starry Night.' },
+        { t:'try', title:'Try it for real!', text:'Paint a swirly night sky in the Playground with the 🌈 or 💧 brushes.', view:'draw', btn:'🎨 Open Playground' } ] },
+      { id:'f-monet', track:'artists', e:'🪷', name:'Claude Monet', cards:[
+        { t:'info', title:'Painting light (1840–1926)', text:'Monet from France painted <b>outside</b> to catch sunlight. He used quick <b>dabs</b> of color. This style is called <b>Impressionism</b>.', pic:DABS },
+        { t:'info', title:'The same thing, again and again', text:'Monet painted his <b>water lily pond</b> about 250 times, and haystacks at different times of day — because the light was always different.' },
+        { t:'quiz', q:'Monet’s style is called…', choices:['Impressionism','Cubism','Cartoon'], a:0, why:'Impressionism — quick dabs that show light.' },
+        { t:'quiz', q:'What did Monet love to paint in his garden?', choices:['Water lilies','Robots','Dinosaurs'], a:0, why:'His famous water lily pond.' } ] },
+      { id:'f-hoku', track:'artists', e:'🌊', name:'Hokusai', cards:[
+        { t:'info', title:'The Great Wave (1760–1849)', text:'Katsushika Hokusai from Japan made <b>The Great Wave off Kanagawa</b> — a giant wave with Mount Fuji tiny in the back. It’s a <b>woodblock print</b>: carved wood, inked and pressed onto paper.', pic:WAVE },
+        { t:'quiz', q:'What is small in the back of The Great Wave?', pic:WAVE, choices:['Mount Fuji','A castle','The moon'], a:0, why:'Mount Fuji — small because it’s far away (perspective!).' },
+        { t:'quiz', q:'A woodblock print is made by…', choices:['Carving wood, inking it and pressing paper on it','Taking a photo','Painting with fingers'], a:0, why:'Carve, ink, press — you can print many copies.' } ] },
+      { id:'f-pic', track:'artists', e:'🔷', name:'Picasso', cards:[
+        { t:'info', title:'Faces from every side (1881–1973)', text:'Pablo Picasso from Spain helped invent <b>Cubism</b>: he broke things into shapes and showed the front and the side of a face at the same time!', pic:CUBIST },
+        { t:'info', title:'A blue time', text:'Early on, Picasso painted almost everything in blues. People call it his <b>Blue Period</b>.' },
+        { t:'quiz', q:'Cubism shows things as…', choices:['Shapes, from many sides at once','Tiny dots','Swirls'], a:0, why:'Picasso’s cubist faces mix front and side views.' },
+        { t:'quiz', q:'Picasso’s Blue Period paintings were mostly…', choices:['Blue','Pink','Rainbow'], a:0, why:'Mostly shades of blue.' },
+        { t:'try', title:'Try it for real!', text:'Draw a face in the Playground using only straight-edged shapes.', view:'draw', btn:'🎨 Open Playground' } ] },
+      { id:'f-frida', track:'artists', e:'🌺', name:'Frida Kahlo', cards:[
+        { t:'info', title:'Painting herself (1907–1954)', text:'Frida Kahlo from Mexico painted many <b>self-portraits</b> with flowers, animals and bright Mexican colors. After a bad bus accident she painted from her bed using a mirror.', pic:EMO('🌺 🐒 🦜 🪞') },
+        { t:'quiz', q:'Frida Kahlo was from…', choices:['Mexico','Japan','Norway'], a:0, why:'She lived in Mexico City.' },
+        { t:'quiz', q:'A painting of yourself is called a…', choices:['Self-portrait','Landscape','Still life'], a:0, why:'Self-portrait.' },
+        { t:'try', title:'Try it for real!', text:'Draw a cartoon of yourself with flowers around it.', lesson:'cartoonme' } ] }
+    );
     SCHOOL_LIST = LESSONS.map(x => ({ id:x.id, name:`${x.e} ${x.name}` }));
-    const TRACKS = [['music','🎼 Music school','How music works — notes, rhythm, chords and your ears'], ['art','🎨 Art school','How art works — colors, light, perspective and faces']];
+    const TRACKS = [['music','🎼 Music school','How music works — notes, rhythm, chords and your ears'], ['art','🎨 Art school','How art works — colors, light, perspective and faces'],
+      ['world','🎻 Music world','Orchestras, instruments from every country and famous composers'], ['artists','🖼️ Famous artists','Great artists — and how they painted']];
+    const TRACK_LABEL = { music:'MUSIC SCHOOL', art:'ART SCHOOL', world:'MUSIC WORLD', artists:'FAMOUS ARTISTS' };
 
     // ---- menu ----
     function menu(){
@@ -7141,7 +7310,7 @@
       finished = false;
       cards = L.cards.map(c => c.gen ? { t:'quiz', ...c.gen() } : c);
       idx = 0; right = 0; total = cards.filter(c => c.t === 'quiz' || c.t === 'tap').length;
-      $('schTitle').innerHTML = `<small>${L.track === 'music' ? 'MUSIC SCHOOL' : 'ART SCHOOL'}</small>${L.e} ${L.name}`;
+      $('schTitle').innerHTML = `<small>${TRACK_LABEL[L.track] || 'SCHOOL'}</small>${L.e} ${L.name}`;
       show();
     }
     function progressBar(){
@@ -7163,7 +7332,8 @@
       nextBtn.onclick = next;
       if(c.t === 'info'){ foot.appendChild(nextBtn); return; }
       if(c.t === 'try'){
-        const tryB = mkEl('button', 'btn', '✏️ Draw it now'); tryB.onclick = () => { finish(true); go('draw', c.lesson); };
+        const tryB = mkEl('button', 'btn', c.btn || '✏️ Draw it now');
+        tryB.onclick = () => { finish(true); if(c.view) go(c.view, c.arg); else go('draw', c.lesson); };
         foot.append(tryB, nextBtn); return;
       }
       if(c.t === 'quiz'){
