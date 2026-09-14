@@ -604,6 +604,65 @@
   .movebox input[type=range]{flex:1;accent-color:var(--ink)}
   .modeask .chips-pick .taste{font-size:14px;padding:8px 12px}
 
+  /* ---- school: music + art lessons with cards ---- */
+  .art.school{background:linear-gradient(135deg,#1f2a44,#3a2a4a);display:grid;place-items:center;font-size:44px;letter-spacing:.1em}
+  .schsub{margin:-6px 0 4px;color:var(--muted);font-weight:700}
+  .schoolview{grid-template-rows:auto auto minmax(0,1fr);background:radial-gradient(120% 60% at 50% 0,var(--home-glow,#241f2b),var(--lacquer) 70%)}
+  .schdots{display:flex;gap:5px;justify-content:center;padding:4px 14px 8px}
+  .schdots i{flex:1;max-width:44px;height:6px;border-radius:999px;background:#ffffff18}
+  .schdots i.done{background:var(--brass-deep)}
+  .schdots i.now{background:var(--brass-lit)}
+  .schwrap{max-width:620px;margin:0 auto;padding:6px 14px 28px;display:grid;gap:12px}
+  .schcard{display:grid;gap:12px;justify-items:center;text-align:center;padding:20px 18px;border-radius:20px;background:var(--paper);color:var(--ink);box-shadow:0 10px 30px #0007}
+  .schcard h2{margin:0;font-size:22px;text-wrap:balance}
+  .schtext{margin:0;font-size:17px;font-weight:700;line-height:1.45;text-wrap:pretty}
+  .schtext b{color:#6b3fa0}
+  .schpic{display:grid;justify-items:center;gap:6px;width:100%}
+  .schpic svg{max-width:100%}
+  .hearbtn{background:var(--ink);border-color:var(--ink);color:var(--brass-lit)}
+  .schfoot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+  .schchoices{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;width:100%}
+  .schchoice{min-height:52px;padding:10px 12px;border-radius:14px;border:2px solid #cdbfa3;background:#fffaf0;color:var(--ink);font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+  .schchoice:hover{border-color:var(--ink)}
+  .schchoice.right{border-color:#2f9e6e;background:#d9f5e6}
+  .schchoice.wrong{border-color:#d7263d;background:#fde0e3;animation:nope .32s}
+  .schwhy{margin:0;min-height:1.4em;font-weight:800;font-size:15px}
+  .nicon{width:40px;height:58px;color:#2a2330}
+  .schchoice .nicon{width:34px;height:48px}
+  .rpic{display:flex;align-items:flex-end;gap:2px}
+  .rpic .nicon{width:32px;height:46px}
+  .notelens{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%}
+  .notelens span{display:grid;justify-items:center;gap:2px;padding:8px 4px;border-radius:12px;background:#fffaf0}
+  .notelens small{color:var(--ink-soft);font-weight:800}
+  .staffpic{width:220px;height:auto;background:#fffaf0;border-radius:12px}
+  .facepics{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%}
+  .facepics .staffpic{width:100%}
+  .keyspic{width:260px;height:auto}
+  .bigletters{font:800 30px var(--ui);letter-spacing:.14em}
+  .bigletters span{color:var(--ink-soft);font-size:20px}
+  .tempos,.dyn{display:flex;gap:14px;justify-content:center;align-items:baseline;font-weight:800;font-size:18px;font-style:italic}
+  .dyn span{font-family:Georgia,serif;font-weight:700}
+  .swrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+  .swrow i{width:12px}
+  .sw{display:inline-block;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 2px #0002}
+  .swrow .sw{width:44px;height:44px}
+  .bigsw{width:110px;height:110px;border-radius:24px;box-shadow:inset 0 0 0 3px #0002}
+  .mixpic{display:flex;gap:8px;align-items:center;justify-content:center;font-size:22px;font-weight:800}
+  .blob{width:46px;height:46px;border-radius:50%;box-shadow:inset 0 0 0 2px #0002;display:grid;place-items:center;font-size:22px}
+  .blob.q{box-shadow:inset 0 0 0 2px #2a233055;background:repeating-linear-gradient(45deg,#fffaf0 0 6px,#efe6d2 6px 12px)!important}
+  .wheel{width:170px;height:170px;border-radius:50%;background:conic-gradient(#e0404f,#f28c28,#f6c945,#9bcf3e,#3bb273,#17c3b2,#2f7fd8,#7b4fc9,#c94fa3,#e0404f);box-shadow:inset 0 0 0 30px #fffaf055}
+  .artpic{width:min(300px,100%);height:auto;border-radius:12px;background:#fffaf0}
+  .cresc{font-family:Georgia,serif}
+  .taplane{position:relative;width:100%;height:34px;border-radius:10px;background:#efe6d2;overflow:hidden}
+  .taplane .tmark{position:absolute;top:6px;bottom:6px;border-left:3px solid #2a2330;background:#2a233014}
+  .taplane .tap{position:absolute;top:0;bottom:0;width:4px;margin-left:-2px;background:#d7263d;border-radius:2px}
+  .taplane .tcursor{position:absolute;top:0;bottom:0;left:0;width:2px;background:#2f7fd8}
+  .taprow{display:flex;gap:8px;justify-content:center}
+  .tappad{width:min(260px,80%);height:110px;border-radius:24px;border:0;background:linear-gradient(180deg,var(--brass-lit),var(--brass-deep));color:#1b150c;font:800 30px var(--ui);letter-spacing:.2em;box-shadow:0 6px 0 #0005;touch-action:none}
+  .tappad:disabled{opacity:.45}
+  .tappad.hitfx{transform:translateY(4px);box-shadow:0 2px 0 #0005}
+  .schoolview .top .ttl{white-space:nowrap}
+
   /* ---- customize page + home hello ---- */
   .hello{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .avatar{flex:none;width:46px;height:46px;border-radius:50%;border:2px solid var(--brass);background:var(--panel);font-size:26px;line-height:1;display:grid;place-items:center}
@@ -767,7 +826,7 @@
       <div class="tiles">
         <button class="tile" data-go="pianoSongs">
           <span class="art piano"></span>
-          <span class="txt"><b>Piano</b><span>Courses · 28 songs · hears your piano</span></span>
+          <span class="txt"><b>Piano</b><span>Courses · 36 songs · hears your piano</span></span>
         </button>
         <button class="tile" data-go="guitarMenu">
           <span class="art guitar"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
@@ -821,6 +880,14 @@
             <path d="M146 30 C138 22 124 28 128 40 C132 52 146 60 146 66 C146 60 160 52 164 40 C168 28 154 22 146 30" fill="#d7263d"/>
           </svg></span>
           <span class="txt"><b>My drawings</b><span>Everything you finished</span></span>
+        </button>
+      </div>
+
+      <h2 class="shelf"><span>🎓</span> School</h2>
+      <div class="tiles">
+        <button class="tile wide" data-go="schoolMenu">
+          <span class="art school" aria-hidden="true">🎼🎨</span>
+          <span class="txt"><b>School</b><span>How music and art work · rhythm, notes, chords, colors, light, faces · 17 lessons</span></span>
         </button>
       </div>
 
@@ -1205,6 +1272,17 @@
     <div class="fbstrip" id="fbStrip"></div>
   </section>
 
+  <!-- ============ SCHOOL ============ -->
+  <section class="view listview" data-view="schoolMenu" hidden>
+    <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>SCHOOL</small>What do you want to learn?</h1></header>
+    <div class="scroll"><div class="scroll-in" id="schoolList"></div></div>
+  </section>
+  <section class="view schoolview" data-view="school" hidden>
+    <header class="top"><button class="back">◀ Back</button><h1 class="ttl" id="schTitle"><small>SCHOOL</small>Lesson</h1></header>
+    <div class="schdots" id="schDots" aria-hidden="true"></div>
+    <div class="scroll"><div class="schwrap"><div class="schcard" id="schCard"></div><div class="schfoot" id="schFoot"></div></div></div>
+  </section>
+
   <!-- ============ CUSTOMIZE ============ -->
   <section class="view listview custview" data-view="custom" hidden>
     <header class="top"><button class="back">◀ Back</button><h1 class="ttl"><small>MAKE IT YOURS</small>Customize</h1></header>
@@ -1312,6 +1390,22 @@
       notes:'G4 C4:.5 D4:.5 E4:.5 F4:.5 G4 C4 C4 A4 F4:.5 G4:.5 A4:.5 B4:.5 C5 C4 C4 F4 G4:.5 F4:.5 E4:.5 D4:.5 E4 F4:.5 E4:.5 D4:.5 C4:.5 B3 C4:.5 D4:.5 E4:.5 C4:.5 D4:3' },
     { g:'Famous tunes', id:'elise', name:'Für Elise (Beethoven)', bpm:100,
       notes:'E5:.5 D#5:.5 E5:.5 D#5:.5 E5:.5 B4:.5 D5:.5 C5:.5 A4 C4:.5 E4:.5 A4:.5 B4 E4:.5 G#4:.5 B4:.5 C5 E4:.5 E5:.5 D#5:.5 E5:.5 D#5:.5 E5:.5 B4:.5 D5:.5 C5:.5 A4 C4:.5 E4:.5 A4:.5 B4 E4:.5 C5:.5 B4:.5 A4:2' },
+    { g:'More classics', id:'greensleeves', name:'Greensleeves', bpm:110,
+      notes:'A4 C5:2 D5 E5:1.5 F5:.5 E5 D5:2 B4 G4:1.5 A4:.5 B4 C5:2 A4 A4:1.5 G#4:.5 A4 B4:2 G#4 E4:2 A4 C5:2 D5 E5:1.5 F5:.5 E5 D5:2 B4 G4:1.5 A4:.5 B4 C5:1.5 B4:.5 A4 G#4:1.5 F#4:.5 G#4 A4:3' },
+    { g:'More classics', id:'mountain', name:'In the Hall of the Mountain King (Grieg)', bpm:100,
+      notes:'A4:.5 B4:.5 C5:.5 D5:.5 E5:.5 C5:.5 E5 Eb5:.5 C5:.5 Eb5 D5:.5 Bb4:.5 D5 A4:.5 B4:.5 C5:.5 D5:.5 E5:.5 C5:.5 E5:.5 A5:.5 G5:.5 E5:.5 C5:.5 E5:.5 G5:2' },
+    { g:'More classics', id:'canon', name:'Canon in D theme (Pachelbel)', bpm:80,
+      notes:'E5:2 D5:2 C5:2 B4:2 A4:2 G4:2 A4:2 B4:2 C5:2 B4:2 A4:2 G4:2 F4:2 E4:2 F4:2 G4:2' },
+    { g:'More classics', id:'spring', name:'Spring (Vivaldi)', bpm:110,
+      notes:'E4 G#4 G#4 G#4 F#4:.5 E4:.5 B4:2 B4:.5 A4:.5 G#4 G#4 G#4 F#4:.5 E4:.5 B4:2 B4:.5 A4:.5 G#4 A4 B4 A4 G#4 F#4:2' },
+    { g:'More classics', id:'entertainer', name:'The Entertainer (Joplin)', bpm:90,
+      notes:'D4:.5 D#4:.5 E4:.5 C5 E4:.5 C5 E4:.5 C5:2.5 C5:.5 D5:.5 D#5:.5 E5:.5 C5:.5 D5:.5 E5 B4:.5 D5 C5:2' },
+    { g:'More classics', id:'auld', name:'Auld Lang Syne', bpm:100,
+      notes:'C4 F4:1.5 F4:.5 F4 A4 G4:1.5 F4:.5 G4 A4 F4:1.5 F4:.5 A4 C5 D5:3 D5 C5:1.5 A4:.5 A4 F4 G4:1.5 F4:.5 G4 A4 F4:1.5 D4:.5 D4 C4 F4:3' },
+    { g:'Fun songs', id:'camptown', name:'Camptown Races', bpm:120,
+      notes:'G4:.5 G4:.5 E4:.5 G4:.5 A4:.5 G4:.5 E4 E4:.5 D4:1.5 E4:.5 D4:1.5 G4:.5 G4:.5 E4:.5 G4:.5 A4:.5 G4:.5 E4 D4:.5 E4:.5 D4 C4:2' },
+    { g:'Fun songs', id:'cucaracha', name:'La Cucaracha', bpm:130,
+      notes:'C4:.5 C4:.5 C4:.5 F4 A4:2 C4:.5 C4:.5 C4:.5 F4 A4:2 F4 F4:.5 E4:.5 E4:.5 D4:.5 D4:.5 C4:3' },
   ];
   const SEMI = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
   const LIDX = {C:0,D:1,E:2,F:3,G:4,A:5,B:6};
@@ -1580,7 +1674,7 @@
   }
   function renderHome(){
     const p = store.get('prog', blankProg());
-    const keys = { pianoSongs:'piano.', singSongs:'sing.', drawMenu:'draw.', guitarMenu:'guitar.', drumsMenu:'drums.', instHub:'inst.', beats:'game.beats', gamesMenu:'game.q.', flip:'game.flip' };
+    const keys = { pianoSongs:'piano.', singSongs:'sing.', drawMenu:'draw.', guitarMenu:'guitar.', drumsMenu:'drums.', instHub:'inst.', beats:'game.beats', gamesMenu:'game.q.', flip:'game.flip', schoolMenu:'school.' };
     document.querySelectorAll('.tile').forEach(t => {
       const key = keys[t.dataset.go]; if(!key) return;
       let el = t.querySelector('.prog');
@@ -6826,6 +6920,333 @@
     };
   })();
 
+  // ================= SCHOOL =================
+  (() => {
+    const mkEl = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
+    const pickRand = a => a[Math.floor(Math.random()*a.length)];
+    const shuffle = a => { const b = a.slice(); for(let i = b.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const NN = { C:0, 'C#':1, Db:1, D:2, 'D#':3, Eb:3, E:4, F:5, 'F#':6, Gb:6, G:7, 'G#':8, Ab:8, A:9, 'A#':10, Bb:10, B:11 };
+    const midi = s => { const m = /^([A-G][#b]?)(\d)$/.exec(s); return (+m[2] + 1)*12 + NN[m[1]]; };
+
+    // ---- sounds: a simple bell tone we can make loud or soft ----
+    function blip(m, t0, dur, vol, type){
+      unlock(); if(!ctx) return;
+      const t = ctx.currentTime + .05 + t0, o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || 'triangle'; o.frequency.value = 440*Math.pow(2, (m - 69)/12);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol == null ? .5 : vol, t + .012); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
+    }
+    const tune = (notes, beat) => { let t = 0; notes.forEach(n => { const [nm, d] = n.split(':'), len = (d ? +d : 1)*beat; if(nm !== 'R') nm.split('+').forEach(x => blip(midi(x), t, Math.max(.25, len*.95))); t += len; }); return t; };
+    const chord = (names, t0, dur, vol) => names.forEach(n => blip(midi(n), t0 || 0, dur || 1.4, vol == null ? .3 : vol));
+    const click = (t0, hi) => blip(hi ? 96 : 84, t0, .06, hi ? .35 : .25, 'square');
+
+    // ---- little pictures ----
+    const NOTE_SVG = {
+      w:'<ellipse cx="20" cy="46" rx="9" ry="6.5" transform="rotate(-20 20 46)" fill="none" stroke="currentColor" stroke-width="3"/>',
+      h:'<ellipse cx="18" cy="46" rx="8" ry="6" transform="rotate(-20 18 46)" fill="none" stroke="currentColor" stroke-width="3"/><line x1="25.5" y1="44" x2="25.5" y2="8" stroke="currentColor" stroke-width="2.5"/>',
+      q:'<ellipse cx="18" cy="46" rx="8" ry="6" transform="rotate(-20 18 46)" fill="currentColor"/><line x1="25.5" y1="44" x2="25.5" y2="8" stroke="currentColor" stroke-width="2.5"/>',
+      e:'<ellipse cx="18" cy="46" rx="8" ry="6" transform="rotate(-20 18 46)" fill="currentColor"/><line x1="25.5" y1="44" x2="25.5" y2="8" stroke="currentColor" stroke-width="2.5"/><path d="M25.5 8 Q38 16 34 30" fill="none" stroke="currentColor" stroke-width="3"/>'
+    };
+    const kindOf = d => d >= 4 ? 'w' : d >= 2 ? 'h' : d >= 1 ? 'q' : 'e';
+    const noteIcon = k => `<svg class="nicon" viewBox="0 0 40 58" aria-hidden="true">${NOTE_SVG[k]}</svg>`;
+    const rhythmPic = beats => `<div class="rpic">${beats.map(d => noteIcon(kindOf(d))).join('')}</div>`;
+    const DIA = ['C','D','E','F','G','A','B'];
+    function staffPic(name){
+      const m = /^([A-G])(\d)$/.exec(name), step = (+m[2])*7 + DIA.indexOf(m[1]), e4 = 4*7 + 2, y = 70 - (step - e4)*6;
+      let lines = ''; for(let i = 0; i < 5; i++) lines += `<line x1="6" x2="154" y1="${70 - i*12}" y2="${70 - i*12}"/>`;
+      let ledger = ''; if(y >= 82) ledger += `<line x1="86" x2="114" y1="82" y2="82"/>`; if(y <= 10) ledger += `<line x1="86" x2="114" y1="10" y2="10"/>`;
+      return `<svg class="staffpic" viewBox="0 0 160 96" aria-label="A note on the music lines"><g stroke="#8d8190" stroke-width="1.4">${lines}${ledger}</g>
+        <text x="10" y="76" font-size="62" fill="#2a2330" style="font-family:'Segoe UI Symbol','Noto Music','Apple Symbols',serif">𝄞</text>
+        <ellipse cx="100" cy="${y}" rx="8" ry="6" transform="rotate(-20 100 ${y})" fill="#2a2330"/><line x1="${y > 40 ? 107.5 : 92.5}" x2="${y > 40 ? 107.5 : 92.5}" y1="${y}" y2="${y > 40 ? y - 38 : y + 38}" stroke="#2a2330" stroke-width="2.2"/></svg>`;
+    }
+    function keysPic(marks, labels){
+      marks = marks || []; let s = '';
+      DIA.forEach((n, i) => {
+        const on = marks.includes(n);
+        s += `<rect x="${i*30 + 2}" y="2" width="28" height="96" rx="4" fill="${on ? '#e8c679' : '#fbf7ec'}" stroke="#2a2330" stroke-width="1.5"/>`;
+        if(labels) s += `<text x="${i*30 + 16}" y="88" font-size="13" font-weight="800" text-anchor="middle" fill="#6d6272">${n}</text>`;
+      });
+      [[0,'C#'],[1,'D#'],[3,'F#'],[4,'G#'],[5,'A#']].forEach(([i, n]) => { const on = marks.includes(n); s += `<rect x="${i*30 + 22}" y="2" width="18" height="58" rx="3" fill="${on ? '#c8a15a' : '#1d1a22'}"/>`; });
+      return `<svg class="keyspic" viewBox="0 0 214 100" aria-label="Piano keys">${s}</svg>`;
+    }
+    const swatch = (c, label) => `<span class="sw" style="background:${c}"></span>${label ? `<b>${label}</b>` : ''}`;
+    const mixPic = (a, b, out) => `<div class="mixpic"><span class="blob" style="background:${a}"></span><b>+</b><span class="blob" style="background:${b}"></span><b>=</b><span class="blob q" style="background:${out || 'transparent'}">${out ? '' : '?'}</span></div>`;
+    const WHEEL = '<div class="wheel" aria-label="Color wheel"></div>';
+    const SPHERE = `<svg class="artpic" viewBox="0 0 200 130" aria-label="A lit ball"><defs><radialGradient id="sch-sph" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#fbf7ec"/><stop offset=".45" stop-color="#b9afc0"/><stop offset=".78" stop-color="#4a4450"/><stop offset="1" stop-color="#7a7280"/></radialGradient><radialGradient id="sch-sh"><stop offset="0" stop-color="#2a2330" stop-opacity=".55"/><stop offset="1" stop-color="#2a2330" stop-opacity="0"/></radialGradient></defs>
+      <ellipse cx="118" cy="108" rx="62" ry="12" fill="url(#sch-sh)"/><circle cx="96" cy="64" r="44" fill="url(#sch-sph)"/><text x="10" y="22" font-size="22">☀️</text>
+      <g font-size="10" font-weight="800" fill="#2a2330"><text x="60" y="34">1</text><text x="126" y="94">2</text><text x="150" y="122">3</text></g></svg>`;
+    const ROAD = `<svg class="artpic" viewBox="0 0 200 130" aria-label="A road going far away"><rect width="200" height="56" fill="#cfe6f5"/><rect y="56" width="200" height="74" fill="#e6dcc6"/>
+      <path d="M40 130 L100 56 L160 130 Z" fill="#8d8190"/><path d="M100 56 L100 130" stroke="#fbf7ec" stroke-width="2" stroke-dasharray="6 6"/><line x1="0" x2="200" y1="56" y2="56" stroke="#2f7fd8" stroke-width="1.5"/>
+      <circle cx="100" cy="56" r="3.5" fill="#d7263d"/><rect x="16" y="70" width="10" height="34" fill="#5c8a3a"/><rect x="62" y="58" width="4" height="12" fill="#5c8a3a"/></svg>`;
+    const FACE = `<svg class="artpic" viewBox="0 0 200 150" aria-label="Face guide lines"><path d="M70 60 Q70 14 100 14 Q130 14 130 60 Q130 108 112 128 Q100 140 88 128 Q70 108 70 60" fill="#f4dcc6" stroke="#2a2330" stroke-width="2"/>
+      <g stroke="#2f7fd8" stroke-width="1.2" stroke-dasharray="4 3"><line x1="60" x2="140" y1="70" y2="70"/><line x1="100" x2="100" y1="10" y2="140"/><line x1="66" x2="134" y1="98" y2="98"/></g>
+      <g fill="#2a2330"><ellipse cx="86" cy="70" rx="6" ry="3.5"/><ellipse cx="114" cy="70" rx="6" ry="3.5"/></g><path d="M100 80 L96 96 L104 96" fill="none" stroke="#2a2330" stroke-width="1.6"/><path d="M90 112 Q100 118 110 112" fill="none" stroke="#2a2330" stroke-width="2"/></svg>`;
+    const SHAPES = `<svg class="artpic" viewBox="0 0 200 130" aria-label="A cat made of shapes"><g fill="none" stroke-width="3"><circle cx="100" cy="52" r="30" stroke="#2f7fd8"/><path d="M76 34 L78 10 L94 24 M124 34 L122 10 L106 24" stroke="#d7263d"/><ellipse cx="100" cy="104" rx="36" ry="22" stroke="#3bb273"/><path d="M136 104 Q170 96 160 70" stroke="#f28c28"/></g><g fill="#2a2330"><circle cx="90" cy="50" r="3"/><circle cx="110" cy="50" r="3"/></g></svg>`;
+
+    // ---- the lessons ----
+    const hear = (label, fn) => ({ label, fn });
+    const EAR_MAJMIN = () => { const root = pickRand(['C4','D4','F4','G4']), r = midi(root), minor = Math.random() < .5, names = [r, r + (minor ? 3 : 4), r + 7];
+      return { q:'Listen. Happy (major) or sad (minor)?', hear:hear('▶ Hear the chord', () => names.forEach(n => blip(n, 0, 1.6, .28))), choices:['😊 Happy (major)', '😢 Sad (minor)'], a:minor ? 1 : 0, why:minor ? 'Minor chords have a darker, sadder sound.' : 'Major chords sound bright and happy.' }; };
+    const EAR_UPDOWN = () => { const a = 60 + Math.floor(Math.random()*12), up = Math.random() < .5, b = a + (up ? 1 : -1)*(2 + Math.floor(Math.random()*5));
+      return { q:'Did the second note go higher or lower?', hear:hear('▶ Hear 2 notes', () => { blip(a, 0, .6); blip(b, .7, .8); }), choices:['⬆️ Higher', '⬇️ Lower'], a:up ? 0 : 1, why:up ? 'The second note was higher.' : 'The second note was lower.' }; };
+    const EAR_STEP = () => { const a = midi(pickRand(['C4','D4','E4','F4','G4'])), leap = Math.random() < .5, b = a + (leap ? 7 : 2);
+      return { q:'Step (next door) or leap (a big jump)?', hear:hear('▶ Hear 2 notes', () => { blip(a, 0, .6); blip(b, .7, .8); }), choices:['👣 Step', '🦘 Leap'], a:leap ? 1 : 0, why:leap ? 'That was a big jump — a leap.' : 'Those notes were right next to each other — a step.' }; };
+    const EAR_LOUD = () => { const loud = Math.random() < .5;
+      return { q:'Listen. Forte (loud) or piano (soft)?', hear:hear('▶ Hear it', () => ['C5','E5','G5'].forEach((n, i) => blip(midi(n), i*.35, .4, loud ? .7 : .08))), choices:['🔊 Forte — loud', '🔈 Piano — soft'], a:loud ? 0 : 1, why:loud ? 'That was loud: forte, written f.' : 'That was soft: piano, written p.' }; };
+    const EAR_TEMPO = () => { const fast = Math.random() < .5, beat = fast ? .22 : .7;
+      return { q:'Listen. Allegro (fast) or largo (slow)?', hear:hear('▶ Hear it', () => { let t = 0; ['C5','D5','E5','C5','E5','G5'].forEach(n => { blip(midi(n), t, beat*.9, .4); t += beat; }); }), choices:['🐇 Allegro — fast', '🐢 Largo — slow'], a:fast ? 0 : 1, why:fast ? 'Allegro means fast and lively.' : 'Largo means very slow.' }; };
+    const STAFF_Q = pool => () => { const n = pickRand(pool), letters = shuffle(['C','D','E','F','G','A','B']).filter(l => l !== n[0]).slice(0, 3), ch = shuffle([n[0], ...letters]);
+      return { q:'Which letter is this note?', pic:staffPic(n), hear:hear('▶ Hear it', () => blip(midi(n), 0, 1)), choices:ch, a:ch.indexOf(n[0]), why:`It’s ${n[0]}.` }; };
+    const RHY_Q = () => { const pats = [[1,1,2], [2,2], [1,1,1,1], [.5,.5,1,2], [1,.5,.5,2]], p = pickRand(pats), others = shuffle(pats.filter(x => x !== p)).slice(0, 2), ch = shuffle([p, ...others]);
+      return { q:'Which rhythm did you hear?', hear:hear('▶ Hear the rhythm', () => { let t = 0; p.forEach(d => { blip(72, t, Math.max(.2, d*.5*.9), .45); t += d*.5; }); }), choices:ch.map(rhythmPic), html:true, a:ch.indexOf(p), why:'Long notes ring longer; eighth notes are quick.' }; };
+    const WARMCOOL = () => { const warm = [['#e0404f','red'],['#f28c28','orange'],['#f6c945','yellow']], cool = [['#2f7fd8','blue'],['#3bb273','green'],['#7b4fc9','purple']], isWarm = Math.random() < .5, c = pickRand(isWarm ? warm : cool);
+      return { q:`Is ${c[1]} warm or cool?`, pic:`<div class="bigsw" style="background:${c[0]}"></div>`, choices:['🔥 Warm', '❄️ Cool'], a:isWarm ? 0 : 1, why:isWarm ? 'Reds, oranges and yellows feel warm like fire and sun.' : 'Blues, greens and purples feel cool like water and ice.' }; };
+
+    const LESSONS = [
+      // 🎼 music school
+      { id:'m-alpha', track:'music', e:'🔤', name:'The music alphabet', cards:[
+        { t:'info', title:'Only 7 letters!', text:'Music uses just seven letters: <b>A B C D E F G</b>. After G, it starts again at A.', pic:'<div class="bigletters">A B C D E F G <span>→ A…</span></div>', hear:hear('▶ Hear them go up', () => tune(['A3','B3','C4','D4','E4','F4','G4','A4'], .3)) },
+        { t:'info', title:'Find C on the piano', text:'Black keys come in groups of 2 and 3. <b>C</b> is the white key just left of the group of <b>2</b> black keys.', pic:keysPic(['C'], true), hear:hear('▶ Hear C', () => blip(60, 0, 1.2)) },
+        { t:'quiz', q:'What letter comes after G?', choices:['H','A','F'], a:1, why:'There is no H in music — after G you go back to A.' },
+        { t:'quiz', q:'How many different letters does music use?', choices:['5','7','26'], a:1, why:'A, B, C, D, E, F, G — seven letters.' },
+        { t:'quiz', q:'Which key is gold?', pic:keysPic(['E']), choices:['C','D','E','F'], a:2, why:'E is the third white key, just right of the 2 black keys.' },
+        { t:'quiz', q:'Which key is gold?', pic:keysPic(['F']), choices:['F','G','B','E'], a:0, why:'F is just left of the group of 3 black keys.' } ] },
+      { id:'m-length', track:'music', e:'♩', name:'Note lengths', cards:[
+        { t:'info', title:'Some notes are long, some are short', text:'We count music in <b>beats</b>. The shape of a note tells you how many beats to hold it.', pic:`<div class="notelens">${[['w','Whole','4 beats'],['h','Half','2 beats'],['q','Quarter','1 beat'],['e','Eighth','½ beat']].map(([k, n, b]) => `<span>${noteIcon(k)}<b>${n}</b><small>${b}</small></span>`).join('')}</div>` },
+        { t:'info', title:'Hear the difference', text:'Listen: one whole note, then two half notes, then four quarter notes. Each group fills 4 beats!', hear:hear('▶ Listen', () => { let t = 0; click(0, true); [[4],[2,2],[1,1,1,1]].forEach(g => g.forEach(d => { blip(72, t, d*.5*.9, .45); t += d*.5; })); }) },
+        { t:'quiz', q:'How many beats is this note?', pic:noteIcon('h'), choices:['1','2','4'], a:1, why:'An open note with a stem is a half note: 2 beats.' },
+        { t:'quiz', q:'How many beats is this note?', pic:noteIcon('q'), choices:['½','1','2'], a:1, why:'A filled note with a stem is a quarter note: 1 beat.' },
+        { t:'quiz', q:'Which note is the LONGEST?', choices:[noteIcon('q'), noteIcon('w'), noteIcon('e')], html:true, a:1, why:'The whole note lasts 4 beats.' },
+        { t:'tap', q:'Tap this rhythm!', beats:[1,1,2], bpm:90 } ] },
+      { id:'m-beat', track:'music', e:'🥁', name:'Beat and tempo', cards:[
+        { t:'info', title:'The beat', text:'The <b>beat</b> is the steady pulse you tap your foot to. It keeps going like a clock: 1, 2, 3, 4.', hear:hear('▶ Hear a beat', () => { for(let i = 0; i < 8; i++) click(i*.5, i % 4 === 0); }) },
+        { t:'info', title:'Tempo = speed', text:'<b>Tempo</b> is how fast the beat goes. Musicians use Italian words: <b>largo</b> is slow, <b>andante</b> is walking speed, <b>allegro</b> is fast.', pic:'<div class="tempos"><span>🐢 Largo</span><span>🚶 Andante</span><span>🐇 Allegro</span></div>' },
+        { t:'quiz', gen:EAR_TEMPO }, { t:'quiz', gen:EAR_TEMPO },
+        { t:'quiz', q:'What does "allegro" mean?', choices:['Slow','Fast','Loud'], a:1, why:'Allegro means fast and cheerful.' },
+        { t:'tap', q:'Tap along with the beat — 4 steady taps', beats:[1,1,1,1], bpm:80 } ] },
+      { id:'m-staff', track:'music', e:'🎼', name:'Reading notes', cards:[
+        { t:'info', title:'The staff', text:'Notes sit on 5 lines called the <b>staff</b>. The swirly <b>treble clef</b> 𝄞 is at the start. Higher on the staff = higher sound.', pic:staffPic('G4') },
+        { t:'info', title:'A trick for the spaces', text:'The 4 spaces spell <b>F A C E</b> from the bottom up — like the word “face”!', pic:`<div class="facepics">${['F4','A4','C5','E5'].map(staffPic).join('')}</div>`, hear:hear('▶ Hear F A C E', () => tune(['F4','A4','C5','E5'], .45)) },
+        { t:'info', title:'Middle C', text:'<b>Middle C</b> sits on its own little line just below the staff.', pic:staffPic('C4'), hear:hear('▶ Hear middle C', () => blip(60, 0, 1.2)) },
+        { t:'quiz', gen:STAFF_Q(['F4','A4','C5','E5']) }, { t:'quiz', gen:STAFF_Q(['E4','G4','B4','D5','F5']) },
+        { t:'quiz', gen:STAFF_Q(['C4','D4','E4','F4','G4','A4','B4','C5']) }, { t:'quiz', gen:STAFF_Q(['C4','D4','E4','F4','G4','A4','B4','C5']) } ] },
+      { id:'m-sharp', track:'music', e:'♯', name:'Sharps and flats', cards:[
+        { t:'info', title:'The black keys', text:'A <b>sharp ♯</b> means one key <b>higher</b> (to the right). A <b>flat ♭</b> means one key <b>lower</b> (to the left). Most black keys are sharps and flats!', pic:keysPic(['C#']), hear:hear('▶ C then C sharp', () => { blip(60, 0, .7); blip(61, .8, .9); }) },
+        { t:'info', title:'Two names, one key', text:'The black key between C and D is <b>C♯</b> (C sharp) — and also <b>D♭</b> (D flat). Same key, two names!' },
+        { t:'quiz', q:'A sharp ♯ makes a note…', choices:['Higher','Lower','Louder'], a:0, why:'Sharp = one key higher.' },
+        { t:'quiz', q:'Which black key is gold?', pic:keysPic(['F#']), choices:['C♯','F♯','A♯'], a:1, why:'It’s just right of F, so it’s F sharp (also called G flat).' },
+        { t:'quiz', q:'C♯ is the same key as…', choices:['D♭','B♭','C♭'], a:0, why:'One up from C is the same as one down from D.' },
+        { t:'quiz', q:'What does this sign mean? ♭', choices:['Sharp — higher','Flat — lower','Stop'], a:1, why:'♭ is a flat: one key lower.' } ] },
+      { id:'m-loud', track:'music', e:'🔊', name:'Loud and soft', cards:[
+        { t:'info', title:'Dynamics', text:'<b>Dynamics</b> tell you how loud to play. <b>p</b> (piano) = soft, <b>mf</b> (mezzo forte) = medium, <b>f</b> (forte) = loud.', pic:'<div class="dyn"><span style="font-size:18px">p</span><span style="font-size:26px">mf</span><span style="font-size:36px">f</span></div>', hear:hear('▶ Soft, medium, loud', () => [.07,.25,.7].forEach((v, i) => blip(72, i*.7, .6, v))) },
+        { t:'info', title:'Getting louder', text:'A <b>crescendo</b> (<span class="cresc">&lt;</span>) means get louder bit by bit. A <b>decrescendo</b> (&gt;) means get softer.', hear:hear('▶ Crescendo', () => { for(let i = 0; i < 8; i++) blip(67 + (i % 2)*5, i*.3, .3, .05 + i*.09); }) },
+        { t:'quiz', q:'What does "f" (forte) mean?', choices:['Fast','Loud','Soft'], a:1, why:'Forte means loud.' },
+        { t:'quiz', gen:EAR_LOUD }, { t:'quiz', gen:EAR_LOUD },
+        { t:'quiz', q:'A crescendo means…', choices:['Get louder','Get softer','Stop'], a:0, why:'Crescendo = growing louder.' } ] },
+      { id:'m-majmin', track:'music', e:'😊', name:'Happy and sad chords', cards:[
+        { t:'info', title:'Chords', text:'A <b>chord</b> is 3 or more notes played together. <b>Major</b> chords sound happy. <b>Minor</b> chords sound sad or mysterious.', pic:keysPic(['C','E','G'], true), hear:hear('▶ C major 😊', () => chord(['C4','E4','G4'])) },
+        { t:'info', title:'Just one note changes', text:'Move the middle note down one key and major turns into minor. Listen!', pic:keysPic(['C','D#','G'], true), hear:hear('▶ Major, then minor', () => { chord(['C4','E4','G4'], 0, 1.2); chord(['C4','D#4','G4'], 1.4, 1.4); }) },
+        { t:'quiz', gen:EAR_MAJMIN }, { t:'quiz', gen:EAR_MAJMIN }, { t:'quiz', gen:EAR_MAJMIN },
+        { t:'quiz', q:'How many notes are in a simple chord?', choices:['1','2','3'], a:2, why:'A basic chord (a triad) has 3 notes.' } ] },
+      { id:'m-steps', track:'music', e:'🦘', name:'Steps, leaps and ears', cards:[
+        { t:'info', title:'Melodies move', text:'A melody can <b>step</b> to the next note, or <b>leap</b> over notes. Steps sound smooth; leaps sound jumpy.', hear:hear('▶ Steps, then leaps', () => { tune(['C4','D4','E4','F4'], .3); tune(['R:4','C4','G4','C5','E4'], .3); }) },
+        { t:'quiz', gen:EAR_UPDOWN }, { t:'quiz', gen:EAR_UPDOWN }, { t:'quiz', gen:EAR_STEP }, { t:'quiz', gen:EAR_STEP } ] },
+      { id:'m-rhythm', track:'music', e:'🎶', name:'Rhythm master', cards:[
+        { t:'info', title:'Eighth notes are quick', text:'Two eighth notes fit into one beat. Say “ti-ti” for two eighths and “ta” for a quarter note.', pic:rhythmPic([1,.5,.5,1,1]), hear:hear('▶ Ta, ti-ti, ta, ta', () => { let t = 0; [1,.5,.5,1,1].forEach(d => { blip(72, t, d*.5*.9, .45); t += d*.5; }); }) },
+        { t:'quiz', gen:RHY_Q }, { t:'quiz', gen:RHY_Q },
+        { t:'tap', q:'Tap: ta, ti-ti, ta, ta', beats:[1,.5,.5,1,1], bpm:80 },
+        { t:'tap', q:'Tap: ta, ta, ta-a', beats:[1,1,2], bpm:96 } ] },
+      // 🎨 art school
+      { id:'a-primary', track:'art', e:'🎨', name:'Mixing colors', cards:[
+        { t:'info', title:'Primary colors', text:'<b>Red</b>, <b>yellow</b> and <b>blue</b> are primary colors. You can’t make them by mixing — but you can mix them to make almost everything else!', pic:`<div class="swrow">${swatch('#e0404f','Red')}${swatch('#f6c945','Yellow')}${swatch('#2f7fd8','Blue')}</div>` },
+        { t:'info', title:'Secondary colors', text:'Mix two primaries to get a secondary color.', pic:`${mixPic('#e0404f','#f6c945','#f28c28')}${mixPic('#f6c945','#2f7fd8','#3bb273')}${mixPic('#e0404f','#2f7fd8','#7b4fc9')}` },
+        { t:'quiz', q:'Red + blue = ?', pic:mixPic('#e0404f','#2f7fd8'), choices:[swatch('#3bb273','Green'), swatch('#7b4fc9','Purple'), swatch('#f28c28','Orange')], html:true, a:1, why:'Red and blue make purple.' },
+        { t:'quiz', q:'Yellow + blue = ?', pic:mixPic('#f6c945','#2f7fd8'), choices:[swatch('#3bb273','Green'), swatch('#f28bb5','Pink'), swatch('#8a5a34','Brown')], html:true, a:0, why:'Yellow and blue make green.' },
+        { t:'quiz', q:'Red + yellow = ?', pic:mixPic('#e0404f','#f6c945'), choices:[swatch('#7b4fc9','Purple'), swatch('#f28c28','Orange'), swatch('#2f7fd8','Blue')], html:true, a:1, why:'Red and yellow make orange.' },
+        { t:'quiz', q:'Which one is a primary color?', choices:[swatch('#3bb273','Green'), swatch('#f28c28','Orange'), swatch('#2f7fd8','Blue')], html:true, a:2, why:'Blue is primary — it can’t be mixed from other colors.' } ] },
+      { id:'a-wheel', track:'art', e:'🌈', name:'The color wheel', cards:[
+        { t:'info', title:'Colors in a circle', text:'The <b>color wheel</b> puts colors in rainbow order in a circle. Colors next to each other look calm together.', pic:WHEEL },
+        { t:'info', title:'Opposites pop!', text:'Colors <b>across</b> the wheel are <b>complementary</b>. Put them side by side and both look brighter — like a red apple on green leaves.', pic:`<div class="swrow">${swatch('#e0404f')}${swatch('#3bb273')}<i></i>${swatch('#2f7fd8')}${swatch('#f28c28')}<i></i>${swatch('#f6c945')}${swatch('#7b4fc9')}</div>` },
+        { t:'quiz', q:'What is the opposite of red?', choices:[swatch('#3bb273','Green'), swatch('#f28c28','Orange'), swatch('#f28bb5','Pink')], html:true, a:0, why:'Red and green are opposites.' },
+        { t:'quiz', q:'What is the opposite of blue?', choices:[swatch('#7b4fc9','Purple'), swatch('#f28c28','Orange'), swatch('#3bb273','Green')], html:true, a:1, why:'Blue and orange are opposites.' },
+        { t:'quiz', q:'What is the opposite of yellow?', choices:[swatch('#7b4fc9','Purple'), swatch('#e0404f','Red'), swatch('#fbf7ec','White')], html:true, a:0, why:'Yellow and purple are opposites.' } ] },
+      { id:'a-warm', track:'art', e:'🔥', name:'Warm and cool colors', cards:[
+        { t:'info', title:'Colors have feelings', text:'<b>Warm</b> colors (red, orange, yellow) feel hot and exciting. <b>Cool</b> colors (blue, green, purple) feel calm and chilly.', pic:`<div class="swrow">${swatch('#e0404f')}${swatch('#f28c28')}${swatch('#f6c945')}<i></i>${swatch('#3bb273')}${swatch('#2f7fd8')}${swatch('#7b4fc9')}</div>` },
+        { t:'quiz', gen:WARMCOOL }, { t:'quiz', gen:WARMCOOL }, { t:'quiz', gen:WARMCOOL },
+        { t:'quiz', q:'You’re drawing a quiet snowy night. Which colors fit best?', choices:['🔥 Warm colors','❄️ Cool colors'], a:1, why:'Cool blues and purples make a scene feel cold and calm.' } ] },
+      { id:'a-value', track:'art', e:'🌗', name:'Light and dark colors', cards:[
+        { t:'info', title:'Tints and shades', text:'Add <b>white</b> to a color to make a light <b>tint</b>. Add <b>black</b> to make a dark <b>shade</b>.', pic:`<div class="swrow">${['#f9c6cc','#f08a96','#e0404f','#a02a36','#5e1820'].map(c => swatch(c)).join('')}</div>` },
+        { t:'quiz', q:'Red + white = ?', pic:mixPic('#e0404f','#ffffff'), choices:[swatch('#f28bb5','Pink'), swatch('#7a2733','Dark red'), swatch('#f28c28','Orange')], html:true, a:0, why:'Adding white makes a tint — red becomes pink.' },
+        { t:'quiz', q:'To make a darker shade, add…', choices:['White','Black','Yellow'], a:1, why:'Black makes a color darker.' },
+        { t:'quiz', q:'Which one is the darkest?', choices:[swatch('#9fd0f2'), swatch('#2f7fd8'), swatch('#123a66')], html:true, a:2, why:'The navy blue has the most black in it.' } ] },
+      { id:'a-light', track:'art', e:'☀️', name:'Light and shadow', cards:[
+        { t:'info', title:'Where is the light?', text:'Before shading, decide where the light comes from. The side facing the light is bright (1). The far side is dark (2). The ball throws a <b>cast shadow</b> on the ground (3).', pic:SPHERE },
+        { t:'quiz', q:'In the picture, what is number 3?', pic:SPHERE, choices:['The highlight','The cast shadow','The sun'], a:1, why:'Number 3 is the shadow the ball throws on the table.' },
+        { t:'quiz', q:'Shadows go…', choices:['Toward the light','Away from the light'], a:1, why:'Shadows always point away from the light.' },
+        { t:'quiz', q:'The brightest spot on something shiny is called the…', choices:['Highlight','Outline','Shadow'], a:0, why:'That tiny bright spot is the highlight.' },
+        { t:'try', title:'Try it for real!', text:'Draw a realistic ball using light and shadow.', lesson:'rball' } ] },
+      { id:'a-persp', track:'art', e:'🛣️', name:'Perspective', cards:[
+        { t:'info', title:'Far things look small', text:'The line where the sky meets the land is the <b>horizon line</b>. Things far away look smaller and get closer to it.', pic:ROAD },
+        { t:'info', title:'The vanishing point', text:'Lines that go away from you — like the sides of a road — seem to meet at one dot on the horizon: the <b>vanishing point</b> (the red dot).', pic:ROAD },
+        { t:'quiz', q:'Trees far away look…', choices:['Bigger','Smaller','Upside down'], a:1, why:'Far things look smaller.' },
+        { t:'quiz', q:'Where do the sides of a road seem to meet?', pic:ROAD, choices:['At the vanishing point','At the bottom','They never get closer'], a:0, why:'They meet at the vanishing point on the horizon.' },
+        { t:'try', title:'Try it for real!', text:'Draw a road in perspective with a vanishing point.', lesson:'road3d' } ] },
+      { id:'a-face', track:'art', e:'🙂', name:'Drawing faces', cards:[
+        { t:'info', title:'Secret face lines', text:'Real heads are egg-shaped. The <b>eyes</b> go halfway down the head — not at the top! The nose sits between the eyes and the chin.', pic:FACE },
+        { t:'quiz', q:'Where do the eyes go?', pic:FACE, choices:['Near the top of the head','About halfway down','Near the chin'], a:1, why:'Eyes are about halfway down — lots of people draw them too high.' },
+        { t:'quiz', q:'How far apart are the eyes?', choices:['One eye-width apart','Touching','Very far apart'], a:0, why:'There’s about one eye-width between the eyes.' },
+        { t:'try', title:'Try it for real!', text:'Use these secret lines to draw a real face.', lesson:'realface' } ] },
+      { id:'a-shapes', track:'art', e:'🔺', name:'Shapes first', cards:[
+        { t:'info', title:'Everything is made of shapes', text:'Artists start with simple shapes — circles, ovals, squares, triangles — then add details. This cat is just a circle, two triangles, an oval and a curve!', pic:SHAPES },
+        { t:'quiz', q:'Which shapes make a simple house?', choices:['A square and a triangle','Two circles','A star'], a:0, why:'A square for the walls and a triangle for the roof.' },
+        { t:'quiz', q:'What should you draw first?', choices:['Tiny details','Big simple shapes','The shading'], a:1, why:'Big shapes first, details last.' },
+        { t:'try', title:'Try it for real!', text:'Draw a cat from simple shapes.', lesson:'cat' } ] }
+    ];
+    const TRACKS = [['music','🎼 Music school','How music works — notes, rhythm, chords and your ears'], ['art','🎨 Art school','How art works — colors, light, perspective and faces']];
+
+    // ---- menu ----
+    function menu(){
+      const el = $('schoolList'), stars = store.get('stars', {}); el.innerHTML = '';
+      TRACKS.forEach(([tr, title, sub]) => {
+        el.appendChild(mkEl('h2', null, title));
+        el.appendChild(mkEl('p', 'schsub', sub));
+        const g = mkEl('div', 'songgrid path'); el.appendChild(g);
+        const list = LESSONS.filter(L => L.track === tr), next = list.find(L => !stars['school.' + L.id]);
+        list.forEach(L => {
+          const st = stars['school.' + L.id] || 0;
+          const b = mkEl('button', 'songcard', `<span class="sn">${L.e} ${L.name}</span><span class="sm">${L === next ? '<em class="nextup">Next up!</em> · ' : ''}${L.cards.length} cards · <span class="stars2">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span></span>`);
+          b.onclick = () => { unlock(); go('school', L.id); };
+          g.appendChild(b);
+        });
+      });
+    }
+    hooks.schoolMenu = { enter(){ menu(); } };
+
+    // ---- lesson player ----
+    let L = null, cards = [], idx = 0, right = 0, total = 0, answered = false, tapState = null, finished = false;
+    function start(id){
+      L = LESSONS.find(x => x.id === id) || LESSONS[0];
+      finished = false;
+      cards = L.cards.map(c => c.gen ? { t:'quiz', ...c.gen() } : c);
+      idx = 0; right = 0; total = cards.filter(c => c.t === 'quiz' || c.t === 'tap').length;
+      $('schTitle').innerHTML = `<small>${L.track === 'music' ? 'MUSIC SCHOOL' : 'ART SCHOOL'}</small>${L.e} ${L.name}`;
+      show();
+    }
+    function progressBar(){
+      $('schDots').innerHTML = cards.map((c, i) => `<i class="${i < idx ? 'done' : i === idx ? 'now' : ''}"></i>`).join('');
+    }
+    function show(){
+      stopTap();
+      const c = cards[idx], el = $('schCard'); answered = false;
+      progressBar();
+      el.className = 'schcard ' + c.t;
+      el.innerHTML = '';
+      if(c.title) el.appendChild(mkEl('h2', null, c.title));
+      if(c.q) el.appendChild(mkEl('h2', null, c.q));
+      if(c.pic) el.appendChild(mkEl('div', 'schpic', c.pic));
+      if(c.text) el.appendChild(mkEl('p', 'schtext', c.text));
+      if(c.hear){ const b = mkEl('button', 'btn hearbtn', c.hear.label); b.onclick = () => { unlock(); c.hear.fn(); }; el.appendChild(b); }
+      const foot = $('schFoot'); foot.innerHTML = '';
+      const nextBtn = mkEl('button', 'btn go', idx === cards.length - 1 ? 'Finish ✓' : 'Next ▶');
+      nextBtn.onclick = next;
+      if(c.t === 'info'){ foot.appendChild(nextBtn); return; }
+      if(c.t === 'try'){
+        const tryB = mkEl('button', 'btn', '✏️ Draw it now'); tryB.onclick = () => { finish(true); go('draw', c.lesson); };
+        foot.append(tryB, nextBtn); return;
+      }
+      if(c.t === 'quiz'){
+        const box = mkEl('div', 'schchoices' + (c.html ? ' rich' : ''));
+        const why = mkEl('p', 'schwhy');
+        c.choices.forEach((ch, i) => {
+          const b = mkEl('button', 'schchoice', c.html ? ch : String(ch));
+          b.onclick = () => {
+            if(answered) return;
+            answered = true;
+            const ok = i === c.a; if(ok) right++;
+            b.classList.add(ok ? 'right' : 'wrong');
+            if(!ok) box.children[c.a].classList.add('right');
+            why.innerHTML = `${ok ? '✅ Yes!' : '❌ Not quite.'} ${c.why || ''}`;
+            if(ok){ blip(84, 0, .25, .25); blip(88, .12, .35, .25); } else blip(55, 0, .35, .2, 'sawtooth');
+            foot.appendChild(nextBtn);
+          };
+          box.appendChild(b);
+        });
+        el.append(box, why);
+        return;
+      }
+      if(c.t === 'tap') tapCard(c, el, foot, nextBtn);
+    }
+    function next(){ if(idx < cards.length - 1){ idx++; show(); } else finish(); }
+    function finish(quiet){
+      if(finished) return; // a double tap on Finish must not give XP twice
+      finished = true;
+      stopTap();
+      const pct = total ? right/total : 1, stars = pct >= .99 ? 3 : pct >= .7 ? 2 : 1;
+      saveStars('school.' + L.id, stars);
+      const xp = 20 + stars*5; gainXP(xp);
+      if(quiet) return;
+      const list = LESSONS.filter(x => x.track === L.track), nextL = list[list.indexOf(L) + 1];
+      showResult({ title: stars === 3 ? 'Perfect lesson!' : 'Lesson done!', stars, xp, lines:[total ? `You got ${right} of ${total} right` : 'You finished all the cards'],
+        retry:() => start(L.id), next:nextL ? () => { stack[stack.length - 1].arg = nextL.id; open('school', nextL.id); } : null, nextLabel:nextL ? 'Next lesson ▶' : null });
+      tada();
+    }
+
+    // ---- rhythm tapping ----
+    function stopTap(){ if(tapState){ tapState.timers.forEach(clearTimeout); removeEventListener('keydown', tapState.key); tapState = null; } }
+    function tapCard(c, el, foot, nextBtn){
+      const beat = 60/c.bpm, starts = []; let acc = 0; c.beats.forEach(d => { starts.push(acc); acc += d; });
+      el.appendChild(mkEl('div', 'schpic', rhythmPic(c.beats)));
+      const lane = mkEl('div', 'taplane', starts.map((s, i) => `<i class="tmark" style="left:${s/acc*100}%;width:${c.beats[i]/acc*100}%"></i>`).join('') + '<span class="tcursor"></span>');
+      el.appendChild(lane);
+      const status = mkEl('p', 'schwhy', 'Press ▶ Listen first, then 🥁 My turn. You get 4 clicks to count you in.');
+      const pad = mkEl('button', 'tappad', 'TAP'); pad.disabled = true;
+      const row = mkEl('div', 'taprow');
+      const listen = mkEl('button', 'btn', '▶ Listen'), mine = mkEl('button', 'btn go', '🥁 My turn');
+      row.append(listen, mine);
+      el.append(row, pad, status);
+      let tries = 0, passed = false;
+      const cursor = lane.querySelector('.tcursor');
+      const runCursor = (delay, secs) => { cursor.style.transition = 'none'; cursor.style.left = '0%'; tapState.timers.push(setTimeout(() => { cursor.style.transition = `left ${secs}s linear`; cursor.style.left = '100%'; }, delay*1000)); };
+      listen.onclick = () => {
+        unlock(); stopTap(); tapState = { timers:[], key:() => {} };
+        for(let i = 0; i < 4; i++) click(i*beat, i === 0);
+        starts.forEach((s, i) => blip(72, 4*beat + s*beat, Math.max(.15, c.beats[i]*beat*.85), .5));
+        runCursor(.05 + 4*beat, acc*beat);
+      };
+      mine.onclick = () => {
+        unlock(); stopTap();
+        const taps = [], t0 = performance.now() + (50 + 4*beat*1000);
+        tapState = { timers:[], key:e => { if(e.code === 'Space' || e.key === ' '){ e.preventDefault(); hit(); } } };
+        addEventListener('keydown', tapState.key);
+        for(let i = 0; i < 4; i++) click(i*beat, i === 0);
+        lane.querySelectorAll('.tap').forEach(x => x.remove());
+        pad.disabled = false; status.textContent = 'Get ready… 1, 2, 3, 4 — then tap!';
+        runCursor(.05 + 4*beat, acc*beat);
+        const hit = () => {
+          const t = (performance.now() - t0)/1000/beat;
+          if(t < -.5 || t > acc + .5) return;
+          taps.push(t); blip(79, 0, .12, .35);
+          pad.classList.remove('hitfx'); void pad.offsetWidth; pad.classList.add('hitfx');
+          lane.appendChild(mkEl('i', 'tap', '')).style.left = `${Math.max(0, Math.min(100, t/acc*100))}%`;
+        };
+        pad.onpointerdown = e => { e.preventDefault(); hit(); };
+        tapState.timers.push(setTimeout(() => {
+          pad.disabled = true; stopTap();
+          const win = Math.max(.22, .3*(c.bpm/90)), used = new Set();
+          let good = 0;
+          starts.forEach(s => { let best = -1, bd = 9; taps.forEach((t, i) => { const d = Math.abs(t - s); if(!used.has(i) && d < bd){ bd = d; best = i; } }); if(best >= 0 && bd <= win){ used.add(best); good++; } });
+          const extra = taps.length - used.size, ok = good === starts.length && extra <= 1;
+          tries++;
+          if(ok && !passed){ passed = true; right++; }
+          status.innerHTML = ok ? `✅ Great timing! You hit all ${starts.length} notes.` : `❌ You hit ${good} of ${starts.length} notes${extra > 1 ? ' and tapped extra' : ''}. ${tries < 3 ? 'Try again!' : ''}`;
+          ok ? blip(84, 0, .25, .25) : blip(55, 0, .35, .2, 'sawtooth');
+          if(ok || tries >= 3){ if(!foot.contains(nextBtn)) foot.appendChild(nextBtn); }
+        }, 50 + (4 + acc + .6)*beat*1000));
+      };
+    }
+    hooks.school = { enter(id){ start(id); }, leave(){ stopTap(); } };
+  })();
+
   // ================= CUSTOMIZE =================
   (() => {
     const mkEl = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; };
@@ -7005,7 +7426,7 @@
     };
 
     // ---- 📊 my progress ----
-    const APPS = [['🎹 Piano','piano.'], ['🎸 Guitar','guitar.'], ['🥁 Drums','drums.'], ['🎤 Sing','sing.'], ['✏️ Draw','draw.'], ['🎻 More instruments','inst.'], ['🎮 Games','game.']];
+    const APPS = [['🎹 Piano','piano.'], ['🎸 Guitar','guitar.'], ['🥁 Drums','drums.'], ['🎤 Sing','sing.'], ['✏️ Draw','draw.'], ['🎻 More instruments','inst.'], ['🎓 School','school.'], ['🎮 Games','game.']];
     function renderProgress(){
       const el = $('progList'); if(!el) return;
       const p = store.get('prog', blankProg()), xp = p.xp || 0, lvl = levelOf(xp), into = xp % 200;
