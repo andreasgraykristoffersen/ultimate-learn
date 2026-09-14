@@ -2,6 +2,11 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Ultimate Learn">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Ultimate Learn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -816,7 +821,7 @@
     <div class="home-in">
       <div class="hero">
         <h1 class="brand">ULTIMATE LEARN</h1>
-        <p class="hello"><button class="avatar" id="homeAvatar" data-go="custom" aria-label="Customize">🙂</button><span id="homeHello">What do you want to learn today?</span><span class="herobtns"><button class="btn" data-go="progress">📊 My progress</button><button class="btn custbtn" data-go="custom">🎨 Customize</button></span></p>
+        <p class="hello"><button class="avatar" id="homeAvatar" data-go="custom" aria-label="Customize">🙂</button><span id="homeHello">What do you want to learn today?</span><span class="herobtns"><button class="btn" id="installBtn" hidden>📲 Install app</button><button class="btn" data-go="progress">📊 My progress</button><button class="btn custbtn" data-go="custom">🎨 Customize</button></span></p>
         <div class="xpbar" id="homeProg"></div>
       </div>
 
@@ -1327,6 +1332,7 @@
     },
     set(k,v){ memStore[k] = JSON.stringify(v); try{ localStorage.setItem('ultimateLearn.'+k, memStore[k]); }catch(e){} }
   };
+  let SCHOOL_LIST = []; // filled in by the SCHOOL block (for today's challenge)
   let levelHook = null, pendingLevel = 0; // the CUSTOMIZE block shows the level-up party
   let CUST = store.get('custom', null) || {}; // your customize settings (the CUSTOMIZE block keeps this up to date)
   function saveStars(key, n){ const s = store.get('stars',{}); if(!(s[key] >= n)){ s[key] = n; store.set('stars', s); } challengeCheck(key); }
@@ -1694,7 +1700,7 @@
   }
   // ---- keep going: remember the last lesson you opened ----
   function trackLast(v, arg){
-    if(!['piano','sing','draw','guitar','drums'].includes(v) || arg == null || arg === 'free') return;
+    if(!['piano','sing','draw','guitar','drums','school'].includes(v) || arg == null || arg === 'free') return;
     const t = views[v] && views[v].querySelector('.ttl');
     if(!t) return;
     const sm = t.querySelector('small');
@@ -1712,11 +1718,12 @@
     PATTERNS.forEach(p => pool.push({ key:'guitar.'+p.id, v:'guitar', arg:p.id, kind:'Guitar', title:p.name }));
     GSONGS.forEach(s => pool.push({ key:'guitar.'+s.id, v:'guitar', arg:s.id, kind:'Guitar', title:s.name }));
     warmups().forEach(w => pool.push({ key:'sing.'+w.id, v:'sing', arg:w.id, kind:'Sing', title:w.name }));
+    SCHOOL_LIST.forEach(l => pool.push({ key:'school.'+l.id, v:'school', arg:l.id, kind:'School', title:l.name }));
     return pool;
   }
   function todayChallenge(){
     const d = Math.floor((Date.now() - new Date().getTimezoneOffset()*60000)/86400000);
-    const kinds = ['Draw','Piano','Drums','Guitar','Sing'];
+    const kinds = ['Draw','Piano','School','Drums','Guitar','Sing'];
     const list = challengePool().filter(c => c.kind === kinds[d % kinds.length]);
     return list.length ? list[(d*7 + 3) % list.length] : null;
   }
@@ -1746,7 +1753,11 @@
     { id:'b-art10', e:'🖼️', n:'10 drawings', test:() => starCount('draw.') >= 10 },
     { id:'b-perfect', e:'💯', n:'10 perfect lessons', test:() => starEntries().filter(([,v]) => v >= 3).length >= 10 },
     { id:'b-level5', e:'🏆', n:'Level 5', test:() => (progNow().xp||0) >= 800 },
-    { id:'b-challenge', e:'⭐', n:'Daily challenge', test:() => !!store.get('challengeDone','') }
+    { id:'b-challenge', e:'⭐', n:'Daily challenge', test:() => !!store.get('challengeDone','') },
+    { id:'b-school', e:'🎓', n:'First school lesson', test:() => starCount('school.') > 0 },
+    { id:'b-music', e:'🎼', n:'Music scholar', test:() => starCount('school.m-') >= 9 },
+    { id:'b-artsch', e:'🖌️', n:'Art scholar', test:() => starCount('school.a-') >= 8 },
+    { id:'b-level10', e:'🐐', n:'Level 10 legend', test:() => (progNow().xp||0) >= 1800 }
   ];
   function renderBadges(){
     const el = $('badges'); if(!el) return;
@@ -7102,6 +7113,7 @@
         { t:'quiz', q:'What should you draw first?', choices:['Tiny details','Big simple shapes','The shading'], a:1, why:'Big shapes first, details last.' },
         { t:'try', title:'Try it for real!', text:'Draw a cat from simple shapes.', lesson:'cat' } ] }
     ];
+    SCHOOL_LIST = LESSONS.map(x => ({ id:x.id, name:`${x.e} ${x.name}` }));
     const TRACKS = [['music','🎼 Music school','How music works — notes, rhythm, chords and your ears'], ['art','🎨 Art school','How art works — colors, light, perspective and faces']];
 
     // ---- menu ----
@@ -7473,6 +7485,26 @@
       el.appendChild(path);
     }
     hooks.progress = { enter(){ renderProgress(); } };
+
+    // ---- 📲 install as an app (website only: the Claude page can't be installed) ----
+    const onSite = location.protocol === 'https:' && /github\.io$/.test(location.hostname) && window.top === window.self;
+    const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    let installEvt = null;
+    const installBtn = $('installBtn');
+    if(onSite && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+    addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if(installBtn) installBtn.hidden = false; });
+    addEventListener('appinstalled', () => { installEvt = null; if(installBtn) installBtn.hidden = true; });
+    if(installBtn){
+      if(onSite && isIOS && !standalone) installBtn.hidden = false;
+      installBtn.onclick = () => {
+        if(installEvt){ installEvt.prompt(); installEvt.userChoice.then(() => { installEvt = null; installBtn.hidden = true; }); return; }
+        let t = $('custToast');
+        if(!t){ t = mkEl('div', 'custtoast'); t.id = 'custToast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+        t.textContent = '📲 Tap the Share button ⬆️, then “Add to Home Screen”. Ultimate Learn will be an app on your home screen!';
+        t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 6000);
+      };
+    }
     hooks.custom = { enter(){ render(); } };
     const prevHome = hooks.home && hooks.home.enter;
     if(hooks.home) hooks.home.enter = arg => { if(prevHome) prevHome(arg); apply(); };
